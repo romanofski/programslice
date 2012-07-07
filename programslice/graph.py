@@ -30,7 +30,15 @@ class Graph(object):
         return self.graph.keys()
 
     def add(self, node):
-        self.graph.setdefault(node.name, [node])
+        self.graph.setdefault(node.name, [])
+
+    def connect(self, n1, n2):
+        assert isinstance(n1, Node)
+        assert isinstance(n2, Node)
+        self.graph[n1.name].append(n2)
 
     def __len__(self):
         return len(self.graph)
+
+    def __getitem__(self, key):
+        return self.graph[key]

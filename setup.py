@@ -24,6 +24,7 @@ Slice programs""",
       # -*- Entry points: -*-
       """,
       extras_require=dict(
-          test=[]
+          test=['unittest2',
+               ]
       ),
      )

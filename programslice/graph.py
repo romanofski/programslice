@@ -13,13 +13,24 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library.  If not, see
 # <http://www.gnu.org/licenses/>.
-import ast
 
 
-class Visitor(ast.Visitor):
+class Node(object):
+
+    def __init__(self, name):
+        self.name = name
+
+
+class Graph(object):
 
     def __init__(self):
-        super(Visitor, self).__init__()
+        self.graph = dict()
 
-    def visitFunction(self, node):
-        pass
+    def edges(self):
+        return self.graph.keys()
+
+    def add(self, node):
+        self.graph.setdefault(node.name, [node])
+
+    def __len__(self):
+        return len(self.graph)

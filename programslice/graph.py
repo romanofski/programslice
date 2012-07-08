@@ -34,9 +34,7 @@ class Graph(object):
          for node in args]
 
     def connect(self, n1, n2):
-        assert isinstance(n1, Node)
-        assert isinstance(n2, Node)
-        self.graph[n1.name].append(n2)
+        self.graph[n1].append(self.graph[n2])
 
     def __len__(self):
         return len(self.graph)

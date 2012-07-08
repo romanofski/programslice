@@ -29,8 +29,9 @@ class Graph(object):
     def edges(self):
         return self.graph.keys()
 
-    def add(self, node):
-        self.graph.setdefault(node.name, [])
+    def add(self, *args):
+        [self.graph.setdefault(node.name, [])
+         for node in args]
 
     def connect(self, n1, n2):
         assert isinstance(n1, Node)

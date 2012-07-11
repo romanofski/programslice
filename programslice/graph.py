@@ -12,8 +12,11 @@ class Graph(object):
     def __init__(self):
         self.graph = dict()
 
-    def edges(self):
-        return self.graph.keys()
+    def edges(self, name):
+        result = []
+        if name in self.graph.keys():
+            result = [x.lineno for x in self.graph[name]]
+        return result
 
     def add(self, node):
         if not node.name in self.graph.keys():

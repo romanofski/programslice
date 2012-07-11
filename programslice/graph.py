@@ -1,3 +1,6 @@
+from collections import deque
+
+
 class Node(object):
 
     next = None
@@ -15,7 +18,17 @@ class Graph(object):
     def edges(self, name):
         result = []
         if name in self.graph.keys():
-            result = [x.lineno for x in self.graph[name]]
+            visited = []
+            children = deque(self.graph[name])
+            while children:
+                child = children.popleft()
+                if child.next:
+                    new = deque(self.graph[child.next.name])
+                    children.extend(new)
+                result.append(child.lineno)
+                if child in visited:
+                    break
+                visited.append(child)
         return result
 
     def add(self, node):

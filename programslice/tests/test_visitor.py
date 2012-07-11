@@ -28,5 +28,5 @@ class TestDataDependencyVisitor(unittest2.TestCase):
         # XXX that's not quite correct, as we currently don't visit
         # functions
         expected = {'foo': [4], 'number': [1, 2], 'do_baz': [4]}
-        self.assertEquals(expected, self.visitor.graph)
+        self.assertEqual(expected, self.visitor.graph)
 

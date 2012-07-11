@@ -1,10 +1,11 @@
 import ast
+import programslice.graph
 
 
 class DataDependencyVisitor(ast.NodeVisitor):
 
     def __init__(self):
-        self.graph = dict()
+        self.graph = programslice.graph.Graph()
 
     def visit_Assign(self, node):
         self.context = node.targets[0].id
@@ -16,8 +17,7 @@ class DataDependencyVisitor(ast.NodeVisitor):
         self.visit(node.right)
 
     def visit_Name(self, node):
-        if node.id not in self.graph.keys():
-            self.graph.setdefault(node.id, [node.lineno])
-        else:
-            self.graph[node.id].append(node.lineno)
-
+        graphnode = programslice.graph.Node(node.id, node.lineno)
+        self.graph.add(graphnode)
+        if self.context and node.id is not self.context:
+            self.graph.connect(node.id, self.context)

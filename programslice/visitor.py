@@ -6,6 +6,7 @@ class DataDependencyVisitor(ast.NodeVisitor):
 
     def __init__(self):
         self.graph = programslice.graph.Graph()
+        self.context = None
 
     def visit_Assign(self, node):
         self.context = node.targets[0].id

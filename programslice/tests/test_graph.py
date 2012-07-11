@@ -22,5 +22,7 @@ class TestGraph(unittest2.TestCase):
         self.graph.add(Node('A', 1))
         self.graph.add(Node('B', 1))
         self.graph.connect('A', 'B')
-
         self.assertEqual('B', self.graph['A'][0].next.name)
+
+        self.graph.connect('B', 'A')
+        self.assertEqual('A', self.graph['B'][0].next.name)

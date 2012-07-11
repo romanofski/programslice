@@ -9,9 +9,7 @@ class DataDependencyVisitor(ast.NodeVisitor):
     def visit_Assign(self, node):
         self.context = node.targets[0].id
         for c in ast.iter_child_nodes(node):
-            meth = getattr(self, 'visit_' + c.__class__.__name__,
-                           self.generic_visit)
-            meth(c)
+            self.visit(c)
 
     def visit_BinOp(self, node):
         self.visit(node.left)

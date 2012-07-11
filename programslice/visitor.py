@@ -14,8 +14,8 @@ class DataDependencyVisitor(ast.NodeVisitor):
             meth(c)
 
     def visit_BinOp(self, node):
-        for n in [node.left, node.right]:
-            self.visit_Name(n)
+        self.visit(node.left)
+        self.visit(node.right)
 
     def visit_Name(self, node):
         if node.id not in self.graph.keys():

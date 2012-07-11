@@ -1,20 +1,19 @@
 import ast
+import os.path
 import programslice.visitor
 import unittest2
 
 
 class TestDataDependencyVisitor(unittest2.TestCase):
 
-    def setUp(self):
-        self.node = ast.Assign([ast.Name('foo', ast.Store())],
-                               ast.Name('bar', ast.Load()))
-        self.node.lineno = 1
-        self.col_offset = 0
-        self.node.targets[0].lineno = 1
-        self.node.value.lineno = 1
+    def load_testdata(self, filename):
+        filepath = os.path.join(os.path.dirname(__file__),
+                                'testdata', filename)
+        node = ast.parse(open(filepath, 'r').read(), filepath)
+        return node
 
     def test_visit_Assign(self):
+        node = self.load_testdata('assign.py')
         visitor = programslice.visitor.DataDependencyVisitor()
-        visitor.visit_Assign(self.node)
+        visitor.visit_Assign(node.body[0])
         self.assertEqual([1], visitor.graph['foo'])
-        self.assertEqual([1], visitor.graph['bar'])

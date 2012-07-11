@@ -21,7 +21,7 @@ class Graph(object):
         self.graph[node.name].append(node)
 
     def connect(self, n1, n2):
-        self.graph[n1].next = self.graph[n2]
+        self.graph[n1][0].next = self.graph[n2][0]
 
     def __len__(self):
         return len(self.graph)

@@ -19,8 +19,8 @@ class TestGraph(unittest2.TestCase):
         self.assertEqual(['A', 'B'], self.graph.edges())
 
     def test_connect(self):
-        self.graph.add(Node('A'))
-        self.graph.add(Node('B'))
+        self.graph.add(Node('A', 1))
+        self.graph.add(Node('B', 1))
         self.graph.connect('A', 'B')
 
-        self.assertEqual(1, len(self.graph['A']))
+        self.assertEqual('B', self.graph['A'][0].next.name)

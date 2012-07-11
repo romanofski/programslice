@@ -15,5 +15,7 @@ class TestDataDependencyVisitor(unittest2.TestCase):
     def test_visit_Assign(self):
         node = self.load_testdata('assign.py')
         visitor = programslice.visitor.DataDependencyVisitor()
-        visitor.visit_Assign(node.body[0])
+        visitor.visit(node)
         self.assertEqual([1], visitor.graph['foo'])
+        self.assertEqual([2], visitor.graph['bar'])
+        self.assertEqual([3], visitor.graph['baz'])

@@ -1,7 +1,10 @@
 class Node(object):
 
-    def __init__(self, name):
+    next = None
+
+    def __init__(self, name, lineno):
         self.name = name
+        self.lineno = lineno
 
 
 class Graph(object):
@@ -12,12 +15,13 @@ class Graph(object):
     def edges(self):
         return self.graph.keys()
 
-    def add(self, *args):
-        [self.graph.setdefault(node.name, [])
-         for node in args]
+    def add(self, node):
+        if not node.name in self.graph.keys():
+            self.graph.setdefault(node.name, [])
+        self.graph[node.name].append(node)
 
     def connect(self, n1, n2):
-        self.graph[n1].append(self.graph[n2])
+        self.graph[n1].next = self.graph[n2]
 
     def __len__(self):
         return len(self.graph)

@@ -13,9 +13,14 @@ class DataDependencyVisitor(ast.NodeVisitor):
     def visit_FunctionDef(self, node):
         graph = programslice.graph.Graph(
             'function {0}:{1}'.format(node.name, node.lineno))
-        self.stack.append(graph)
+        self.stack.appendleft(graph)
         [self.visit(x) for x in node.body]
         self.reset()
+
+    def visit_Assign(self, node):
+        n = programslice.graph.Node(node.targets[0].id, node.lineno)
+        graph = self.stack[0]
+        graph.add(n)
 
     def reset(self):
         self.graphs.append(self.stack.popleft())

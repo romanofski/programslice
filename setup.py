@@ -6,7 +6,7 @@ version = '0.1'
 
 setup(name='programslice',
       version=version,
-      description="Statistical analysis tool",
+      description="Static analysis tool for python",
       long_description="""\
 Slice programs""",
       keywords='',

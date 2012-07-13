@@ -3,7 +3,7 @@ import programslice.graph
 from collections import deque
 
 
-class DataDependencyVisitor(ast.NodeVisitor):
+class ControlDependencyVisitor(ast.NodeVisitor):
 
     def __init__(self):
         self.graphs = []

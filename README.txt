@@ -26,3 +26,6 @@ This work would not be possible without:
     * Jens Krinkes "Advanced Slicing of Sequential and Concurrent
       Programs" thesis:
       http://www.opus-bayern.de/uni-passau/volltexte/2004/37/pdf/thesis_a5.pdf
+
+    * Wikipedia
+      http://en.wikipedia.org/wiki/Program_slicing

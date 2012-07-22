@@ -3,10 +3,7 @@ from collections import OrderedDict
 
 class Node(object):
 
-    next = None
-
-    def __init__(self, name, lineno):
-        self.name = name
+    def __init__(self, lineno):
         self.lineno = lineno
 
 
@@ -17,13 +14,28 @@ class Graph(object):
         self.graph = OrderedDict()
 
     def edges(self):
-        return [x.lineno for x in self.graph.keys()]
+        return self.graph.keys()
 
     def add(self, node):
-        self.graph.setdefault(node, [])
+        self.graph.setdefault(node.lineno, [])
 
-    def connect(self, n1, n2):
-        self.graph.setdefault(n1, []).append(n2)
+    def connect(self, lineno1, lineno2):
+        self.graph.setdefault(lineno1, []).append(Node(lineno2))
+
+    def slice_forward(self, lineno):
+        """
+        A forward slice, which is just a depth first traversal.
+        """
+        visited = [lineno]
+        children = list(self.graph[lineno])
+
+        while children:
+            n = children.pop()
+            if n.lineno not in visited:
+                children.extend(list(self.graph[n.lineno]))
+                visited.append(n.lineno)
+
+        return sorted(visited)  # XXX perhaps not needed
 
     def __len__(self):
         return len(self.graph)

@@ -22,6 +22,7 @@ class TestControlDependencyVisitor(unittest2.TestCase):
         self.assertEqual(2, len(self.visitor.graphs))
         self.assertEqual('function innerfunc:2', graph1.name)
         self.assertEqual('function main:1', graph2.name)
+        self.assertEqual([4, 6, 7], graph2.slice_forward(4))
 
     def test_visit_Assign(self):
         node = self.load_testdata('function.py')

@@ -53,5 +53,5 @@ class TestGraph(unittest2.TestCase):
         self.graph.connect(8, 5)
         self.graph.connect(8, 7)
 
-        result = self.graph.find_path(2)
+        result = self.graph.slice_forward(2)
         self.assertEqual([2, 3, 4, 5, 7, 8, 11], result)

@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from collections import deque
 
 
 class Node(object):
@@ -24,15 +25,15 @@ class Graph(object):
 
     def slice_forward(self, lineno):
         """
-        A forward slice, which is just a depth first traversal.
+        A forward slice, which is just a breadth first traversal.
         """
         visited = [lineno]
-        children = list(self.graph[lineno])
+        children = deque(self.graph[lineno])
 
         while children:
-            n = children.pop()
+            n = children.popleft()
             if n.lineno not in visited:
-                children.extend(list(self.graph[n.lineno]))
+                children.extend(deque(self.graph[n.lineno]))
                 visited.append(n.lineno)
 
         return sorted(visited)  # XXX perhaps not needed

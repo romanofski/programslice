@@ -14,6 +14,13 @@ class Graph(object):
     def add(self, lineno):
         self.graph.setdefault(lineno, [])
 
+    @property
+    def first(self):
+        """
+        Returns the first line of the program the graph represents
+        """
+        return min(self.graph.keys())
+
     def connect(self, lineno1, lineno2):
         self.graph.setdefault(lineno1, []).append(lineno2)
 

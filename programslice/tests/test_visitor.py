@@ -1,4 +1,4 @@
-from programslice import slice_buffer
+from programslice import slice_vim_buffer
 import ast
 import os.path
 import programslice.visitor
@@ -45,6 +45,6 @@ class TestFunctions(unittest2.TestCase):
     def test_slice_buffer(self):
         filepath = os.path.join(os.path.dirname(__file__),
                                 'testdata', 'function.py')
-        buffer = open(filepath, 'r')
-        lines = slice_buffer(4, buffer, 'function.py')
+        buffer = open(filepath, 'r').read()
+        lines = slice_vim_buffer(4, buffer, 'function.py')
         self.assertEqual([4, 6, 7], lines)

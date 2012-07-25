@@ -31,7 +31,7 @@ class ControlDependencyVisitor(ast.NodeVisitor):
             return
 
         graph = self.stack[0]
-        if node.lineno not in graph.edges():
+        if node.lineno not in graph.edges:
             graph.add(node.lineno)
             self.variables.appendleft(node)
         if node.id in [x.id for x in self.variables]:

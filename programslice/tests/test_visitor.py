@@ -28,8 +28,8 @@ class TestControlDependencyVisitor(unittest2.TestCase):
         node = self.load_testdata('function.py')
         self.visitor.visit(node)
         graph1, graph2 = self.visitor.graphs
-        self.assertEqual([3], graph1.edges())
-        self.assertEqual([4, 5, 6], graph2.edges())
+        self.assertEqual([3], graph1.edges)
+        self.assertEqual([4, 5, 6], graph2.edges)
 
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')

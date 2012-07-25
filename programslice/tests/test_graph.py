@@ -17,11 +17,11 @@ class TestGraph(unittest2.TestCase):
     def test_add(self):
         self.graph.add(1)
         self.graph.add(2)
-        self.assertEqual([1, 2], self.graph.edges())
+        self.assertEqual([1, 2], self.graph.edges)
 
         self.graph.add(3)
         self.assertEqual(3, len(self.graph))
-        self.assertEqual([1, 2, 3], self.graph.edges())
+        self.assertEqual([1, 2, 3], self.graph.edges)
 
     def test_connect(self):
         self.graph.add(1)
@@ -36,7 +36,7 @@ class TestGraph(unittest2.TestCase):
         self.graph.add(1)
         self.graph.add(2)
 
-        result = self.graph.edges()
+        result = self.graph.edges
         self.assertEqual([1, 2], result)
 
     def test_slice_forward(self):

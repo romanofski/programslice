@@ -12,25 +12,26 @@ class Graph(object):
         self.name = name
         self.graph = OrderedDict()
 
-    def edges(self):
-        return self.graph.keys()
-
     def add(self, lineno):
         self.graph.setdefault(lineno, [])
+
+    @property
+    def edges(self):
+        return self.graph.keys()
 
     @property
     def first(self):
         """
         Returns the first line number
         """
-        return min(self.edges())
+        return min(self.edges)
 
     @property
     def last(self):
         """
         Returns the last line number
         """
-        return max(self.edges())
+        return max(self.edges)
 
     def connect(self, lineno1, lineno2):
         self.graph.setdefault(lineno1, []).append(lineno2)

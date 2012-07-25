@@ -22,9 +22,8 @@ class ControlDependencyVisitor(ast.NodeVisitor):
         # XXX ignoring module-level assignments
         if not self.stack:
             return
-        n = programslice.graph.Node(node.lineno)
         graph = self.stack[0]
-        graph.add(n)
+        graph.add(node.lineno)
         [self.visit(x) for x in ast.iter_child_nodes(node)]
 
     def visit_Name(self, node):
@@ -33,7 +32,7 @@ class ControlDependencyVisitor(ast.NodeVisitor):
 
         graph = self.stack[0]
         if node.lineno not in graph.edges():
-            graph.add(programslice.graph.Node(node.lineno))
+            graph.add(node.lineno)
             self.variables.appendleft(node)
         if node.id in [x.id for x in self.variables]:
             oldnode = self.variables.popleft()
@@ -42,16 +41,14 @@ class ControlDependencyVisitor(ast.NodeVisitor):
             self.variables.extend([node])
 
     def visit_While(self, node):
-        n = programslice.graph.Node(node.lineno)
         graph = self.stack[0]
-        graph.add(n)
+        graph.add(node.lineno)
         [self.visit(x) for x in node.body]
         tail = graph.graph.keys()[-1]
-        graph.connect(tail, n)
+        graph.connect(tail, node.lineno)
 
     def visit_Return(self, node):
-        n = programslice.graph.Node(node.lineno)
-        self.stack[0].add(n)
+        self.stack[0].add(node.lineno)
 
     def reset(self):
         self.graphs.append(self.stack.popleft())

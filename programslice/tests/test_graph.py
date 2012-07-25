@@ -1,6 +1,5 @@
 import unittest2
 from programslice.graph import Graph
-from programslice.graph import Node
 
 
 class TestGraph(unittest2.TestCase):
@@ -9,33 +8,33 @@ class TestGraph(unittest2.TestCase):
         self.graph = Graph()
 
     def test_add(self):
-        self.graph.add(Node(1))
-        self.graph.add(Node(2))
+        self.graph.add(1)
+        self.graph.add(2)
         self.assertEqual([1, 2], self.graph.edges())
 
-        self.graph.add(Node(3))
+        self.graph.add(3)
         self.assertEqual(3, len(self.graph))
         self.assertEqual([1, 2, 3], self.graph.edges())
 
     def test_connect(self):
-        self.graph.add(Node(1))
-        self.graph.add(Node(2))
+        self.graph.add(1)
+        self.graph.add(2)
         self.graph.connect(1, 2)
-        self.assertEqual([2], [x.lineno for x in self.graph[1]])
+        self.assertEqual([2], self.graph[1])
 
         self.graph.connect(2, 1)
-        self.assertEqual([1], [x.lineno for x in self.graph[2]])
+        self.assertEqual([1], self.graph[2])
 
     def test_edges(self):
-        self.graph.add(Node(1))
-        self.graph.add(Node(2))
+        self.graph.add(1)
+        self.graph.add(2)
 
         result = self.graph.edges()
         self.assertEqual([1, 2], result)
 
     def test_slice_forward(self):
         for i in range(1, 12):
-            self.graph.add(Node(i))
+            self.graph.add(i)
 
         self.graph.connect(1, 10)
         self.graph.connect(1, 6)

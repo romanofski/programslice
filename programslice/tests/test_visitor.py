@@ -1,3 +1,4 @@
+from programslice import slice_buffer
 import ast
 import os.path
 import programslice.visitor
@@ -36,3 +37,14 @@ class TestControlDependencyVisitor(unittest2.TestCase):
         self.visitor.visit(node)
         graph = self.visitor.graphs[0]
         self.assertEqual(1, len(graph.graph[graph.graph.keys()[-1]]))
+        self.assertEqual([], graph.slice_forward(12))
+
+
+class TestFunctions(unittest2.TestCase):
+
+    def test_slice_buffer(self):
+        filepath = os.path.join(os.path.dirname(__file__),
+                                'testdata', 'function.py')
+        buffer = open(filepath, 'r')
+        lines = slice_buffer(4, buffer, 'function.py')
+        self.assertEqual([4, 6, 7], lines)

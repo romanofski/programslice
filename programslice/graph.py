@@ -3,6 +3,10 @@ from collections import deque
 
 
 class Graph(object):
+    """
+    A graph is represents a parsed code fragment visited by a
+    programslice.visitor
+    """
 
     def __init__(self, name=''):
         self.name = name
@@ -17,14 +21,14 @@ class Graph(object):
     @property
     def first(self):
         """
-        Returns the first line of the program the graph represents
+        Returns the first line number
         """
         return min(self.edges())
 
     @property
     def last(self):
         """
-        Returns the last parsed line of the program
+        Returns the last line number
         """
         return max(self.edges())
 

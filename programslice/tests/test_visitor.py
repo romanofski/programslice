@@ -37,7 +37,6 @@ class TestControlDependencyVisitor(unittest2.TestCase):
         self.visitor.visit(node)
         graph = self.visitor.graphs[0]
         self.assertEqual(1, len(graph.graph[graph.graph.keys()[-1]]))
-        self.assertEqual([], graph.slice_forward(12))
 
 
 class TestFunctions(unittest2.TestCase):

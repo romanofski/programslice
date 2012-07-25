@@ -19,7 +19,14 @@ class Graph(object):
         """
         Returns the first line of the program the graph represents
         """
-        return min(self.graph.keys())
+        return min(self.edges())
+
+    @property
+    def last(self):
+        """
+        Returns the last parsed line of the program
+        """
+        return max(self.edges())
 
     def connect(self, lineno1, lineno2):
         self.graph.setdefault(lineno1, []).append(lineno2)

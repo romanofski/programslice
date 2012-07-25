@@ -7,11 +7,12 @@ class TestGraph(unittest2.TestCase):
     def setUp(self):
         self.graph = Graph()
 
-    def test_first(self):
+    def test_first_last(self):
         self.graph.add(3)
         self.graph.add(1)
         self.graph.add(5)
         self.assertEqual(1, self.graph.first)
+        self.assertEqual(5, self.graph.last)
 
     def test_add(self):
         self.graph.add(1)

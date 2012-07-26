@@ -2,10 +2,10 @@ from programslice import slice_vim_buffer
 import ast
 import os.path
 import programslice.visitor
-import unittest2
+import unittest2 as unittest
 
 
-class TestControlDependencyVisitor(unittest2.TestCase):
+class TestControlDependencyVisitor(unittest.TestCase):
 
     def setUp(self):
         self.visitor = programslice.visitor.ControlDependencyVisitor()
@@ -39,7 +39,7 @@ class TestControlDependencyVisitor(unittest2.TestCase):
         self.assertEqual(1, len(graph.graph[graph.graph.keys()[-1]]))
 
 
-class TestFunctions(unittest2.TestCase):
+class TestFunctions(unittest.TestCase):
 
     def test_slice_buffer(self):
         filepath = os.path.join(os.path.dirname(__file__),

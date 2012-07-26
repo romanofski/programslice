@@ -1,8 +1,8 @@
-import unittest2
 from programslice.graph import Graph
+import unittest2 as unittest
 
 
-class TestGraph(unittest2.TestCase):
+class TestGraph(unittest.TestCase):
 
     def setUp(self):
         self.graph = Graph()

@@ -5,10 +5,10 @@ import programslice.visitor
 import unittest2 as unittest
 
 
-class TestControlDependencyVisitor(unittest.TestCase):
+class TestLineDependencyVisitor(unittest.TestCase):
 
     def setUp(self):
-        self.visitor = programslice.visitor.ControlDependencyVisitor()
+        self.visitor = programslice.visitor.LineDependencyVisitor()
 
     def load_testdata(self, filename):
         filepath = os.path.join(os.path.dirname(__file__),

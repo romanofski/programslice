@@ -3,7 +3,13 @@ import programslice.graph
 from collections import deque
 
 
-class ControlDependencyVisitor(ast.NodeVisitor):
+class LineDependencyVisitor(ast.NodeVisitor):
+    """
+    A visitor which creates a data dependency graph.
+
+    Note: I've called it LineDependencyVisitor, as currently it only
+    matters are dependencies between lines of code and their variables.
+    """
 
     def __init__(self):
         self.graphs = []

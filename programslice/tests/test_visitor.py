@@ -39,6 +39,26 @@ class TestLineDependencyVisitor(unittest.TestCase):
         self.assertEqual(1, len(graph.graph[graph.graph.keys()[-1]]))
 
 
+class TestVisitorFunctional(unittest.TestCase):
+
+    def test_get_graph_for(self):
+        visitor = programslice.visitor.LineDependencyVisitor()
+        graph1 = programslice.graph.Graph('function1')
+        graph1.add(3)
+        graph1.add(5)
+        graph1.add(11)
+
+        graph2 = programslice.graph.Graph('function2')
+        graph2.add(12)
+        graph2.add(13)
+        graph2.add(15)
+        visitor.graphs = [graph1, graph2]
+
+        self.assertEqual('function1', visitor.get_graph_for(4).name)
+        self.assertEqual('function2', visitor.get_graph_for(12).name)
+        self.assertEqual(None, visitor.get_graph_for(2))
+
+
 class TestFunctions(unittest.TestCase):
 
     def test_slice_buffer(self):

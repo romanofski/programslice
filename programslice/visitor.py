@@ -17,6 +17,14 @@ class LineDependencyVisitor(ast.NodeVisitor):
         self.stack = deque()
         self.variables = deque()
 
+    def get_graph_for(self, lineno):
+        """
+        Returns a graph, which visited the given lineno
+        """
+        for graph in self.graphs:
+            if lineno >= graph.first and lineno <= graph.last:
+                return graph
+
     def visit_FunctionDef(self, node):
         graph = programslice.graph.Graph(
             'function {0}:{1}'.format(node.name, node.lineno))

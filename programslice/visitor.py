@@ -32,14 +32,6 @@ class LineDependencyVisitor(ast.NodeVisitor):
         [self.visit(x) for x in node.body]
         self.reset()
 
-    def visit_Assign(self, node):
-        # XXX ignoring module-level assignments
-        if not self.stack:
-            return
-        graph = self.stack[0]
-        graph.add(node.lineno)
-        [self.visit(x) for x in ast.iter_child_nodes(node)]
-
     def visit_Name(self, node):
         self.variables.setdefault(node.id, deque()).append(node.lineno)
 

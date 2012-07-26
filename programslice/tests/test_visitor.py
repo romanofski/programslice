@@ -25,13 +25,6 @@ class TestLineDependencyVisitor(unittest.TestCase):
         self.assertEqual('function main:1', graph2.name)
         self.assertEqual([4, 6, 7], graph2.slice_forward(4))
 
-    def test_visit_Assign(self):
-        node = self.load_testdata('function.py')
-        self.visitor.visit(node)
-        graph1, graph2 = self.visitor.graphs
-        self.assertEqual([3], graph1.edges)
-        self.assertEqual([4, 5, 6, 7], graph2.edges)
-
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')
         self.visitor.visit(node)

@@ -15,7 +15,7 @@ class LineDependencyVisitor(ast.NodeVisitor):
         self.graphs = []
         self.current_graph = None
         self.stack = deque()
-        self.variables = deque()
+        self.variables = {}
 
     def get_graph_for(self, lineno):
         """
@@ -41,17 +41,10 @@ class LineDependencyVisitor(ast.NodeVisitor):
         [self.visit(x) for x in ast.iter_child_nodes(node)]
 
     def visit_Name(self, node):
-        if not self.stack:
-            return
+        self.variables.setdefault(node.id, deque()).append(node.lineno)
 
-        graph = self.stack[0]
-        if node.lineno not in graph.edges:
-            graph.add(node.lineno)
-        if node.id in [x.id for x in self.variables]:
-            oldnode = self.variables.popleft()
-            graph.connect(oldnode.lineno, node.lineno)
-        else:
-            self.variables.extend([node])
+    def visit_Call(self, node):
+        [self.visit(x) for x in node.args]
 
     def visit_While(self, node):
         graph = self.stack[0]
@@ -64,4 +57,12 @@ class LineDependencyVisitor(ast.NodeVisitor):
         self.stack[0].add(node.lineno)
 
     def reset(self):
-        self.graphs.append(self.stack.popleft())
+        graph = self.stack.popleft()
+        for key, linenumbers in self.variables.items():
+            while linenumbers:
+                lineno = linenumbers.popleft()
+                if lineno not in graph.edges:
+                    graph.add(lineno)
+                if linenumbers:
+                    graph.connect(lineno, linenumbers[0])
+        self.graphs.append(graph)

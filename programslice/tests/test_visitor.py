@@ -35,8 +35,13 @@ class TestLineDependencyVisitor(unittest.TestCase):
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')
         self.visitor.visit(node)
-        graph = self.visitor.graphs[0]
-        self.assertEqual(1, len(graph.graph[graph.graph.keys()[-1]]))
+        graph = self.visitor.get_graph_for(12)
+        # 15, 23 still missing
+        expected = [12, 16, 17, 18, 19, 20, 21, 22]
+        self.assertEqual(expected, graph.slice_forward(12))
+
+        expected = [18, 20, 22]
+        self.assertEqual(expected, graph.slice_forward(18))
 
 
 class TestVisitorFunctional(unittest.TestCase):

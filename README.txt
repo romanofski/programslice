@@ -13,19 +13,25 @@ statement. More information can be found here:
 
 I'm not sure how I go with this, as it is new territory for me.
 
+What's it Good For?
+===================
 
-What is currently implemented
-=============================
+During a debugging session you can concentrate to debug the relevant
+parts and ignore non-depending lines of code.
+
+TODO
+====
 
 The current implementation is a prototype in every direction:
 
-    * The slicing is currently very dumb. It simply builds a graph based
-      on variable appearences. I'd like to see how usefull that is. Esp.
-      because I can currently only see where a variable is declared.
-      This seems to be an improvement.
+    Slicing
+        The slicing is currently very dumb. It builds a graph based on
+        variable appearences. The line numbers are the edges. This is a
+        very low-tech approach and has it's dis-advantages.
 
-    * The vim integration is also a meager prototype. I'd like to use it
-      and tweak it to make it the most useful integration ever.
+    VIM Integration
+        The vim integration is also a meager prototype. I'd like to use
+        it and tweak it to make it the most useful integration ever.
 
 Credits
 =======

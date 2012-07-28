@@ -25,3 +25,13 @@ for line 3:
 
 This tells us, that line 3 is depended on lines 5 and 6 or in other
 words 4 does not interfere with line 3 at all and can be ignored.
+
+Shebangs and Encoding declarations
+==================================
+
+Sometimes programs use encoding declarations, which need to removed
+before the program can be parsed. The slicing will happen nevertheless:
+
+>>> program = u'#!/usr/bin/env python\n# coding: utf-8\n{program}'.format(program=program)
+>>> slice_vim_buffer(4, program, 'myprogram')
+[4, 6, 7]

@@ -9,5 +9,5 @@ def slice_vim_buffer(currentline, buffer, name):
     node = ast.parse(buffer, name)
     visitor = programslice.visitor.LineDependencyVisitor()
     visitor.visit(node)
-    graph = visitor.graphs[-1]
+    graph = visitor.get_graph_for(currentline)
     return graph.slice_forward(currentline)

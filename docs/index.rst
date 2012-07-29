@@ -9,7 +9,7 @@
 .. toctree::
    :maxdepth: 2
 
-.. include:: ../README.txt
+.. include:: ../README.rst
 .. include:: ../programslice/tests/slice_forward.txt
 
 

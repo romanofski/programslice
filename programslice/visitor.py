@@ -41,7 +41,7 @@ class LineDependencyVisitor(ast.NodeVisitor):
     def visit_While(self, node):
         graph = self.stack[0]
         graph.add(node.lineno)
-        [self.visit(x) for x in node.body]
+        [self.visit(x) for x in ast.iter_child_nodes(node)]
         tail = graph.graph.keys()[-1]
         graph.connect(tail, node.lineno)
 

@@ -29,8 +29,7 @@ class TestLineDependencyVisitor(unittest.TestCase):
         node = self.load_testdata('binsearch.py')
         self.visitor.visit(node)
         graph = self.visitor.get_graph_for(12)
-        # 23 still missing
-        expected = [12, 15, 16, 17, 18, 19, 20, 21, 22]
+        expected = [12, 15, 16, 17, 18, 19, 20, 21, 22, 23]
         self.assertEqual(expected, graph.slice_forward(12))
 
         expected = [18, 20, 22]

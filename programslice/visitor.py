@@ -29,24 +29,11 @@ class LineDependencyVisitor(ast.NodeVisitor):
         graph = programslice.graph.Graph(
             'function {0}:{1}'.format(node.name, node.lineno))
         self.stack.appendleft(graph)
-        [self.visit(x) for x in node.body]
+        [self.visit(x) for x in ast.iter_child_nodes(node)]
         self.reset()
 
     def visit_Name(self, node):
         self.variables.setdefault(node.id, deque()).append(node.lineno)
-
-    def visit_Call(self, node):
-        [self.visit(x) for x in node.args]
-
-    def visit_While(self, node):
-        graph = self.stack[0]
-        graph.add(node.lineno)
-        [self.visit(x) for x in ast.iter_child_nodes(node)]
-        tail = graph.graph.keys()[-1]
-        graph.connect(tail, node.lineno)
-
-    def visit_Return(self, node):
-        self.stack[0].add(node.lineno)
 
     def reset(self):
         graph = self.stack.popleft()

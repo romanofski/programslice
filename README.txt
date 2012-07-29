@@ -13,6 +13,16 @@ statement. More information can be found here:
 
 I'm not sure how I go with this, as it is new territory for me.
 
+How to use it?
+==============
+
+In it's current state, I'm using symlinks to the programslice and the
+vim script in my .vim/ftplugins/python directory and do a:
+
+    :call RunProgramSlice()
+
+in a vim session.
+
 What's it Good For?
 ===================
 
@@ -24,14 +34,18 @@ TODO
 
 The current implementation is a prototype in every direction:
 
-    Slicing
+    Slicing - Increase Precision
         The slicing is currently very dumb. It builds a graph based on
-        variable appearences. The line numbers are the edges. This is a
-        very low-tech approach and has it's dis-advantages.
+        variable occurrences. The line numbers are the edges. This has
+        it's dis-advantages. It's good to explore the vim integration
+        possibilities.
+
+    Slicing - Increase Slicing Quality
+        By increasing precision, we could improve the slicing quality.
 
     VIM Integration
-        The vim integration is also a meager prototype. I'd like to use
-        it and tweak it to make it the most useful integration ever.
+        The vim integration is currently a prototype. I'd like to use it
+        from early on to explore the possibilities.
 
 Credits
 =======

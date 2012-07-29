@@ -7,8 +7,11 @@ class LineDependencyVisitor(ast.NodeVisitor):
     """
     A visitor which creates a data dependency graph.
 
-    Note: I've called it LineDependencyVisitor, as currently it only
-    matters are dependencies between lines of code and their variables.
+    Note: I've called it LineDependencyVisitor, as currently what
+    matters are dependencies between lines of code. This is determined
+    by simply using the occurences of variables in their lines as the
+    graphs edges. This is not very precise, but makes of a nice
+    prototype to play with the vim integration.
     """
 
     def __init__(self):

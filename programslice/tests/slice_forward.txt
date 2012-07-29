@@ -26,6 +26,14 @@ for line 3:
 This tells us, that line 3 is depended on lines 5 and 6 or in other
 words 4 does not interfere with line 3 at all and can be ignored.
 
+Inverted Result
+---------------
+
+If we want to see all lines which are **not depending** on line 3:
+
+>>> slice_vim_buffer(3, program, 'mypogram', invert=True)
+[4]
+
 Shebangs and Encoding declarations
 ==================================
 

@@ -56,7 +56,7 @@ def slice_vim_buffer(currentline, contents, name, invert=False):
     """
     lines = []
     # catch encoding declarations and shebangs
-    head = re.compile(r'#!\/.*\n|#.*coding[:=]\s*(?P<enc>[-\w.]+)')
+    head = re.compile(r'#!\/.*\n|#.*coding[:=]\s*(?P<enc>[-\w.]+).*')
     encoding = (head.match(contents).group('enc')
                 if (head.match(contents) and
                     head.match(contents).group('enc')) else u'utf-8')

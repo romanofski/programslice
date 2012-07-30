@@ -40,6 +40,6 @@ Shebangs and Encoding declarations
 Sometimes programs use encoding declarations, which need to removed
 before the program can be parsed. The slicing will happen nevertheless:
 
->>> program = u'#!/usr/bin/env python\n# coding: utf-8\n{program}'.format(program=program)
+>>> program = u'#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n{program}'.format(program=program)
 >>> slice_vim_buffer(4, program, 'myprogram')
 [4, 6, 7]

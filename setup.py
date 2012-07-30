@@ -18,13 +18,15 @@ Slice programs""",
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          # -*- Extra requirements: -*-
+          'argparse',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       extras_require=dict(
           test=['unittest2',
                ]
-      ),
+          ),
+      entry_points={
+          'console_scripts': [
+              'programslice = programslice:slice_file',
+          ]
+      }
      )

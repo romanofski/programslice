@@ -34,17 +34,11 @@ function! s:ClearProgramSlice()
             call matchdelete(matchId['id'])
         endif
     endfor
-    if exists('b:programslice_matchedlines')
-        unlet b:programslice_matchedlines
-    endif
 endfunction
 
 " Runs the slice from the current line
 function! s:RunProgramSlice()
-    if exists('b:programslice_matchedlines')
-        call s:ClearProgramSlice()
-    endif
-    let b:programslice_matchedlines = {}
+    call s:ClearProgramSlice()
 python << EOF
 
 currentlineno, col = vim.current.window.cursor

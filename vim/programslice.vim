@@ -53,4 +53,4 @@ for line in lines:
 EOF
 endfunction
 
-exe 'command! -buffer -nargs=0 Slice :execute s:RunProgramSlice()'
+exe 'command! -buffer -nargs=0 Slice :call s:RunProgramSlice()'

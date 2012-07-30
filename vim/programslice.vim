@@ -40,7 +40,7 @@ function! s:ClearProgramSlice()
 endfunction
 
 " Runs the slice from the current line
-function! RunProgramSlice()
+function! s:RunProgramSlice()
     if exists('b:programslice_matchedlines')
         call s:ClearProgramSlice()
     endif
@@ -58,3 +58,5 @@ for line in lines:
     vim.command(r"let s:mID = matchadd('ProgramSlice', '\%" + str(line) + r"l\n\@!')")
 EOF
 endfunction
+
+exe 'command! -buffer -nargs=0 Slice :execute s:RunProgramSlice()'

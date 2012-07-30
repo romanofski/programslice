@@ -4,7 +4,7 @@ Slicing Forward
 For example, you're currently writing a very simple python program in
 your current vim session:
 
->>> program = """
+>>> program = u"""
 ... def main():
 ...     foo = 1
 ...     bar = 1

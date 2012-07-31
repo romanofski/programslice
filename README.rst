@@ -17,11 +17,15 @@ How to use it?
 ==============
 
 In it's current state, I'm using symlinks to the programslice and the
-vim script in my .vim/ftplugins/python directory and do a:
+vim script in my .vim/ftplugins/python directory. Use the ex command to
+slice:
 
-    :call RunProgramSlice()
+    :Slice
 
 in a vim session.
+
+You can also use the bin/programslice script, which is generated via
+buildout.
 
 What's it Good For?
 ===================

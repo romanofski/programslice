@@ -43,26 +43,26 @@ def slice_file():
 
     with open(arguments.filename, 'r') as f:
         contents = f.read()
-        lines = slice_vim_buffer(arguments.line, contents,
+        lines = slice_string(arguments.line, contents,
                                  arguments.filename, arguments.invert)
         if lines:
             logger.info("{0}".format(lines))
         sys.exit(0)
 
 
-def slice_vim_buffer(currentline, contents, name, invert=False):
+def slice_string(currentline, string, name, invert=False):
     """
     Utility function which can be used for integrating with vim
     """
     lines = []
     # catch encoding declarations and shebangs
     head = re.compile(r'#!\/.*\n|#.*coding[:=]\s*(?P<enc>[-\w.]+).*')
-    encoding = (head.match(contents).group('enc')
-                if (head.match(contents) and
-                    head.match(contents).group('enc')) else u'utf-8')
-    contents = head.sub('', contents)
+    encoding = (head.match(string).group('enc')
+                if (head.match(string) and
+                    head.match(string).group('enc')) else u'utf-8')
+    string = head.sub('', string)
 
-    node = ast.parse(contents.decode(encoding), name)
+    node = ast.parse(string.decode(encoding), name)
     visitor = programslice.visitor.LineDependencyVisitor()
     visitor.visit(node)
     graph = visitor.get_graph_for(currentline)

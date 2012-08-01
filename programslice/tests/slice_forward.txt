@@ -19,8 +19,8 @@ Suppose you want to see which variables depend on the variable ``foo`` in
 line 3, you'd hand your buffer over to the utility function and slice it
 for line 3:
 
->>> from programslice import slice_vim_buffer
->>> slice_vim_buffer(3, program, 'myprogram')
+>>> from programslice import slice_string
+>>> slice_string(3, program, 'myprogram')
 [3, 5, 6]
 
 This tells us, that line 3 is depended on lines 5 and 6 or in other
@@ -31,7 +31,7 @@ Inverted Result
 
 If we want to see all lines which are **not depending** on line 3:
 
->>> slice_vim_buffer(3, program, 'mypogram', invert=True)
+>>> slice_string(3, program, 'mypogram', invert=True)
 [4]
 
 Shebangs and Encoding declarations
@@ -41,8 +41,8 @@ Sometimes programs use encoding declarations, which need to removed
 before the program can be parsed. The slicing will happen nevertheless:
 
 >>> encprogram = u'#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n{program}'.format(program=program)
->>> slice_vim_buffer(4, encprogram, 'myprogram')
+>>> slice_string(4, encprogram, 'myprogram')
 [4, 6, 7]
 >>> encprogram = u'#!/usr/bin/env python\n#\n# vim: set fileencoding=utf-8 :\n{program}'.format(program=program)
->>> slice_vim_buffer(5, encprogram, 'myprogram')
+>>> slice_string(5, encprogram, 'myprogram')
 [5, 7, 8]

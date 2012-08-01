@@ -26,7 +26,7 @@ execute 'highlight link ProgramSlice ' . g:programslice_dependent_lines
 " Initialize.
 python << EOF
 import vim
-from programslice import slice_vim_buffer
+from programslice import slice_string
 EOF
 
 
@@ -51,7 +51,7 @@ contents = '\n'.join(contents) + '\n'
 vimenc = vim.eval('&encoding')
 if vimenc:
     contents = contents.decode(vimenc)
-lines = slice_vim_buffer(currentlineno, contents, vim.current.buffer.name)
+lines = slice_string(currentlineno, contents, vim.current.buffer.name)
 for line in lines:
     vim.command(r"let s:mID = matchadd('ProgramSlice', '\%" + str(line) + r"l\n\@!')")
 EOF

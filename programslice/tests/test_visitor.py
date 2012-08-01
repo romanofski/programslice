@@ -1,4 +1,3 @@
-from programslice import slice_vim_buffer
 import ast
 import os.path
 import programslice.visitor
@@ -54,13 +53,3 @@ class TestVisitorFunctional(unittest.TestCase):
         self.assertEqual('function1', visitor.get_graph_for(4).name)
         self.assertEqual('function2', visitor.get_graph_for(12).name)
         self.assertEqual(None, visitor.get_graph_for(2))
-
-
-class TestFunctions(unittest.TestCase):
-
-    def test_slice_buffer(self):
-        filepath = os.path.join(os.path.dirname(__file__),
-                                'testdata', 'function.py')
-        buffer = open(filepath, 'r').read()
-        lines = slice_vim_buffer(4, buffer, 'function.py')
-        self.assertEqual([4, 6, 7], lines)

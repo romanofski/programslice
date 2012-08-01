@@ -4,8 +4,14 @@ from collections import deque
 
 class Graph(object):
     """
-    A graph is represents a parsed code fragment visited by a
-    programslice.visitor
+    .. module:: graph
+    .. option:: synopsis
+
+    A graph which represents a function visited by a
+    programslice.visitor. The edges of this graph are the line numbers
+    of the parsed function.
+
+    :param name: A name identifying this graph (e.g. function X)
     """
 
     def __init__(self, name=''):
@@ -22,14 +28,18 @@ class Graph(object):
     @property
     def first(self):
         """
-        Returns the first line number
+        The first line number parsed by this graph.
+
+        :rtype: integer
         """
         return min(self.edges)
 
     @property
     def last(self):
         """
-        Returns the last line number
+        The last line number parsed by this graph.
+
+        :rtype: integer
         """
         return max(self.edges)
 
@@ -38,7 +48,12 @@ class Graph(object):
 
     def slice_forward(self, lineno):
         """
-        A forward slice, which is just a breadth first traversal.
+        A forward slice starting at the given line number.
+
+        :param lineno: A line number from which to calculate
+                       dependent line numbers.
+        :type lineno: integer
+        :rtype: list of integers representing line numbers
         """
         visited = [lineno]
         children = deque(self.graph[lineno])

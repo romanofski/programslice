@@ -13,6 +13,16 @@
 .. include:: vim.rst
 .. include:: ../programslice/tests/slice_forward.txt
 
+API
+===
+
+.. automodule:: programslice
+    :members:
+.. automodule:: programslice.graph
+    :members:
+.. automodule:: programslice.visitor
+    :members:
+
 
 Indices and tables
 ==================

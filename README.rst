@@ -13,18 +13,6 @@ statement. More information can be found here:
 
 I'm not sure how I go with this, as it is new territory for me.
 
-How to use it?
-==============
-
-I'm working on a vim integration. The program provides a command line
-utility `programslice` which can be used to integrate with other editors.
-
-What's it Good For?
-===================
-
-During a debugging session you can concentrate to debug the relevant
-parts and ignore non-depending lines of code.
-
 TODO
 ====
 

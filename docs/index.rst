@@ -10,6 +10,7 @@
    :maxdepth: 2
 
 .. include:: ../README.rst
+.. include:: vim.rst
 .. include:: ../programslice/tests/slice_forward.txt
 
 

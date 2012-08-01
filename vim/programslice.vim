@@ -12,11 +12,15 @@ if exists("g:programslice_ftplugin_loaded")
     finish
 endif
 let g:programslice_ftplugin_loaded = 1
+" The highlight group we link against to mark depending lines
+if !exists('g:programslice_dependent_lines')
+    let g:programslice_dependent_lines = 'WarningMsg'
+endif
 
 " Highlight group.
 " This group is used to highlight the sliced lines, which depend on the
 " starting line.
-execute 'highlight link ProgramSlice SpellBad'
+execute 'highlight link ProgramSlice ' . g:programslice_dependent_lines
 
 
 " Initialize.

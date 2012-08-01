@@ -16,16 +16,8 @@ I'm not sure how I go with this, as it is new territory for me.
 How to use it?
 ==============
 
-In it's current state, I'm using symlinks to the programslice and the
-vim script in my .vim/ftplugins/python directory. Use the ex command to
-slice:
-
-    :Slice
-
-in a vim session.
-
-You can also use the bin/programslice script, which is generated via
-buildout.
+I'm working on a vim integration. The program provides a command line
+utility `programslice` which can be used to integrate with other editors.
 
 What's it Good For?
 ===================

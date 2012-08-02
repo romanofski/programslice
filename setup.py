@@ -26,7 +26,7 @@ Slice programs""",
           ),
       entry_points={
           'console_scripts': [
-              'programslice = programslice:slice_file',
+              'programslice = programslice:command_slice_file',
           ]
       }
      )

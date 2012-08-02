@@ -14,9 +14,10 @@ logger.addHandler(stdout)
 logger.setLevel(logging.INFO)
 
 
-def slice_file():
+def command_slice_file():
     """
-    Command utility to slice a given file
+    Command line utility which can slice a given file and return the
+    depending lines.
     """
     parser = argparse.ArgumentParser(
         description="Static analysis tool to slice python programs")
@@ -50,19 +51,29 @@ def slice_file():
         sys.exit(0)
 
 
-def slice_string(currentline, string, name, invert=False):
+def slice_string(currentline, source, name, invert=False):
     """
-    Utility function which can be used for integrating with vim
+    Slices the given source code from the given currentline.
+
+    :param currentline: A line from which to start the slicing.
+    :type currentline: integer
+    :param source: The source code to parse.
+    :type source: string
+    :param name: filename of the given source code.
+    :type name: string
+    :param invert: Invert the result and return lines which don't depend
+                    on the ``currentline``. Defaults to **False**.
+    :type invert: boolean
     """
     lines = []
     # catch encoding declarations and shebangs
     head = re.compile(r'#!\/.*\n|#.*coding[:=]\s*(?P<enc>[-\w.]+).*')
-    encoding = (head.match(string).group('enc')
-                if (head.match(string) and
-                    head.match(string).group('enc')) else u'utf-8')
-    string = head.sub('', string)
+    encoding = (head.match(source).group('enc')
+                if (head.match(source) and
+                    head.match(source).group('enc')) else u'utf-8')
+    source = head.sub('', source)
 
-    node = ast.parse(string.decode(encoding), name)
+    node = ast.parse(source.decode(encoding), name)
     visitor = programslice.visitor.LineDependencyVisitor()
     visitor.visit(node)
     graph = visitor.get_graph_for(currentline)

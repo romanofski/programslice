@@ -13,6 +13,12 @@ statement. More information can be found here:
 
 I'm not sure how I go with this, as it is new territory for me.
 
+.. note::
+
+    The current implementation does not provide Weiser-style slicing as
+    described on Wikipedia. It is a goal to support it though.
+
+
 TODO
 ====
 

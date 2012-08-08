@@ -20,18 +20,13 @@ endif
 " Highlight group.
 " This group is used to highlight the sliced lines, which depend on the
 " starting line.
+"
 execute 'highlight link ProgramSlice ' . g:programslice_dependent_lines
 
 
-" Initialize.
-python << EOF
-import vim
-from programslice import slice_string
-EOF
-
-
 " Cleares all highlighted lines
-function! s:ClearProgramSlice()
+"
+function! s:clear_slice_matches()
     let matches = getmatches()
     for matchId in matches
         if matchId['group'] == 'ProgramSlice'
@@ -39,11 +34,14 @@ function! s:ClearProgramSlice()
         endif
     endfor
 endfunction
+exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:clear_slice_matches()'
 
 " Runs the slice from the current line
-function! s:RunProgramSlice()
-    call s:ClearProgramSlice()
+"
+function! s:slice_buffer()
 python << EOF
+import vim
+from programslice import slice_string
 
 currentlineno, col = vim.current.window.cursor
 contents = vim.current.buffer[:]
@@ -56,5 +54,4 @@ for line in lines:
     vim.command(r"let s:mID = matchadd('ProgramSlice', '\%" + str(line) + r"l\n\@!')")
 EOF
 endfunction
-
-exe 'command! -buffer -nargs=0 Slice :call s:RunProgramSlice()'
+exe 'command! -buffer -nargs=0 SliceBuffer :call s:slice_buffer()'

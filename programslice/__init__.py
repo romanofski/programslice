@@ -68,12 +68,9 @@ def slice_string(currentline, source, name, invert=False):
     lines = []
     # catch encoding declarations and shebangs
     head = re.compile(r'#!\/.*\n|#.*coding[:=]\s*(?P<enc>[-\w.]+).*')
-    encoding = (head.match(source).group('enc')
-                if (head.match(source) and
-                    head.match(source).group('enc')) else u'utf-8')
     source = head.sub('', source)
 
-    node = ast.parse(source.decode(encoding), name)
+    node = ast.parse(source, name)
     visitor = programslice.visitor.LineDependencyVisitor()
     visitor.visit(node)
     graph = visitor.get_graph_for(currentline)

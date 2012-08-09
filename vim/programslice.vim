@@ -54,4 +54,4 @@ for line in lines:
     vim.command(r"let s:mID = matchadd('ProgramSlice', '\%" + str(line) + r"l\n\@!')")
 EOF
 endfunction
-exe 'command! -buffer -nargs=0 SliceBuffer :call s:slice_buffer()'
+command! -nargs=0 SliceBuffer :call s:slice_buffer()

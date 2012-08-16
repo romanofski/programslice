@@ -37,7 +37,6 @@ def command_slice_file():
               "depending on the given line."),
         action="store_true")
     arguments = parser.parse_args()
-
     if not os.path.exists(arguments.filename):
         logger.error("Can't open {0}.".format(arguments.filename))
         sys.exit(1)
@@ -47,7 +46,7 @@ def command_slice_file():
         lines = slice_string(arguments.line, contents,
                                  arguments.filename, arguments.invert)
         if lines:
-            logger.info("{0}".format(lines))
+            [logger.info("{0}".format(x)) for x in lines]
         sys.exit(0)
 
 

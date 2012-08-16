@@ -47,6 +47,9 @@ function! s:clear_slice_matches()
 endfunction
 exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:clear_slice_matches()'
 
+autocmd CursorMoved <buffer> call s:clear_slice_matches()
+
+
 " Runs the slice from the current line
 "
 function! s:slice_buffer()

@@ -19,7 +19,7 @@ path to the command line utility.
 Slicing
 -------
 
-Use the ex command to slice the current line:
+Use the ex command to slice the current line::
 
     :SliceBuffer
 
@@ -27,22 +27,30 @@ in a vim session. Depending lines will be marked if the slicing is
 successful. If nothing appears, no lines are depending on the current
 cursor line.
 
-Configuration
--------------
+The highlighted lines disappear once you move your cursor again.
+
+(VIM) Configuration
+-------------------
 
 Marker Color
-    You can overwrite the highlight group depending lines are marked:
+    You can overwrite the highlight group depending lines are marked::
 
         let g:programslice_dependent_lines = 'WarningMsg'
 
     A list of possible groups to link against can be obtained in a vim
-    session by:
+    session by::
 
         :highlight
 
 Path to the Command Line Utility
     You may need to set the path to the command line utility manually if
     ``programslice`` is not installed in your ``$PATH``. For example, in
-    your ``vim.rc`` add:
+    your ``vim.rc`` add::
 
         let g:programslice_cmd = "/home/user/programslice/bin/programslice"
+
+Easy Slicing
+    You can bind the slicing to a function key if you want which
+    executes the ``:SliceBuffer`` command automatically on keypress::
+
+        map <F9> :SliceBuffer<CR>

@@ -12,9 +12,20 @@ if exists("g:programslice_ftplugin_loaded")
     finish
 endif
 let g:programslice_ftplugin_loaded = 1
+
 " The highlight group we link against to mark depending lines
 if !exists('g:programslice_dependent_lines')
     let g:programslice_dependent_lines = 'WarningMsg'
+endif
+
+" Define the path to the programslice command
+if !exists('g:programslice_cmd')
+    let g:programslice_cmd = "programslice"
+endif
+if !executable(g:programslice_cmd)
+    echoerr "Can't find the `programslice` command in the current $PATH."
+    echoerr "You may need to adjust the g:programslice_cmd in your .vimrc"
+    finish
 endif
 
 " Highlight group.
@@ -41,15 +52,16 @@ exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:clear_slice_matches()'
 function! s:slice_buffer()
 python << EOF
 import vim
-from programslice import slice_string
+from programslice import glue
 
+cmd = vim.eval('string(g:programslice_cmd)')
 currentlineno, col = vim.current.window.cursor
 contents = vim.current.buffer[:]
 contents = '\n'.join(contents) + '\n'
 vimenc = vim.eval('&encoding')
 if vimenc:
     contents = contents.decode(vimenc)
-lines = slice_string(currentlineno, contents, vim.current.buffer.name)
+lines = glue(cmd, contents, currentlineno)
 for line in lines:
     vim.command(r"let s:mID = matchadd('ProgramSlice', '\%" + str(line) + r"l\n\@!')")
 EOF

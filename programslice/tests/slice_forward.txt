@@ -1,8 +1,18 @@
-Slicing Forward
-===============
+Slicing
+=======
 
-For example, you're currently writing a very simple python program in
-your current vim session:
+The definition of slicing is split into forward and backwards slicing:
+using both methods together and we get a full slice. Currently only
+forward slicing is implemented which returns all line numbers depending
+on the current line number.
+
+..  note:: Weiser style slicing defines a slice criterion with a
+    statement and a subset of variables. This is currently not supported.
+
+Slicing Forward
+---------------
+
+Given a simple program:
 
 >>> program = u"""
 ... def main():
@@ -15,27 +25,23 @@ your current vim session:
 ...     main()
 ... """
 
-Suppose you want to see which variables depend on the variable ``foo`` in
-line 3, you'd hand your buffer over to the utility function and slice it
-for line 3:
+To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 
 >>> from programslice import slice_string
 >>> slice_string(3, program, 'myprogram')
 [3, 5, 6]
 
-This tells us, that line 3 is depended on lines 5 and 6 or in other
-words 4 does not interfere with line 3 at all and can be ignored.
-
 Inverted Result
 ---------------
 
-If we want to see all lines which are **not depending** on line 3:
+If we want to see all lines which **not depend** on line 3 set
+``invert=True``:
 
 >>> slice_string(3, program, 'mypogram', invert=True)
 [4]
 
 Shebangs and Encoding declarations
-==================================
+----------------------------------
 
 Sometimes programs use encoding declarations, which need to removed
 before the program can be parsed. The slicing will happen nevertheless:

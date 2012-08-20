@@ -20,12 +20,19 @@ Disclaimer
 An educational project of mine. I'm not sure how I go with this, as it
 is new territory for me.
 
-TODO
-====
+Development
+===========
 
 The project is hosted on github:
 
     https://github.com/romanofski/programslice
+
+Documentation is available on:
+
+    http://programslice.readthedocs.org/
+
+TODO
+----
 
 The current implementation is a prototype in every direction.
 
@@ -64,3 +71,7 @@ This work would not be possible without:
 
     * Wikipedia
       http://en.wikipedia.org/wiki/Program_slicing
+
+    * VIM plug-ins: Muraoka Yusuke for pep8.vim, Kevin Watters for
+      pychecker.vim and Tim Pope for fugitive.vim
+

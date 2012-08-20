@@ -1,8 +1,5 @@
-==============
- Programslice
-==============
-
-Static analysis tool for python programs.
+Summary
+=======
 
 An educational project of mine. The goal is to be able to slice
 programs. Given a statement, I'd like to forward, or backward slice a
@@ -22,7 +19,7 @@ I'm not sure how I go with this, as it is new territory for me.
 TODO
 ====
 
-The current implementation is a prototype in every direction:
+The current implementation is a prototype in every direction.
 
     Slicing - Increase Precision
         The slicing is currently very dumb. It builds a graph based on
@@ -36,6 +33,10 @@ The current implementation is a prototype in every direction:
     VIM Integration
         The vim integration is currently a prototype. I'd like to use it
         from early on to explore the possibilities.
+
+You can find the issue tracker on github:
+
+    https://github.com/romanofski/programslice/issues
 
 Credits
 =======

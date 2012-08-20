@@ -6,25 +6,21 @@
 ..  moduleauthor:: Róman Joost <roman@bromeco.de>
 ..  default-domain:: py
 
-.. toctree::
-   :maxdepth: 2
+==============
+ Programslice
+==============
+
+Static analysis tool for python programs.
 
 .. include:: ../README.rst
-.. include:: vim.rst
-.. include:: ../programslice/tests/slice_forward.txt
 
-API
-===
+.. toctree::
+   :maxdepth: 2
+   :hidden:
 
-.. automodule:: vim.programslice
-    :members:
-.. automodule:: programslice
-    :members:
-.. automodule:: programslice.graph
-    :members:
-.. automodule:: programslice.visitor
-    :members:
-
+   intro
+   vim
+   api
 
 Indices and tables
 ==================

@@ -7,9 +7,8 @@ version = '0.1'
 setup(name='programslice',
       version=version,
       description="Static analysis tool for python",
-      long_description="""\
-Slice programs""",
-      keywords='',
+      long_description=open('README.rst', 'r').read(),
+      keywords='static analysis',
       author=u'Róman Joost',
       author_email='roman@bromeco.de',
       url='https://github.com/romanofski/programslice',

@@ -1,3 +1,5 @@
+..  _vim-integration:
+
 VIM Integration
 ===============
 

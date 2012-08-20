@@ -1,23 +1,31 @@
-Summary
-=======
+Motivation
+==========
 
-An educational project of mine. The goal is to be able to slice
-programs. Given a statement, I'd like to forward, or backward slice a
-python program and see what statements are affected by the given
-statement. More information can be found here:
+I would like to see what statements depend on a given statement. For
+debugging it is sometimes very helpful to focus on the **important**
+parts of a program.
+
+More information can be found here:
 
     http://en.wikipedia.org/wiki/Program_slicing
-
-I'm not sure how I go with this, as it is new territory for me.
 
 .. note::
 
     The current implementation does not provide Weiser-style slicing as
     described on Wikipedia. It is a goal to support it though.
 
+Disclaimer
+----------
+
+An educational project of mine. I'm not sure how I go with this, as it
+is new territory for me.
 
 TODO
 ====
+
+The project is hosted on github:
+
+    https://github.com/romanofski/programslice
 
 The current implementation is a prototype in every direction.
 
@@ -32,11 +40,9 @@ The current implementation is a prototype in every direction.
 
     VIM Integration
         The vim integration is currently a prototype. I'd like to use it
-        from early on to explore the possibilities.
+        from early on to explore the possibilities. Please see
+        :ref:`vim-integration` for more details.
 
-You can find the issue tracker on github:
-
-    https://github.com/romanofski/programslice/issues
 
 Credits
 =======

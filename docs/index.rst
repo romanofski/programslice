@@ -10,7 +10,7 @@
  Programslice
 ==============
 
-Static analysis tool for python programs.
+Static analysis tool for python programs to see depending code lines.
 
 .. include:: ../README.rst
 

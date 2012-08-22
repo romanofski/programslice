@@ -21,7 +21,8 @@ path to the command line utility.
 Slicing
 -------
 
-Use the ex command to slice the current line::
+Use the ex command to slice the current line in a buffer with Python
+code::
 
     :SliceBuffer
 

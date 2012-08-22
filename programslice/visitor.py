@@ -7,11 +7,11 @@ class LineDependencyVisitor(ast.NodeVisitor):
     """
     A visitor which creates a data dependency graph.
 
-    Note: I've called it LineDependencyVisitor, as currently what
-    matters are dependencies between lines of code. This is determined
-    by simply using the occurences of variables in their lines as the
-    graphs edges. This is not very precise, but makes of a nice
-    prototype to play with the vim integration.
+    .. note:: I've called it LineDependencyVisitor, as currently what
+        matters are dependencies between lines of code. This is
+        determined by simply using the occurences of variables in their
+        lines as the graphs edges. This is not very precise, but makes
+        of a nice prototype to play with the vim integration.
     """
 
     def __init__(self):
@@ -22,7 +22,7 @@ class LineDependencyVisitor(ast.NodeVisitor):
 
     def get_graph_for(self, lineno):
         """
-        Returns a graph, which visited the given lineno
+        Returns a :mod:`graph`, which visited the given lineno
         """
         for graph in self.graphs:
             if lineno >= graph.first and lineno <= graph.last:

@@ -55,14 +55,14 @@ def slice_string(currentline, source, name, invert=False):
     Slices the given source code from the given currentline.
 
     :param currentline: A line from which to start the slicing.
-    :type currentline: integer
+    :type currentline: int
     :param source: The source code to parse.
     :type source: string
     :param name: filename of the given source code.
     :type name: string
     :param invert: Invert the result and return lines which don't depend
                     on the ``currentline``. Defaults to **False**.
-    :type invert: boolean
+    :type invert: bool
     """
     lines = []
     # catch encoding declarations and shebangs

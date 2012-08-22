@@ -12,6 +12,7 @@ class Graph(object):
     of the parsed function.
 
     :param name: A name identifying this graph (e.g. function X)
+    :type name: string
     """
 
     def __init__(self, name=''):
@@ -30,7 +31,7 @@ class Graph(object):
         """
         The first line number parsed by this graph.
 
-        :rtype: integer
+        :rtype: int
         """
         return min(self.edges)
 
@@ -39,7 +40,7 @@ class Graph(object):
         """
         The last line number parsed by this graph.
 
-        :rtype: integer
+        :rtype: int
         """
         return max(self.edges)
 
@@ -52,7 +53,7 @@ class Graph(object):
 
         :param lineno: A line number from which to calculate
                        dependent line numbers.
-        :type lineno: integer
+        :type lineno: int
         :rtype: list of integers representing line numbers
         """
         visited = [lineno]

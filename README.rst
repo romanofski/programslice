@@ -75,3 +75,4 @@ This work would not be possible without:
     * VIM plug-ins: Muraoka Yusuke for pep8.vim, Kevin Watters for
       pychecker.vim and Tim Pope for fugitive.vim
 
+.. include:: CHANGES.rst

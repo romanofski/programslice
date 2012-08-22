@@ -12,15 +12,15 @@
 
 Static analysis tool for python programs to see depending lines of code.
 
-.. include:: ../README.rst
-
 .. toctree::
    :maxdepth: 2
-   :hidden:
 
    intro
    vim
    api
+
+
+.. include:: ../README.rst
 
 Indices and tables
 ==================

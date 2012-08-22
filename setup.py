@@ -1,14 +1,23 @@
 # coding: utf-8
 from setuptools import setup, find_packages
-import sys, os
 
 version = '0.1'
 
 setup(name='programslice',
       version=version,
-      description="Static analysis tool for python",
-      long_description=open('README.rst', 'r').read(),
+      description='Static analysis tool for python',
+      long_description=(
+          open('README.rst').read() + '\n\n' +
+          open('docs/CHANGES.rst').read()
+      ),
       keywords='static analysis',
+      classifiers=[
+          'Environment :: Console',
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: GNU General Public License (GPL)',
+          'Programming Language :: Python',
+          'Topic :: Software Development',
+      ],
       author=u'Róman Joost',
       author_email='roman@bromeco.de',
       url='https://github.com/romanofski/programslice',

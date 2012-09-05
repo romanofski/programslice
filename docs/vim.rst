@@ -56,8 +56,6 @@ Path to the Command Line Utility
         let g:programslice_cmd = "/home/user/programslice/bin/programslice"
 
 Toggle Slicing
-    You can bind the slicing to a function key if you want which
-    executes the ``:SliceBuffer`` command automatically on keypress and
-    toggle the highlight::
+    You can bind the slicing to a function key if you want::
 
         map <F9> :ToggleSliceBuffer<CR>

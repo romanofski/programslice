@@ -47,9 +47,6 @@ function! s:clear_slice_matches()
 endfunction
 exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:clear_slice_matches()'
 
-autocmd CursorMoved <buffer> call s:clear_slice_matches()
-
-
 " Runs the slice from the current line
 "
 function! s:slice_buffer()
@@ -70,3 +67,32 @@ for line in lines:
 EOF
 endfunction
 command! -nargs=0 SliceBuffer :call s:slice_buffer()
+
+
+" Helper methods
+"
+
+" Returns a positive integer if the current buffer is sliced.
+"
+function! s:is_sliced()
+    let matches = getmatches()
+    let is_highlighted = 0
+    for matchId in matches
+        if matchId['group'] == 'ProgramSlice'
+            let is_highlighted = 1
+            break
+        endif
+    endfor
+    return is_highlighted
+endfunction
+
+function! s:toggle_slice()
+    let is_highlighted = s:is_sliced()
+
+    if is_highlighted == 1
+        call s:clear_slice_matches()
+    else
+        call s:slice_buffer()
+    endif
+endfunction
+command! -nargs=0 ToggleSliceBuffer :call s:toggle_slice()

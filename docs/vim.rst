@@ -30,7 +30,10 @@ in a vim session. Depending lines will be marked if the slicing is
 successful. If nothing appears, no lines are depending on the current
 cursor line.
 
-The highlighted lines disappear once you move your cursor again.
+You can also toggle the slicing with::
+
+    :ToggleSliceBuffer
+
 
 (VIM) Configuration
 -------------------
@@ -52,8 +55,9 @@ Path to the Command Line Utility
 
         let g:programslice_cmd = "/home/user/programslice/bin/programslice"
 
-Easy Slicing
+Toggle Slicing
     You can bind the slicing to a function key if you want which
-    executes the ``:SliceBuffer`` command automatically on keypress::
+    executes the ``:SliceBuffer`` command automatically on keypress and
+    toggle the highlight::
 
-        map <F9> :SliceBuffer<CR>
+        map <F9> :ToggleSliceBuffer<CR>

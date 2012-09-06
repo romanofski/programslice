@@ -31,6 +31,10 @@ Documentation is available on:
 
     http://programslice.readthedocs.org/
 
+Screenshots are at:
+
+    http://programslice.readthedocs.org/en/latest/screenshots.html
+
 TODO
 ----
 

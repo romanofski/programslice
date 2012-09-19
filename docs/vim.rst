@@ -58,4 +58,4 @@ Path to the Command Line Utility
 Toggle Slicing
     You can bind the slicing to a function key if you want::
 
-        map <F9> :ToggleSliceBuffer<CR>
+        autocmd FileType python map <F9> :ToggleSliceBuffer<CR>

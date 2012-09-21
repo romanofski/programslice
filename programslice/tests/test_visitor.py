@@ -18,11 +18,11 @@ class TestLineDependencyVisitor(unittest.TestCase):
     def test_visit_FunctionDef(self):
         node = self.load_testdata('function.py')
         self.visitor.visit(node)
-        graph1, graph2 = self.visitor.graphs
-        self.assertEqual(2, len(self.visitor.graphs))
-        self.assertEqual('function innerfunc:2', graph1.name)
-        self.assertEqual('function main:1', graph2.name)
-        self.assertEqual([4, 6, 7], graph2.slice_forward(4))
+        graph1, graph2 = self.visitor.graphs[2:]
+        self.assertEqual(4, len(self.visitor.graphs))
+        self.assertEqual('function innerfunc:12', graph1.name)
+        self.assertEqual('function main:11', graph2.name)
+        self.assertEqual([14, 16, 17], graph2.slice_forward(14))
 
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')

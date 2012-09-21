@@ -1,3 +1,13 @@
+def func1():
+    n = 1
+    n = func2(n)
+    return n
+
+
+def func2(i):
+    return i + 1
+
+
 def main():
     def innerfunc(n):
         return n + 1

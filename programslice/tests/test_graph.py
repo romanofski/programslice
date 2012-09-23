@@ -61,3 +61,18 @@ class TestGraph(unittest.TestCase):
 
         result = self.graph.slice_forward(2)
         self.assertEqual([2, 3, 4, 5, 7, 8, 11], result)
+
+    def test_slice_with_graph(self):
+        graph2 = Graph()
+        graph2.add(4)
+        graph2.add(5)
+        graph2.add(6)
+        graph2.connect(4, 6)
+
+        self.graph.add(3)
+        self.graph.add(4)
+        self.graph.add(graph2)
+        self.graph.connect(4, graph2)
+
+        result = self.graph.slice_forward(4)
+        self.assertEqual([4, 4, 6], result)

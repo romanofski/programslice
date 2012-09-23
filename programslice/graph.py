@@ -61,7 +61,10 @@ class Graph(object):
 
         while children:
             lineno = children.popleft()
-            if lineno not in visited:
+            if isinstance(lineno, Graph) and lineno not in visited:
+                visited.extend(
+                    lineno.slice_forward(lineno.first))
+            elif lineno not in visited:
                 children.extend(deque(self.graph[lineno]))
                 visited.append(lineno)
 

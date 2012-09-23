@@ -68,7 +68,13 @@ class Graph(object):
                 children.extend(deque(self.graph[lineno]))
                 visited.append(lineno)
 
-        return sorted(visited)  # XXX perhaps not needed
+        # remove duplicates. This is not very performant. We concentrate
+        # on performance later.
+        visited = list(set(visited))
+
+        # XXX the sorting defies the whole purpose of traversing first
+        # I don't even think it matters really.
+        return sorted(visited)
 
     def __len__(self):
         return len(self.graph)

@@ -67,7 +67,8 @@ class TestGraph(unittest.TestCase):
         graph2.add(4)
         graph2.add(5)
         graph2.add(6)
-        graph2.connect(4, 6)
+        graph2.connect(4, 5)
+        graph2.connect(5, 6)
 
         self.graph.add(3)
         self.graph.add(4)
@@ -75,4 +76,4 @@ class TestGraph(unittest.TestCase):
         self.graph.connect(4, graph2)
 
         result = self.graph.slice_forward(4)
-        self.assertEqual([4, 4, 6], result)
+        self.assertEqual([4, 5, 6], result)

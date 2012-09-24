@@ -38,7 +38,7 @@ If we want to see all lines which **not depend** on line 3 set
 ``invert=True``:
 
 >>> slice_string(3, program, 'mypogram', invert=True)
-[4]
+[2, 4]
 
 Shebangs and Encoding declarations
 ----------------------------------

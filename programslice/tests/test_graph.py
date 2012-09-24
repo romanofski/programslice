@@ -5,7 +5,10 @@ import unittest2 as unittest
 class TestGraph(unittest.TestCase):
 
     def setUp(self):
-        self.graph = Graph()
+        self.graph = Graph('foo')
+
+    def test_repr(self):
+        self.assertEqual('<Graph foo>', repr(self.graph))
 
     def test_first_last(self):
         self.graph.add(3)

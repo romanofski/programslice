@@ -19,6 +19,9 @@ class Graph(object):
         self.name = name
         self.graph = OrderedDict()
 
+    def __repr__(self):
+        return '<{0} {1}>'.format(self.__class__.__name__, self.name)
+
     def add(self, lineno):
         self.graph.setdefault(lineno, [])
 

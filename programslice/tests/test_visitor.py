@@ -22,13 +22,13 @@ class TestLineDependencyVisitor(unittest.TestCase):
         self.assertEqual(4, len(self.visitor.graphs))
         self.assertEqual('main', graph1.name)
         self.assertEqual('innerfunc', graph2.name)
-        self.assertEqual([14, 16, 17], graph2.slice_forward(14))
+        self.assertEqual([17, 19, 20], graph2.slice_forward(17))
 
     def test_visit_Call(self):
         node = self.load_testdata('function.py')
         self.visitor.visit(node)
         graph = self.visitor.graphs[0]
-        self.assertEqual([2, 3, 4, 7, 8], graph.slice_forward(2))
+        self.assertEqual([5, 6, 7, 10, 11], graph.slice_forward(5))
 
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')

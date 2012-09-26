@@ -38,7 +38,8 @@ class LineDependencyVisitor(ast.NodeVisitor):
         self.reset()
 
     def visit_Call(self, node):
-        self.calls.setdefault(node.func.id, node.lineno)
+        if isinstance(node.func, ast.Name):
+            self.calls.setdefault(node.func.id, node.lineno)
         [self.visit(x) for x in ast.iter_child_nodes(node)]
 
     def visit_Name(self, node):

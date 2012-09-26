@@ -1,3 +1,6 @@
+import itertools
+
+
 def func1():
     n = 1
     n = func2(n)
@@ -5,7 +8,7 @@ def func1():
 
 
 def func2(i):
-    return i + 1
+    return itertools.count(i + 1)
 
 
 def main():

@@ -56,16 +56,21 @@ before the program can be parsed. The slicing will happen nevertheless:
 Text Output
 -----------
 
-Instead of returning line numbers, we can filter the buffer as well:
+Instead of returning line numbers, we can filter the buffer as well. The
+`slice_string` function can be given a custom formatter class. It
+defaults to :py:class:`LineFormatter` to just render the line numbers:
 
->>> from programslice import slice_string_with_output
->>> print slice_string_with_output(4, program, 'myprogram')
+>>> from programslice.formatter import TextOutputFormatter
+>>> result = slice_string(4, program, 'myprogram', formatter=TextOutputFormatter)
+>>> print u'\n'.join(result)
 bar = 1
 baz = foo + bar
 print baz
 
 The text output an also be inverted:
 
->>> print slice_string_with_output(4, program, 'myprogram', invert=True)
+>>> result = slice_string(
+...     4, program, 'myprogram', invert=True, formatter=TextOutputFormatter)
+>>> print u'\n'.join(result)
 def main():
     foo = 1

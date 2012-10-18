@@ -21,3 +21,8 @@ Visitor
 .. automodule:: programslice.visitor
     :members:
 
+Formatter
+---------
+
+.. automodule:: programslice.formatter
+    :members:

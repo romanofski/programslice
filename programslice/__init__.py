@@ -37,15 +37,28 @@ def command_slice_file():
         help=('Invert the result: return all lines which are not '
               'depending on the given line.'),
         action='store_true')
+    parser.add_argument(
+        '-o',
+        '--output',
+        dest='output',
+        default='linenumbers',
+        help=('Choose an output: linenumbers (default), text.'),
+        type=str)
     arguments = parser.parse_args()
     if not os.path.exists(arguments.filename):
         logger.error("Can't open {0}.".format(arguments.filename))
         sys.exit(1)
 
+    formatter = (programslice.formatter.TextOutputFormatter
+              if arguments.output.startswith('text')
+              else programslice.formatter.LineFormatter)
     with open(arguments.filename, 'r') as f:
         contents = f.read()
-        lines = slice_string(arguments.line, contents,
-                                 arguments.filename, arguments.invert)
+        lines = slice_string(arguments.line,
+                             contents,
+                             arguments.filename,
+                             arguments.invert,
+                             formatter)
         if lines:
             [logger.info('{0}'.format(x)) for x in lines]
         sys.exit(0)
@@ -65,6 +78,10 @@ def slice_string(currentline, source, name, invert=False,
     :param invert: Invert the result and return lines which don't depend
                     on the ``currentline``. Defaults to **False**.
     :type invert: bool
+    :param formatter: Formatter class to format the slice result.
+                        Defaults to LineFormatter which only outputs the
+                        line numbers.
+    :type formatter: class
     """
     lines = []
     # catch encoding declarations and shebangs
@@ -80,8 +97,3 @@ def slice_string(currentline, source, name, invert=False,
         inverted = set(range(graph.first, graph.last + 1)) - set(lines)
     result = list(inverted) if invert else lines
     return formatter(result, source)()
-
-
-def slice_string_with_output(currentline, source, name, invert=False):
-    return slice_string(currentline, source, name, invert,
-                        programslice.formatter.TextOutputFormatter)

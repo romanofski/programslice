@@ -21,22 +21,22 @@ def command_slice_file():
     depending lines.
     """
     parser = argparse.ArgumentParser(
-        description="Static analysis tool to slice python programs")
+        description='Static analysis tool to slice python programs')
     parser.add_argument(
-        "filename",
-        help=("Path to a file to be sliced"),
+        'filename',
+        help=('Path to a file to be sliced'),
         type=str)
     parser.add_argument(
-        "line",
-        help=("The line to slice."),
+        'line',
+        help=('The line to slice.'),
         type=int)
     parser.add_argument(
-        "-i",
-        "--invert",
+        '-i',
+        '--invert',
         dest='invert',
-        help=("Invert the result: return all lines which are not "
-              "depending on the given line."),
-        action="store_true")
+        help=('Invert the result: return all lines which are not '
+              'depending on the given line.'),
+        action='store_true')
     arguments = parser.parse_args()
     if not os.path.exists(arguments.filename):
         logger.error("Can't open {0}.".format(arguments.filename))
@@ -47,7 +47,7 @@ def command_slice_file():
         lines = slice_string(arguments.line, contents,
                                  arguments.filename, arguments.invert)
         if lines:
-            [logger.info("{0}".format(x)) for x in lines]
+            [logger.info('{0}'.format(x)) for x in lines]
         sys.exit(0)
 
 

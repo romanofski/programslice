@@ -80,3 +80,8 @@ def slice_string(currentline, source, name, invert=False,
         inverted = set(range(graph.first, graph.last + 1)) - set(lines)
     result = list(inverted) if invert else lines
     return formatter(result, source)()
+
+
+def slice_string_with_output(currentline, source, name, invert=False):
+    return slice_string(currentline, source, name, invert,
+                        programslice.formatter.TextOutputFormatter)

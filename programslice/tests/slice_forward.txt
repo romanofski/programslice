@@ -52,3 +52,20 @@ before the program can be parsed. The slicing will happen nevertheless:
 >>> encprogram = u'#!/usr/bin/env python\n#\n# vim: set fileencoding=utf-8 :\n{program}'.format(program=program)
 >>> slice_string(5, encprogram, 'myprogram')
 [5, 7, 8]
+
+Text Output
+-----------
+
+Instead of returning line numbers, we can filter the buffer as well:
+
+>>> from programslice import slice_string_with_output
+>>> print slice_string_with_output(4, program, 'myprogram')
+bar = 1
+baz = foo + bar
+print baz
+
+The text output an also be inverted:
+
+>>> print slice_string_with_output(4, program, 'myprogram', invert=True)
+def main():
+    foo = 1

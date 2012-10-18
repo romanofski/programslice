@@ -2,6 +2,7 @@ import argparse
 import ast
 import logging
 import os.path
+import programslice.formatter
 import programslice.visitor
 import re
 import sys
@@ -50,7 +51,8 @@ def command_slice_file():
         sys.exit(0)
 
 
-def slice_string(currentline, source, name, invert=False):
+def slice_string(currentline, source, name, invert=False,
+                 formatter=programslice.formatter.LineFormatter):
     """
     Slices the given source code from the given currentline.
 
@@ -76,4 +78,5 @@ def slice_string(currentline, source, name, invert=False):
     if graph:
         lines = graph.slice_forward(currentline)
         inverted = set(range(graph.first, graph.last + 1)) - set(lines)
-    return list(inverted) if invert else lines
+    result = list(inverted) if invert else lines
+    return formatter(result, source)()

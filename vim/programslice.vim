@@ -47,30 +47,41 @@ function! s:clear_slice_matches()
 endfunction
 exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:clear_slice_matches()'
 
+" Simple slice which only highlights line numbers.
+"
+function! s:highlight_line_numbers()
+    let lines = s:slice_buffer('linenumbers')
+    for line in lines
+        let lineno = join(['\%', line, 'l\n\@!'], '')
+        let mID = matchadd('ProgramSlice', lineno)
+    endfor
+endfunction
+command! -nargs=0 SliceBuffer :call s:highlight_line_numbers()
+
+" Helper methods
+"
+
 " Runs the slice from the current line
 "
-function! s:slice_buffer()
+function! s:slice_buffer(output)
 python << EOF
 import vim
 from programslice import glue
 
 cmd = vim.eval('string(g:programslice_cmd)')
+splitview = vim.eval('string(a:output)')
 currentlineno, col = vim.current.window.cursor
 contents = vim.current.buffer[:]
 contents = '\n'.join(contents) + '\n'
 vimenc = vim.eval('&encoding')
 if vimenc:
     contents = contents.decode(vimenc)
-lines = glue(cmd, contents, currentlineno)
-for line in lines:
-    vim.command(r"let s:mID = matchadd('ProgramSlice', '\%" + str(line) + r"l\n\@!')")
+result = glue(cmd, contents, currentlineno)
+vim.command('let result = %s' % result)
 EOF
+return result
 endfunction
-command! -nargs=0 SliceBuffer :call s:slice_buffer()
 
-
-" Helper methods
-"
 
 " Returns a positive integer if the current buffer is sliced.
 "
@@ -92,7 +103,7 @@ function! s:toggle_slice()
     if is_highlighted == 1
         call s:clear_slice_matches()
     else
-        call s:slice_buffer()
+        call s:highlight_line_numbers()
     endif
 endfunction
 command! -nargs=0 ToggleSliceBuffer :call s:toggle_slice()

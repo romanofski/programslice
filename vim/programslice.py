@@ -8,7 +8,7 @@ import re
 import tempfile
 
 
-def glue(cmd, data, lineno):
+def glue(cmd, data, lineno, **kwargs):
     """Glue function to write the current buffer contents into a
     temporary file, slice it and hand the results back to vim.
 
@@ -47,8 +47,10 @@ def glue(cmd, data, lineno):
     finally:
         os.close(temp_file_fd)
 
-    cmd = '{cmd} {tempfilepath} {lineno}'.format(
-        cmd=cmd, lineno=lineno, tempfilepath=temp_file_path)
+    output = kwargs.get('output', 'linenumbers')
+    cmd = '{cmd} {tempfilepath} {lineno} -o {output}'.format(
+        cmd=cmd, lineno=lineno, tempfilepath=temp_file_path,
+        output=output)
 
     try:
         p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)

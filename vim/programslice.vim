@@ -69,14 +69,14 @@ import vim
 from programslice import glue
 
 cmd = vim.eval('string(g:programslice_cmd)')
-splitview = vim.eval('string(a:output)')
+output = vim.eval('string(a:output)')
 currentlineno, col = vim.current.window.cursor
 contents = vim.current.buffer[:]
 contents = '\n'.join(contents) + '\n'
 vimenc = vim.eval('&encoding')
 if vimenc:
     contents = contents.decode(vimenc)
-result = glue(cmd, contents, currentlineno)
+result = glue(cmd, contents, currentlineno, output=output)
 vim.command('let result = %s' % result)
 EOF
 return result

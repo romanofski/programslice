@@ -37,7 +37,7 @@ execute 'highlight link ProgramSlice ' . g:programslice_dependent_lines
 
 " Cleares all highlighted lines
 "
-function! s:clear_slice_matches()
+function! s:ClearSliceMatches()
     let matches = getmatches()
     for matchId in matches
         if matchId['group'] == 'ProgramSlice'
@@ -45,25 +45,25 @@ function! s:clear_slice_matches()
         endif
     endfor
 endfunction
-exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:clear_slice_matches()'
+exe 'command! -buffer -nargs=0 ClearSliceMatches :call s:ClearSliceMatches()'
 
 " Simple slice which only highlights line numbers.
 "
-function! s:highlight_line_numbers()
-    let lines = s:slice_buffer('linenumbers')
+function! s:HighlightLineNumbers()
+    let lines = s:SliceBuffer('linenumbers')
     for line in lines
         let lineno = join(['\%', line, 'l\n\@!'], '')
         let mID = matchadd('ProgramSlice', lineno)
     endfor
 endfunction
-command! -nargs=0 SliceBuffer :call s:highlight_line_numbers()
+command! -nargs=0 SliceBuffer :call s:HighlightLineNumbers()
 
 " Helper methods
 "
 
 " Runs the slice from the current line
 "
-function! s:slice_buffer(output)
+function! s:SliceBuffer(output)
 python << EOF
 import vim
 from programslice import glue
@@ -85,7 +85,7 @@ endfunction
 
 " Returns a positive integer if the current buffer is sliced.
 "
-function! s:is_sliced()
+function! s:IsSliced()
     let matches = getmatches()
     let is_highlighted = 0
     for matchId in matches
@@ -97,13 +97,13 @@ function! s:is_sliced()
     return is_highlighted
 endfunction
 
-function! s:toggle_slice()
-    let is_highlighted = s:is_sliced()
+function! s:ToggleSlice()
+    let is_highlighted = s:IsSliced()
 
     if is_highlighted == 1
-        call s:clear_slice_matches()
+        call s:ClearSliceMatches()
     else
-        call s:highlight_line_numbers()
+        call s:HighlightLineNumbers()
     endif
 endfunction
-command! -nargs=0 ToggleSliceBuffer :call s:toggle_slice()
+command! -nargs=0 ToggleSliceBuffer :call s:ToggleSlice()

@@ -59,6 +59,9 @@ class Graph(object):
         :type lineno: int
         :rtype: list of integers representing line numbers
         """
+        if not lineno in self.graph:
+            return []
+
         visited = [lineno]
         children = deque(self.graph[lineno])
 

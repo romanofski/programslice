@@ -63,7 +63,15 @@ class TestGraph(unittest.TestCase):
         self.graph.connect(8, 7)
 
         result = self.graph.slice_forward(2)
-        self.assertEqual([2, 3, 4, 5, 7, 8, 11], result)
+        expected = [2, 3, 4, 5, 7, 8, 11]
+        self.assertEqual(expected, result)
+
+        result = self.graph.slice_backward(11)
+        expected.reverse()
+        self.assertEqual(expected, result)
+
+        result = self.graph.slice_backward(5)
+        self.assertListEqual([5, 4, 3, 2], result)
 
     def test_slice_with_graph(self):
         graph2 = Graph()

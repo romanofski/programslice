@@ -79,6 +79,17 @@ class Graph(object):
         # I don't even think it matters really.
         return sorted(visited)
 
+    def slice_backward(self, lineno):
+        """ Slices backwards with a great performance impact."""
+        # This shows the difference between an acceptable and a working
+        # solution. Even though this works, it's not acceptable.
+        for i in range(self.first, lineno):
+            result = self.slice_forward(i)
+            if lineno in result:
+                result = result[:result.index(lineno) + 1]
+                result.reverse()
+                return result
+
     def __len__(self):
         return len(self.graph)
 

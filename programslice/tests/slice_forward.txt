@@ -2,15 +2,23 @@ Slicing
 =======
 
 The definition of slicing is split into forward and backwards slicing:
-using both methods together and we get a full slice. Currently only
-forward slicing is implemented which returns all line numbers depending
-on the current line number.
+using both methods together and we get a full slice.
+
+    * forward slicing is a top to bottom aproach: take the first line
+      number and traverse all connecting line numbers (children)
+
+    * backwards slicing is a bottom top aproach and the traversing
+      happens in the reverse order.
+
+This means, forward slicing will give you a bad result if you slice from
+the last couple of lines in a program and the backwards slicing vice
+versa.
 
 ..  note:: Weiser style slicing defines a slice criterion with a
     statement and a subset of variables. This is currently not supported.
 
-Slicing Forward
----------------
+Slicing
+-------
 
 Given a simple program:
 
@@ -30,6 +38,8 @@ To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 >>> from programslice import slice_string
 >>> slice_string(3, program, 'myprogram')
 [3, 5, 6]
+>>> slice_string(6, program, 'myprogram')
+[3, 5, 6]
 
 Inverted Result
 ---------------
@@ -39,6 +49,7 @@ If we want to see all lines which **not depend** on line 3 set
 
 >>> slice_string(3, program, 'mypogram', invert=True)
 [2, 4]
+
 
 Shebangs and Encoding declarations
 ----------------------------------
@@ -51,7 +62,7 @@ before the program can be parsed. The slicing will happen nevertheless:
 [4, 6, 7]
 >>> encprogram = u'#!/usr/bin/env python\n#\n# vim: set fileencoding=utf-8 :\n{program}'.format(program=program)
 >>> slice_string(5, encprogram, 'myprogram')
-[5, 7, 8]
+[8, 5, 7]
 
 Text Output
 -----------

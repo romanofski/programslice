@@ -93,7 +93,7 @@ def slice_string(currentline, source, name, invert=False,
     visitor.visit(node)
     graph = visitor.get_graph_for(currentline)
     if graph:
-        lines = graph.slice_forward(currentline)
+        lines = graph.slice(currentline)
         inverted = set(range(graph.first, graph.last + 1)) - set(lines)
     result = list(inverted) if invert else lines
     return formatter(result, source)()

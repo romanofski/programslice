@@ -42,7 +42,28 @@ class TestGraph(unittest.TestCase):
         result = self.graph.edges
         self.assertEqual([1, 2], result)
 
-    def test_slice_forward(self):
+    def test_slice_with_graph(self):
+        graph2 = Graph()
+        graph2.add(4)
+        graph2.add(5)
+        graph2.add(6)
+        graph2.connect(4, 5)
+        graph2.connect(5, 6)
+
+        self.graph.add(3)
+        self.graph.add(4)
+        self.graph.add(graph2)
+        self.graph.connect(4, graph2)
+
+        result = self.graph.slice_forward(4)
+        self.assertEqual([4, 5, 6], result)
+
+
+class TestGraphSlicing(unittest.TestCase):
+
+    def setUp(self):
+        self.graph = Graph('foo')
+
         for i in range(1, 12):
             self.graph.add(i)
 
@@ -62,10 +83,14 @@ class TestGraph(unittest.TestCase):
         self.graph.connect(8, 5)
         self.graph.connect(8, 7)
 
-        result = self.graph.slice_forward(2)
-        expected = [2, 3, 4, 5, 7, 8, 11]
-        self.assertEqual(expected, result)
+        self.expected = [2, 3, 4, 5, 7, 8, 11]
 
+    def test_slice_forward(self):
+        result = self.graph.slice_forward(2)
+        self.assertEqual(self.expected, result)
+
+    def test_slice_backward(self):
+        expected = self.expected
         result = self.graph.slice_backward(11)
         expected.reverse()
         self.assertEqual(expected, result)
@@ -73,18 +98,9 @@ class TestGraph(unittest.TestCase):
         result = self.graph.slice_backward(5)
         self.assertListEqual([5, 4, 3, 2], result)
 
-    def test_slice_with_graph(self):
-        graph2 = Graph()
-        graph2.add(4)
-        graph2.add(5)
-        graph2.add(6)
-        graph2.connect(4, 5)
-        graph2.connect(5, 6)
+    def test_slice(self):
+        result = self.graph.slice(2)
+        self.assertListEqual(self.expected, result)
 
-        self.graph.add(3)
-        self.graph.add(4)
-        self.graph.add(graph2)
-        self.graph.connect(4, graph2)
-
-        result = self.graph.slice_forward(4)
-        self.assertEqual([4, 5, 6], result)
+        result = self.graph.slice(11)
+        self.assertListEqual(self.expected, result)

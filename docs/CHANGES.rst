@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-0.2 (unreleased)
+0.2 (2012-11-21)
 ----------------
 
     * added output formatter to either output filtered lines of code or

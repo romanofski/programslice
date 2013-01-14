@@ -1,3 +1,8 @@
+"""
+The reason for a self implemented graph and edge is not to be
+smarter, since there are better modules available for this. It is an
+educational project for me, since my own implementation.
+"""
 from collections import OrderedDict
 from collections import deque
 import ast

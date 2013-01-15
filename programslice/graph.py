@@ -189,8 +189,11 @@ class Graph(object):
                 return True
 
 
+# TODO: This will have to be given a search criteria not a simple line
+# number
 class Slice(object):
-    """ A simple search over a graph, starting from an edge.
+    """ A simple search over a graph, starting from an edge given by a
+        line number.
 
     :param graph: The graph to slice
     :type graph: Graph

@@ -159,8 +159,9 @@ class LineDependencyVisitor(ast.NodeVisitor):
 
     def visit_Assign(self, node):
         super(LineDependencyVisitor, self).generic_visit(node)
-        graph = self.scope[-1]
-        self.builder(graph)
+        if self.scope:
+            graph = self.scope[-1]
+            self.builder(graph)
 
     def reset(self):
         graph = self.scope.pop()

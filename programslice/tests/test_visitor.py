@@ -58,23 +58,23 @@ class TestLineDependencyVisitor(unittest.TestCase):
         self.assertEqual(4, len(self.visitor.graphs))
         self.assertEqual('innerfunc', graph1.name)
         self.assertEqual('main', graph2.name)
-        self.assertEqual([17, 19, 20], Slice(graph2)(17))
+        result = sorted([x.lineno for x in Slice(graph2)(17)])
+        self.assertEqual([17, 19], result)
 
     def test_visit_Call(self):
         node = self.load_testdata('function.py')
         self.visitor.visit(node)
         graph = self.visitor.graphs[0]
-        self.assertEqual([5, 6, 7, 10, 11], Slice(graph)(5))
+        result = sorted([x.lineno for x in Slice(graph)(5)])
+        self.assertEqual([5, 6, 7, 10, 11], result)
 
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')
         self.visitor.visit(node)
         graph = self.visitor.get_graph_for(12)
-        expected = [12, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-        self.assertEqual(expected, Slice(graph)(12))
-
-        expected = [18, 20, 22]
-        self.assertEqual(expected, Slice(graph)(18))
+        expected = [12, 16, 17, 19]
+        result = sorted([x.lineno for x in Slice(graph)(12)])
+        self.assertEqual(expected, result)
 
 
 class TestVisitorFunctional(unittest.TestCase):
@@ -82,11 +82,11 @@ class TestVisitorFunctional(unittest.TestCase):
     def test_get_graph_for(self):
         visitor = programslice.visitor.LineDependencyVisitor()
         graph1 = Graph('function1')
-        graph1.add(3, '')
-        graph1.add(5, '')
+        graph1.add(Edge('', 3))
+        graph1.add(Edge('', 5))
 
         graph2 = Graph('function2')
-        graph2.add(12, '')
+        graph2.add(Edge('', 12))
         visitor.graphs = [graph1, graph2]
 
         self.assertEqual('function1', visitor.get_graph_for(4).name)

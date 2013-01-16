@@ -35,6 +35,10 @@ Screenshots are at:
 
     http://programslice.readthedocs.org/en/latest/screenshots.html
 
+Build Status:
+
+    "!https://travis-ci.org/romanofski/programslice.png!":https://travis-ci.org/romanofski/programslice
+
 TODO
 ----
 

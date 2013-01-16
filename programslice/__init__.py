@@ -3,6 +3,7 @@ import ast
 import logging
 import os.path
 import programslice.formatter
+import programslice.graph
 import programslice.visitor
 import re
 import sys
@@ -75,15 +76,17 @@ def slice_string(currentline, source, name, invert=False,
     :type source: string
     :param name: filename of the given source code.
     :type name: string
-    :param invert: Invert the result and return lines which don't depend
-                    on the ``currentline``. Defaults to **False**.
-    :type invert: bool
     :param formatter: Formatter class to format the slice result.
                         Defaults to LineFormatter which only outputs the
                         line numbers.
     :type formatter: class
+
+    .. deprecated:: 0.3
+    :param invert: Invert the result and return lines which don't depend
+                    on the ``currentline``. Defaults to **False**.
+    :type invert: bool
     """
-    lines = []
+    result = []
     # catch encoding declarations and shebangs
     head = re.compile(r'#!\/.*\n|#.*coding[:=]\s*(?P<enc>[-\w.]+).*')
     source = head.sub('', source)
@@ -93,7 +96,5 @@ def slice_string(currentline, source, name, invert=False,
     visitor.visit(node)
     graph = visitor.get_graph_for(currentline)
     if graph:
-        lines = graph.slice_forward(currentline)
-        inverted = set(range(graph.first, graph.last + 1)) - set(lines)
-    result = list(inverted) if invert else lines
+        result = programslice.graph.Slice(graph)(currentline)
     return formatter(result, source)()

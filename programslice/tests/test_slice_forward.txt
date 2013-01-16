@@ -29,29 +29,24 @@ To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 
 >>> from programslice import slice_string
 >>> slice_string(3, program, 'myprogram')
-[3, 5, 6]
+[<Edge foo at #3@4>, <Edge baz at #5@4>]
 
 Inverted Result
 ---------------
 
-If we want to see all lines which **not depend** on line 3 set
-``invert=True``:
-
->>> slice_string(3, program, 'mypogram', invert=True)
-[2, 4]
+Inverted results are no longer supported. We're slicing on search
+criteria, not on simple line numbers.
 
 Shebangs and Encoding declarations
 ----------------------------------
 
 Sometimes programs use encoding declarations, which need to removed
-before the program can be parsed. The slicing will happen nevertheless:
+before the program can be parsed. The slicing will not cause an error:
 
 >>> encprogram = u'#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n{program}'.format(program=program)
->>> slice_string(4, encprogram, 'myprogram')
-[4, 6, 7]
+>>> ignored = slice_string(4, encprogram, 'myprogram')
 >>> encprogram = u'#!/usr/bin/env python\n#\n# vim: set fileencoding=utf-8 :\n{program}'.format(program=program)
->>> slice_string(5, encprogram, 'myprogram')
-[5, 7, 8]
+>>> ignored = slice_string(5, encprogram, 'myprogram')
 
 Text Output
 -----------
@@ -65,12 +60,3 @@ defaults to :py:class:`LineFormatter` to just render the line numbers:
 >>> print('\n'.join(result))    # doctest: +NORMALIZE_WHITESPACE
 bar = 1
 baz = foo + bar
-print(baz)
-
-The text output an also be inverted:
-
->>> result = slice_string(
-...     4, program, 'myprogram', invert=True, formatter=TextOutputFormatter)
->>> print('\n'.join(result))
-def main():
-    foo = 1

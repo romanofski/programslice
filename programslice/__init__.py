@@ -16,6 +16,16 @@ logger.addHandler(stdout)
 logger.setLevel(logging.INFO)
 
 
+def get_formatter_klass(name):
+    """ Returns the slice result formatter given by it's name.  """
+    form = programslice.formatter.VimOutPutFormatter
+    if name.startswith('line'):
+        form = programslice.formatter.LineFormatter
+    elif name.startswith('text'):
+        form = programslice.formatter.TextOutputFormatter
+    return form
+
+
 def command_slice_file():
     """
     Command line utility which can slice a given file and return the
@@ -43,17 +53,15 @@ def command_slice_file():
         '-o',
         '--output',
         dest='output',
-        default='linenumbers',
-        help=('Choose an output: linenumbers (default), text.'),
+        default='vim',
+        help=('Choose an output: vim (default), linenumbers, text.'),
         type=str)
     arguments = parser.parse_args()
     if not os.path.exists(arguments.filename):
         logger.error("Can't open {0}.".format(arguments.filename))
         sys.exit(1)
 
-    formatter = (programslice.formatter.TextOutputFormatter
-              if arguments.output.startswith('text')
-              else programslice.formatter.VimOutPutFormatter)
+    formatter = get_formatter_klass(arguments.output)
     with open(arguments.filename, 'r') as f:
         contents = f.read()
         lines = slice_string(arguments.name,

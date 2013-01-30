@@ -61,7 +61,6 @@ def command_slice_file():
                              arguments.offset,
                              contents,
                              arguments.filename,
-                             arguments.invert,
                              formatter)
         if lines:
             [logger.info('{0}'.format(x)) for x in lines]
@@ -69,7 +68,6 @@ def command_slice_file():
 
 
 def slice_string(name, currentline, offset, source, filename,
-                 invert=False,
                  formatter=programslice.formatter.LineFormatter):
     """
     Slices the given source code from the given currentline.

@@ -28,7 +28,7 @@ Given a simple program:
 To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 
 >>> from programslice import slice_string
->>> slice_string(3, program, 'myprogram')
+>>> slice_string('foo', 3, 4, program, 'myprogram')
 [<Edge foo at #3@4>, <Edge baz at #5@4>]
 
 Inverted Result
@@ -44,9 +44,9 @@ Sometimes programs use encoding declarations, which need to removed
 before the program can be parsed. The slicing will not cause an error:
 
 >>> encprogram = u'#!/usr/bin/env python\n# -*- coding: utf-8 -*-\n{program}'.format(program=program)
->>> ignored = slice_string(4, encprogram, 'myprogram')
+>>> ignored = slice_string('bar', 4, 4, encprogram, 'myprogram')
 >>> encprogram = u'#!/usr/bin/env python\n#\n# vim: set fileencoding=utf-8 :\n{program}'.format(program=program)
->>> ignored = slice_string(5, encprogram, 'myprogram')
+>>> ignored = slice_string('baz', 5, 4, encprogram, 'myprogram')
 
 Text Output
 -----------
@@ -56,7 +56,7 @@ Instead of returning line numbers, we can filter the buffer as well. The
 defaults to :py:class:`LineFormatter` to just render the line numbers:
 
 >>> from programslice.formatter import TextOutputFormatter
->>> result = slice_string(4, program, 'myprogram', formatter=TextOutputFormatter)
+>>> result = slice_string('bar', 4, 4, program, 'myprogram', formatter=TextOutputFormatter)
 >>> print('\n'.join(result))    # doctest: +NORMALIZE_WHITESPACE
 bar = 1
 baz = foo + bar

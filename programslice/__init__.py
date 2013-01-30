@@ -32,6 +32,14 @@ def command_slice_file():
         help=('The line to slice.'),
         type=int)
     parser.add_argument(
+        'name',
+        help=('The variable name.'),
+        type=str)
+    parser.add_argument(
+        'offset',
+        help=('Position offset of the variable.'),
+        type=int)
+    parser.add_argument(
         '-o',
         '--output',
         dest='output',
@@ -49,6 +57,8 @@ def command_slice_file():
     with open(arguments.filename, 'r') as f:
         contents = f.read()
         lines = slice_string(arguments.line,
+                             arguments.name,
+                             arguments.offset,
                              contents,
                              arguments.filename,
                              arguments.invert,
@@ -58,17 +68,22 @@ def command_slice_file():
         sys.exit(0)
 
 
-def slice_string(currentline, source, name, invert=False,
+def slice_string(name, currentline, offset, source, filename,
+                 invert=False,
                  formatter=programslice.formatter.LineFormatter):
     """
     Slices the given source code from the given currentline.
 
+    :param name: The variable name to slice from.
+    :type name: str
     :param currentline: A line from which to start the slicing.
     :type currentline: int
+    :param offset: The position offset of the variable.
+    :type offset: int
     :param source: The source code to parse.
-    :type source: string
-    :param name: filename of the given source code.
-    :type name: string
+    :type source: str
+    :param filename: filename of the given source code.
+    :type filename: str
     :param formatter: Formatter class to format the slice result.
                         Defaults to LineFormatter which only outputs the
                         line numbers.
@@ -84,10 +99,11 @@ def slice_string(currentline, source, name, invert=False,
     head = re.compile(r'#!\/.*\n|#.*coding[:=]\s*(?P<enc>[-\w.]+).*')
     source = head.sub('', source)
 
-    node = ast.parse(source, name)
+    node = ast.parse(source, filename)
     visitor = programslice.visitor.LineDependencyVisitor()
     visitor.visit(node)
     graph = visitor.get_graph_for(currentline)
     if graph:
-        result = programslice.graph.Slice(graph)(currentline)
+        start = programslice.graph.Edge(name, currentline, offset)
+        result = programslice.graph.Slice(graph)(start)
     return formatter(result, source)()

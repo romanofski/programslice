@@ -93,7 +93,7 @@ class TestSlice(unittest.TestCase):
         self.graph.connect_by_lineno(8, 5)
         self.graph.connect_by_lineno(8, 7)
 
-        result = [x.lineno for x in Slice(self.graph)(2)]
+        result = [x.lineno for x in Slice(self.graph)(Edge('a', 2))]
         self.assertSetEqual(set([2, 3, 4, 5, 7, 8, 11]), set(result))
 
     def test_graph_slice_with_graph(self):
@@ -107,5 +107,5 @@ class TestSlice(unittest.TestCase):
         e4 = self.graph.add(Edge('', 4))
         self.graph.connect_with_graph(e4, graph2)
 
-        result = Slice(self.graph)(4)
+        result = Slice(self.graph)(Edge('', 4))
         self.assertSetEqual(set([4, 5, 6]), set([x.lineno for x in result]))

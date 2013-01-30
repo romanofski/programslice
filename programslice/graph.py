@@ -185,11 +185,8 @@ class Graph(object):
                 return True
 
 
-# TODO: This will have to be given a search criteria not a simple line
-# number
 class Slice(object):
-    """ A simple search over a graph, starting from an edge given by a
-        line number.
+    """ A simple search over a graph, starting from an edge.
 
     :param graph: The graph to slice
     :type graph: Graph
@@ -198,26 +195,24 @@ class Slice(object):
     def __init__(self, graph):
         self.graph = graph
 
-    def __call__(self, start):
-        lineno = (start.lineno if isinstance(start, Edge) else start)
-        result = self.slice_forward(lineno)
+    def __call__(self, edge):
+        assert isinstance(edge, Edge)
+        result = self.slice_forward(edge)
         return result
 
-    def slice_forward(self, lineno):
+    def slice_forward(self, edge):
         """
-        A forward slice starting at the given line number.
+        A forward slice starting at the given edge. A match is when
+        ``Edge.lineno == lineno`` and ``Edge.name == name``.
 
-        :param lineno: A line number from which to calculate
-                       dependent line numbers.
-        :type lineno: int
+        :param edge: An edge.
+        :type edge: Edge
         :rtype: list of edges
         """
-        edge = self.graph.get_edge_by_lineno(lineno)
-        if edge is None:
-            return []
-
         visited = [edge]
         children = deque(self.graph.get_neighbors(edge))
+        if not children:
+            return []
 
         while children:
             edge = children.popleft()

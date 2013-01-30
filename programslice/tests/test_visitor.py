@@ -58,14 +58,15 @@ class TestLineDependencyVisitor(unittest.TestCase):
         self.assertEqual(4, len(self.visitor.graphs))
         self.assertEqual('innerfunc', graph1.name)
         self.assertEqual('main', graph2.name)
-        result = sorted([x.lineno for x in Slice(graph2)(17)])
+        result = sorted([x.lineno
+                         for x in Slice(graph2)(Edge('foo', 17, 4))])
         self.assertEqual([17, 19], result)
 
     def test_visit_Call(self):
         node = self.load_testdata('function.py')
         self.visitor.visit(node)
         graph = self.visitor.graphs[0]
-        result = sorted([x.lineno for x in Slice(graph)(5)])
+        result = sorted([x.lineno for x in Slice(graph)(Edge('n', 5, 4))])
         # see issue #16
         # self.assertEqual([5, 6, 7, 10, 11], result)
         self.assertEqual([5, 6], result)
@@ -75,7 +76,7 @@ class TestLineDependencyVisitor(unittest.TestCase):
         self.visitor.visit(node)
         graph = self.visitor.get_graph_for(12)
         expected = [12, 16, 17, 19]
-        result = sorted([x.lineno for x in Slice(graph)(12)])
+        result = sorted([x.lineno for x in Slice(graph)(Edge('min', 12, 4))])
         self.assertEqual(expected, result)
 
 

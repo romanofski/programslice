@@ -169,7 +169,7 @@ class LineDependencyVisitor(ast.NodeVisitor):
         node = self.calls.get(graph.name)
         if node is not None:
             for g in self.graphs:
-                if node.lineno in range(g.first, g.last + 1):
+                if node.lineno in range(g.first.lineno, g.last.lineno + 1):
                     edge = g.get_edge_by_lineno(node.lineno)
                     if edge is None:
                         return

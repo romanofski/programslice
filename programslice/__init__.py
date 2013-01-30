@@ -56,8 +56,8 @@ def command_slice_file():
               else programslice.formatter.LineFormatter)
     with open(arguments.filename, 'r') as f:
         contents = f.read()
-        lines = slice_string(arguments.line,
-                             arguments.name,
+        lines = slice_string(arguments.name,
+                             arguments.line,
                              arguments.offset,
                              contents,
                              arguments.filename,

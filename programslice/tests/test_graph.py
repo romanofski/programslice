@@ -25,8 +25,8 @@ class TestGraph(unittest.TestCase):
     def test_first_last(self):
         e1 = self.graph.add(Edge('', 1))
         e2 = self.graph.add(Edge('', 5))
-        self.assertEqual(e1.lineno, self.graph.first)
-        self.assertEqual(e2.lineno, self.graph.last)
+        self.assertEqual(e1, self.graph.first)
+        self.assertEqual(e2, self.graph.last)
 
     def test_graph_add(self):
         e1 = self.graph.add(Edge('', 1))

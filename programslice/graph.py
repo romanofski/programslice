@@ -78,30 +78,26 @@ class Graph(object):
         return edge
 
     @property
-    def _linenumbers(self):
-        return [x.lineno for x in self.graph]
-
-    @property
     def edges(self):
         return self.graph.keys()
 
     @property
     def first(self):
         """
-        The first line number parsed by this graph.
+        The edge with the lowest line number parsed by this graph.
 
         :rtype: int
         """
-        return min(self._linenumbers)
+        return min(self.edges, key=lambda x: x.lineno)
 
     @property
     def last(self):
         """
-        The last line number parsed by this graph.
+        The edge with the highest line number parsed by this graph.
 
         :rtype: int
         """
-        return max(self._linenumbers)
+        return max(self.edges, key=lambda x: x.lineno)
 
     def connect(self, e1, e2):
         # Sometimes we want to connect an edge with a graph. Instead of

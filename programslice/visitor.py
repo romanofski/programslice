@@ -137,7 +137,8 @@ class LineDependencyVisitor(ast.NodeVisitor):
         Returns a :mod:`graph`, which visited the given lineno
         """
         for graph in self.graphs:
-            if lineno >= graph.first and lineno <= graph.last:
+            # TODO: aw... violation of demeters law. Please refactor me
+            if lineno >= graph.first.lineno and lineno <= graph.last.lineno:
                 return graph
 
     def visit_FunctionDef(self, node):

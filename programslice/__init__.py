@@ -32,13 +32,6 @@ def command_slice_file():
         help=('The line to slice.'),
         type=int)
     parser.add_argument(
-        '-i',
-        '--invert',
-        dest='invert',
-        help=('Invert the result: return all lines which are not '
-              'depending on the given line.'),
-        action='store_true')
-    parser.add_argument(
         '-o',
         '--output',
         dest='output',

@@ -29,7 +29,7 @@ To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 
 >>> from programslice import slice_string
 >>> slice_string('foo', 3, 4, program, 'myprogram')
-[<Edge foo at #3@4>, <Edge baz at #5@4>]
+['foo,3,4', 'baz,5,4']
 
 Inverted Result
 ---------------

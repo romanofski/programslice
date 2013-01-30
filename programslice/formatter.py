@@ -14,6 +14,12 @@ class LineFormatter(object):
 
     TODO: No checking in place wether `source` is a unicode object or
     str.
+
+    >>> from programslice.graph import Edge
+    >>> slice_result = [Edge('foo', 12, 3), Edge('bar', 13, 3)]
+    >>> formatter = LineFormatter(slice_result, '')
+    >>> formatter()
+    [12, 13]
     """
 
     def __init__(self, slice_result, source):
@@ -21,7 +27,19 @@ class LineFormatter(object):
         self.slice_result = slice_result
 
     def __call__(self):
-        return self.slice_result
+        return [x.lineno for x in self.slice_result]
+
+
+class VimOutPutFormatter(LineFormatter):
+    """Returns slice output information parsable by vim.
+
+    This class is different to the Line formatter in that it outputs
+    additional detail from the edges.
+    """
+
+    def __call__(self):
+        return ['{node.name},{node.lineno},{node.offset}'.format(node=x)
+                for x in self.slice_result]
 
 
 class TextOutputFormatter(LineFormatter):

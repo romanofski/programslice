@@ -53,7 +53,7 @@ def command_slice_file():
 
     formatter = (programslice.formatter.TextOutputFormatter
               if arguments.output.startswith('text')
-              else programslice.formatter.LineFormatter)
+              else programslice.formatter.VimOutPutFormatter)
     with open(arguments.filename, 'r') as f:
         contents = f.read()
         lines = slice_string(arguments.name,
@@ -68,7 +68,7 @@ def command_slice_file():
 
 
 def slice_string(name, currentline, offset, source, filename,
-                 formatter=programslice.formatter.LineFormatter):
+                 formatter=programslice.formatter.VimOutPutFormatter):
     """
     Slices the given source code from the given currentline.
 
@@ -83,7 +83,7 @@ def slice_string(name, currentline, offset, source, filename,
     :param filename: filename of the given source code.
     :type filename: str
     :param formatter: Formatter class to format the slice result.
-                        Defaults to LineFormatter which only outputs the
+                        Defaults to VimOutPutFormatter which only outputs the
                         line numbers.
     :type formatter: class
 

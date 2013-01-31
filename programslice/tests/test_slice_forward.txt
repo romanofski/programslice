@@ -28,8 +28,8 @@ Given a simple program:
 To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 
 >>> from programslice import slice_string
->>> slice_string('foo', 3, 4, program, 'myprogram')
-['foo,3,4', 'baz,5,4']
+>>> sorted(slice_string('foo', 3, 4, program, 'myprogram'))
+['baz,5,4', 'foo,3,4']
 
 Inverted Result
 ---------------

@@ -38,7 +38,7 @@ def command_slice_file():
         help=('Path to a file to be sliced'),
         type=str)
     parser.add_argument(
-        'name',
+        'varname',
         help=('The variable name.'),
         type=str)
     parser.add_argument(
@@ -64,7 +64,7 @@ def command_slice_file():
     formatter = get_formatter_klass(arguments.output)
     with open(arguments.filename, 'r') as f:
         contents = f.read()
-        lines = slice_string(arguments.name,
+        lines = slice_string(arguments.varname,
                              arguments.line,
                              arguments.offset,
                              contents,
@@ -75,13 +75,13 @@ def command_slice_file():
         sys.exit(0)
 
 
-def slice_string(name, currentline, offset, source, filename,
+def slice_string(varname, currentline, offset, source, filename,
                  formatter=programslice.formatter.VimOutPutFormatter):
     """
     Slices the given source code from the given currentline.
 
-    :param name: The variable name to slice from.
-    :type name: str
+    :param varname: The variable name to slice from.
+    :type varname: str
     :param currentline: A line from which to start the slicing.
     :type currentline: int
     :param offset: The position offset of the variable.
@@ -110,6 +110,6 @@ def slice_string(name, currentline, offset, source, filename,
     visitor.visit(node)
     graph = visitor.get_graph_for(currentline)
     if graph:
-        start = programslice.graph.Edge(name, currentline, offset)
+        start = programslice.graph.Edge(varname, currentline, offset)
         result = programslice.graph.Slice(graph)(start)
     return formatter(result, source)()

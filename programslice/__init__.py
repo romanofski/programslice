@@ -38,13 +38,13 @@ def command_slice_file():
         help=('Path to a file to be sliced'),
         type=str)
     parser.add_argument(
-        'line',
-        help=('The line to slice.'),
-        type=int)
-    parser.add_argument(
         'name',
         help=('The variable name.'),
         type=str)
+    parser.add_argument(
+        'line',
+        help=('The line number to slice.'),
+        type=int)
     parser.add_argument(
         'offset',
         help=('Position offset of the variable.'),

@@ -1,6 +1,13 @@
 CHANGES
 =======
 
+0.3 (unreleased)
+----------------
+
+    * New datastructures to improve slicing quality
+    * Slicing result is now more fine grained than simply highlighting
+      line numbers
+
 0.2 (2012-11-21)
 ----------------
 

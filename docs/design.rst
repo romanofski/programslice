@@ -6,6 +6,17 @@ Usergroup
 
 Advanced Python developers.
 
+Scenarios
+---------
+
+Roman is a passionate python developer. Sometimes however his passion
+slumps when debugging `megamoths <http://www.codinghorror.com/blog/2012/07/new-programming-jargon.html>`_
+The challenge when debugging these huge lines of code is to find how
+each of the variables are connected in order to track down the problem.
+Now he has programslice. It helps him to focus on the important
+variables which are connected to a variable which might be the possible
+cause of failure.
+
 Data Representation
 -------------------
 
@@ -14,28 +25,32 @@ represented as an :py:class:`edge`.
 
 .. note:: Open Question: What about scopes? See #16 on github.
 
+Slice
+^^^^^
+
+A slice is currently a depth-first traversal over a :py:class:`graph`.
+
+.. note:: Open Question: How to implement slicing backwards effectively
+    a.k.a. search the graph backwards.
+
+
 Integration - Vim
 -----------------
 
-A classic slice run goes like this:
+The following parts are involved:
 
-    1. The user marks a statement in VIM and calls the vim slice
-       command.
+    * vim
+    * vim script/python script acting as an API to pass slice
+      information to programslice and parse the result
+    * programslice as a command line utility
 
-    2. The command passes the slice criterion [#scriterion]_ and filename to the
-       programslice command line utility.
+This provides (hopefully) the following benefits:
 
-    3. Programslice parses the source code and builds internal
-       datastructures.
+    * most of the python code is testable
+    * a minimum of non-testable code is covered by vimML
+    * other IDEs/editors can provide an integration with the command
+      line utility
 
-    4. A slice is run on the data structures and the result printed to
-       stdout.
+but also disadvantages:
 
-    5. The slice is parsed by vim and the result is highlighted in the
-       vim buffer.
-
-
-.. rubric:: Footnotes
-
-.. [#scriterion] The slice criterion is currently a variable name,
-    linenumber and offset.
+    * possible cause of integration errors

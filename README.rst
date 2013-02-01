@@ -8,7 +8,8 @@ Static slicing for python programs with `vim <https://github.com/romanofski/prog
 Non-Goals
 ---------
 
-    * find defects in your code e.g. like PyChecker
+    * Find defects in your code e.g. like PyChecker
+    * Being used as a command line utility
 
 Installation Requirements
 -------------------------

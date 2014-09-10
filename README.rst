@@ -1,7 +1,7 @@
 Product Vision
 ==============
 
-Static slicing for python programs with `vim <http://www.vim.org>`_ integration.
+Static slicing for python programs with `vim <https://github.com/romanofski/programslice.vim>`_ integration.
 
     http://en.wikipedia.org/wiki/Program_slicing
 
@@ -52,6 +52,3 @@ This work would not be possible without:
 
     * VIM plug-ins: Muraoka Yusuke for pep8.vim, Kevin Watters for
       pychecker.vim and Tim Pope for fugitive.vim
-
-.. include:: CHANGES.rst
-

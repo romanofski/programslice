@@ -108,7 +108,7 @@ def slice_string(varname, currentline, offset, source, filename,
     node = ast.parse(source, filename)
     visitor = programslice.visitor.LineDependencyVisitor()
     visitor.visit(node)
-    graph = visitor.get_graph_for(currentline)
+    graph = visitor.graph
     if graph:
         start = programslice.graph.Edge(varname, currentline, offset)
         result = programslice.graph.Slice(graph)(start)

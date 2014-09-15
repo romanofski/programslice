@@ -1,11 +1,11 @@
-import unittest2
+import unittest
 from programslice import get_formatter_klass
 from programslice.formatter import LineFormatter
 from programslice.formatter import VimOutPutFormatter
 from programslice.formatter import TextOutputFormatter
 
 
-class TestCommandLine(unittest2.TestCase):
+class TestCommandLine(unittest.TestCase):
 
     def test_get_formatter_klass(self):
         self.assertEqual(LineFormatter,

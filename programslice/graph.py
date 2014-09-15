@@ -35,6 +35,9 @@ class Edge(object):
     def __eq__(self, other):
         return type(self) == type(other) and self.__key() == other.__key()
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __hash__(self):
         return hash(self.__key())
 
@@ -44,8 +47,7 @@ class Edge(object):
 
     @classmethod
     def create_from_astnode(klass, node):
-        name = node.id if isinstance(node, ast.Name) else node.name
-        return Edge(name, node.lineno, node.col_offset)
+        return Edge(node.id, node.lineno, node.col_offset)
 
 
 class Graph(object):
@@ -100,11 +102,16 @@ class Graph(object):
         return max(self.edges, key=lambda x: x.lineno)
 
     def connect(self, e1, e2):
-        # Sometimes we want to connect an edge with a graph. Instead of
-        # checking multiple types, we check only if they're the same
-        # type. TODO: Perhaps put the type checking in a decorator
         assert isinstance(e1, type(e1)) and isinstance(e2, type(e2))
         self.graph.setdefault(e1, []).append(e2)
+        self.add(e2)
+
+        # Tie up potential outstanding edges
+        for key in self.graph:
+            if (key.name == e1.name and
+                    key != e1 and
+                    e1 not in self.graph[key]):
+                self.graph[key].append(e1)
 
     def connect_with_graph(self, edge, graph):
         """ Connects the edge with a graph.
@@ -172,6 +179,19 @@ class Graph(object):
         ..  note:: This can return Edges and Graphs
         """
         return (self.graph.get(edge, []) + self.references.get(edge, []))
+
+    def get(self, name, lineno, default=None):
+        """ Returns an Edge given by name and lineno.
+
+            Will return default if nothing is found.
+        """
+        edges = [e for e in self.get_edges_by_name(name)
+                 if e.lineno == lineno]
+        if not edges:
+            return default
+        if len(edges) > 1:
+            raise KeyError('More than one edge found.')
+        return edges[0]
 
     def __len__(self):
         return len(self.graph)

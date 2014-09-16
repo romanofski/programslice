@@ -25,16 +25,13 @@ setup(name='programslice',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          'argparse',
-      ],
+      install_requires=[],
       extras_require=dict(
-          test=['unittest2',
-               ]
+          test=[]
           ),
       entry_points={
           'console_scripts': [
               'programslice = programslice:command_slice_file',
           ]
       }
-     )
+      )

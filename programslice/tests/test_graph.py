@@ -1,5 +1,5 @@
 from programslice.graph import Graph
-import unittest2 as unittest
+import unittest
 
 
 class TestGraph(unittest.TestCase):

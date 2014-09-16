@@ -10,6 +10,11 @@ Non-Goals
 
     * find defects in your code e.g. like PyChecker
 
+Installation Requirements
+-------------------------
+
+    * Python 2.7
+
 Development
 ===========
 

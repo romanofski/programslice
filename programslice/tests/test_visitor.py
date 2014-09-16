@@ -1,7 +1,7 @@
 import ast
 import os.path
 import programslice.visitor
-import unittest2 as unittest
+import unittest
 
 
 class TestLineDependencyVisitor(unittest.TestCase):

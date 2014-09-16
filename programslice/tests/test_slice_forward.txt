@@ -19,7 +19,7 @@ Given a simple program:
 ...     foo = 1
 ...     bar = 1
 ...     baz = foo + bar
-...     print baz
+...     print(baz)
 ... 
 ... if __name__ == "__main__":
 ...     main()
@@ -62,15 +62,15 @@ defaults to :py:class:`LineFormatter` to just render the line numbers:
 
 >>> from programslice.formatter import TextOutputFormatter
 >>> result = slice_string(4, program, 'myprogram', formatter=TextOutputFormatter)
->>> print u'\n'.join(result)    # doctest: +NORMALIZE_WHITESPACE
+>>> print('\n'.join(result))    # doctest: +NORMALIZE_WHITESPACE
 bar = 1
 baz = foo + bar
-print baz
+print(baz)
 
 The text output an also be inverted:
 
 >>> result = slice_string(
 ...     4, program, 'myprogram', invert=True, formatter=TextOutputFormatter)
->>> print u'\n'.join(result)
+>>> print('\n'.join(result))
 def main():
     foo = 1

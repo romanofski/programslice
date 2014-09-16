@@ -17,7 +17,7 @@ def main():
     foo = 1
     bar = 1
     baz = foo + bar
-    print baz
+    print(baz)
 
 if __name__ == "__main__":
     main()

@@ -12,24 +12,17 @@ class Edge(object):
     .. option:: synopsis
 
     Representing the edge of a :class:`graph`.
-
-    :param name: Name of the edge (e.g. variable or function name)
-    :type name: str
-    :param ln: linenumber
-    :type ln: int
-    :param offset: Column offset from an ast node
-    :param offset: int
     """
 
-    def __init__(self, name, ln, offset=None):
+    def __init__(self, name, ln, column):
         assert isinstance(ln, int), "line number needs to be an integer"
         assert isinstance(name, str), "name needs to be str"
         self.name = name
         self.lineno = ln
-        self.offset = offset
+        self.column = column
 
     def __key(self):
-        return (self.lineno, self.name, self.offset)
+        return (self.lineno, self.name, self.column)
 
     def __eq__(self, other):
         return type(self) == type(other) and self.__key() == other.__key()
@@ -42,7 +35,7 @@ class Edge(object):
 
     def __repr__(self):
         return ('<{self.__class__.__name__} {self.name} at '
-                '#{self.lineno}@{self.offset}>'.format(self=self))
+                '#{self.lineno}@{self.column}>'.format(self=self))
 
     @classmethod
     def create_from_astnode(klass, node):

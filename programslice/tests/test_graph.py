@@ -6,8 +6,8 @@ import ast
 
 def test_connect():
     graph = Graph('')
-    e1 = graph.add(Edge('', 1))
-    e2 = graph.add(Edge('', 2))
+    e1 = graph.add(Edge('', 1, 1))
+    e2 = graph.add(Edge('', 2, 1))
     graph.connect(e1, e2)
     assert graph[e2] == [e1]
 
@@ -34,15 +34,12 @@ def test_repr():
     assert expected == repr(graph)
 
 
-class TestEdge(unittest.TestCase):
-
-    def test_create_from_astnode(self):
-        node = ast.Name('n', 0)
-        node.col_offset = 0
-        node.lineno = 0
-        edge = Edge.create_from_astnode(node)
-        self.assertTupleEqual(('n', 0, 0),
-                              (edge.name, edge.lineno, edge.offset))
+def test_edge_create_from_astnode():
+    node = ast.Name('n', 0)
+    node.col_offset = 0
+    node.lineno = 0
+    edge = Edge.create_from_astnode(node)
+    assert ('n', 0, 0) == (edge.name, edge.lineno, edge.column)
 
 
 class TestGraph(unittest.TestCase):
@@ -51,23 +48,23 @@ class TestGraph(unittest.TestCase):
         self.graph = Graph('foo')
 
     def test_graph_add(self):
-        e1 = self.graph.add(Edge('', 1))
+        e1 = self.graph.add(Edge('', 1, 1))
         self.assertListEqual([e1], self.graph.edges)
 
-        e2 = self.graph.add(Edge('', 3))
+        e2 = self.graph.add(Edge('', 3, 1))
         self.assertEqual(2, len(self.graph))
         self.assertListEqual([e1, e2], self.graph.edges)
 
-        self.graph.add(Edge('', 3))
+        self.graph.add(Edge('', 3, 1))
         self.assertEqual(2, len(self.graph))
 
     def test_graph_in(self):
-        data = ('n', 1)
+        data = ('n', 1, 1)
         self.graph.add(Edge(*data))
         e2 = Edge(*data)
         self.assertTrue(e2 in self.graph)
 
     def test_graph__getitem__(self):
-        data = ('n', 1)
+        data = ('n', 1, 1)
         self.graph.add(Edge(*data))
         self.assertListEqual([], self.graph[Edge(*data)])

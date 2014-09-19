@@ -38,7 +38,7 @@ class VimOutPutFormatter(LineFormatter):
     """
 
     def __call__(self):
-        return ['{node.name},{node.lineno},{node.offset}'.format(node=x)
+        return ['{node.name},{node.lineno},{node.column}'.format(node=x)
                 for x in self.slice_result]
 
 

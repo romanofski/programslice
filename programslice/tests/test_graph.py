@@ -27,6 +27,13 @@ def test_graph_slice_forward(assignment_graph):
     assert set([3, 5, 6]) == set(result)
 
 
+def test_repr():
+    graph = Graph('foo')
+    graph.add(Edge('o', 3, 4))
+    expected = '<Graph foo [(<Edge o at #3@4>, [])]>'
+    assert expected == repr(graph)
+
+
 class TestEdge(unittest.TestCase):
 
     def test_create_from_astnode(self):
@@ -42,15 +49,6 @@ class TestGraph(unittest.TestCase):
 
     def setUp(self):
         self.graph = Graph('foo')
-
-    def test_repr(self):
-        self.assertEqual('<Graph foo>', repr(self.graph))
-
-    def test_first_last(self):
-        e1 = self.graph.add(Edge('', 1))
-        e2 = self.graph.add(Edge('', 5))
-        self.assertEqual(e1, self.graph.first)
-        self.assertEqual(e2, self.graph.last)
 
     def test_graph_add(self):
         e1 = self.graph.add(Edge('', 1))
@@ -73,9 +71,3 @@ class TestGraph(unittest.TestCase):
         data = ('n', 1)
         self.graph.add(Edge(*data))
         self.assertListEqual([], self.graph[Edge(*data)])
-
-    def test_graph_get_edges_by_name(self):
-        e1 = self.graph.add(Edge('n', 1, 0))
-        e2 = self.graph.add(Edge('n', 1, 12))
-        self.assertListEqual([e1, e2], self.graph.get_edges_by_name('n'))
-        self.assertListEqual([e1], self.graph.get_edges_by_name('n', True))

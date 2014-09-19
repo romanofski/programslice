@@ -5,7 +5,6 @@ educational project for me, since my own implementation.
 """
 from collections import OrderedDict
 from collections import deque
-import ast
 
 
 class Edge(object):
@@ -65,11 +64,12 @@ class Graph(object):
     def __init__(self, name=''):
         self.name = name
         self.graph = OrderedDict()
-        # graph references
-        self.references = dict()
 
     def __repr__(self):
-        return '<{0} {1}>'.format(self.__class__.__name__, self.name)
+        return '<{} {} {}>'.format(
+            self.__class__.__name__,
+            self.name,
+            self.graph.items())
 
     def add(self, edge):
         """ Adds a new edge with the given parameters to the graph.
@@ -83,24 +83,6 @@ class Graph(object):
     def edges(self):
         return self.graph.keys()
 
-    @property
-    def first(self):
-        """
-        The edge with the lowest line number parsed by this graph.
-
-        :rtype: int
-        """
-        return min(self.edges, key=lambda x: x.lineno)
-
-    @property
-    def last(self):
-        """
-        The edge with the highest line number parsed by this graph.
-
-        :rtype: int
-        """
-        return max(self.edges, key=lambda x: x.lineno)
-
     def connect(self, e1, e2):
         assert isinstance(e1, type(e1)) and isinstance(e2, type(e2))
         self.graph.setdefault(e1, []).append(e2)
@@ -113,85 +95,11 @@ class Graph(object):
                     e1 not in self.graph[key]):
                 self.graph[key].append(e1)
 
-    def connect_with_graph(self, edge, graph):
-        """ Connects the edge with a graph.
-
-        This is used when we would like to slice over boundaries, e.g.
-        function call to a function which is defined in the same module.
+    def get(self, edge, default=[]):
+        """ Returns all referenced edges from the given edge an empty
+            list otherwise.
         """
-        self.references.setdefault(edge, []).append(graph)
-
-    def connect_by_lineno(self, l1, l2):
-        """ Connects the edges given by their line numbers.
-
-        If edges can not be looked up by their line numbers, a KeyError
-        is raised.
-
-        :param l1: The line number of the first edge.
-        :type l1: int
-        :param l2: The line number of the second edge.
-        :type l2: int
-        """
-        e1 = self.get_edge_by_lineno(l1)
-        e2 = self.get_edge_by_lineno(l2)
-        if e1 is None or e2 is None:
-            empty = l1 if e1 is not None else l2
-            raise KeyError('Edge for {} does not exist.'.format(empty))
-        self.connect(e1, e2)
-
-    def get_edge_by_lineno(self, lineno):
-        """ Returns the first edge of the given line number.
-
-        :param lineno: The line number
-        :type lineno: int
-        :rtype: Edge or None if no corresponding edge is found
-        """
-        for e in self.edges:
-            if e.lineno == lineno:
-                return e
-
-    def get_edges_by_name(self, name, unique_lines=False):
-        """ Returns all edges with the same name.
-
-        :param name: The name of the edge
-        :type name: str
-        :param unique_lines: Only return edges which are on separate
-                             line numbers.
-        :type unique_lines: bool
-        :rtype: List of Edges or [] if no corresponding edge is found
-        """
-        result = []
-        lines = []
-        for e in self.edges:
-            if e.name != name:
-                continue
-            if unique_lines and e.lineno in lines:
-                continue
-            else:
-                result.append(e)
-                lines.append(e.lineno)
-        return result
-
-    def get_neighbors(self, edge):
-        """ Returns all edges, such there is a vertice from the given
-            edge to the neighbor edge.
-
-        ..  note:: This can return Edges and Graphs
-        """
-        return (self.graph.get(edge, []) + self.references.get(edge, []))
-
-    def get(self, name, lineno, default=None):
-        """ Returns an Edge given by name and lineno.
-
-            Will return default if nothing is found.
-        """
-        edges = [e for e in self.get_edges_by_name(name)
-                 if e.lineno == lineno]
-        if not edges:
-            return default
-        if len(edges) > 1:
-            raise KeyError('More than one edge found.')
-        return edges[0]
+        return self.graph.get(edge, default)
 
     def __len__(self):
         return len(self.graph)
@@ -230,7 +138,7 @@ class Slice(object):
         :rtype: list of edges
         """
         visited = [edge]
-        children = deque(self.graph.get_neighbors(edge))
+        children = deque(self.graph.get(edge))
         if not children:
             return []
 
@@ -240,7 +148,7 @@ class Slice(object):
                 slice = Slice(edge)
                 visited.extend(slice(edge.first))
             elif edge not in visited:
-                children.extend(deque(self.graph.get_neighbors(edge)))
+                children.extend(deque(self.graph.get(edge)))
                 visited.append(edge)
 
         # XXX filter out duplicates

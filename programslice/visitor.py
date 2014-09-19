@@ -1,18 +1,10 @@
 # coding: utf-8
 import ast
 import programslice.graph
-from collections import deque
 
 
 class LineDependencyVisitor(ast.NodeVisitor):
-    """
-    A visitor which creates a data dependency graph.
-
-    .. note:: I've called it LineDependencyVisitor, as currently what
-        matters are dependencies between lines of code. This is
-        determined by simply using the occurences of variables in their
-        lines as the graphs edges. This is not very precise, but makes
-        of a nice prototype to play with the vim integration.
+    """ A visitor which creates a data dependency graph.
     """
 
     def __init__(self):
@@ -20,10 +12,6 @@ class LineDependencyVisitor(ast.NodeVisitor):
         self.contexts = []
         self.writes = {}
         self.reads = {}
-
-        self.calls = {}
-        self.scope = deque()
-        self.graphs = []
 
     def visit_FunctionDef(self, node):
         self.reads[node.name] = node

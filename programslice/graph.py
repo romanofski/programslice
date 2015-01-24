@@ -5,6 +5,13 @@ educational project for me, since my own implementation.
 """
 from collections import OrderedDict
 from collections import deque
+import ast
+
+AST_EDGE_MAPPING = {
+    ast.Attribute: lambda x: x.attr,
+    ast.Name: lambda x: x.id,
+    ast.Subscript: lambda x: x.value.attr,
+}
 
 
 class Edge(object):
@@ -39,7 +46,8 @@ class Edge(object):
 
     @classmethod
     def create_from_astnode(klass, node):
-        return Edge(node.id, node.lineno, node.col_offset)
+        return Edge(AST_EDGE_MAPPING[node.__class__](node),
+                    node.lineno, node.col_offset)
 
 
 class Graph(object):

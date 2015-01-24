@@ -28,8 +28,8 @@ Given a simple program:
 To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 
 >>> from programslice import slice_string
->>> sorted(slice_string('foo', 3, 4, program, 'myprogram'))
-['baz,5,4', 'foo,3,4', 'foo,5,10']
+>>> slice_string('foo', 3, 4, program, 'myprogram')
+['foo,3,4', 'foo,5,10', 'baz,5,4', 'baz,6,10']
 
 Inverted Result
 ---------------
@@ -58,6 +58,7 @@ defaults to :py:class:`LineFormatter` to just render the line numbers:
 >>> from programslice.formatter import TextOutputFormatter
 >>> result = slice_string('bar', 4, 4, program, 'myprogram', formatter=TextOutputFormatter)
 >>> print('\n'.join(result))    # doctest: +NORMALIZE_WHITESPACE
-    bar = 1
     baz = foo + bar
+    bar = 1
+    print(baz)
     baz = foo + bar

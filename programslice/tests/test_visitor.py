@@ -12,7 +12,6 @@ def test_visit_Assign(assignment_graph):
 def test_visit_Call(call_graph):
     graph = call_graph
     assert graph[Edge('n', 3, 4)] == [Edge('n', 4, 10)]
-    assert Edge('i', 7, 8) in graph[Edge('n', 4, 10)]
 
 
 class TestLineDependencyVisitor(unittest.TestCase):
@@ -35,12 +34,24 @@ class TestLineDependencyVisitor(unittest.TestCase):
             Edge('foo', 17, 4),
             Edge('foo', 19, 10),
             Edge('baz', 19, 4),
+            Edge('baz', 20, 10),
             ], result)
 
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')
         self.visitor.visit(node)
         graph = self.visitor.graph
-        expected = set([12, 16, 17, 19, 21])
-        result = set([x.lineno for x in Slice(graph)(Edge('min', 12, 4))])
+        start = Edge('min', 12, 4)
+        expected = [
+            start,
+            Edge('min', 15, 14),
+            Edge('mid', 16, 8),
+            Edge('min', 16, 18),
+            Edge('mid', 17, 23),
+            Edge('min', 16, 31),
+            Edge('x', 17, 8),
+            Edge('x', 18, 11),
+            Edge('min', 21, 12),
+            ]
+        result = Slice(graph)(start)
         self.assertEqual(expected, result)

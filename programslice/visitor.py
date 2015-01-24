@@ -9,73 +9,70 @@ class LineDependencyVisitor(ast.NodeVisitor):
 
     def __init__(self):
         self.graph = programslice.graph.Graph('')
-        self.contexts = []
         self.writes = {}
         self.reads = {}
 
-    def visit_FunctionDef(self, node):
-        self.reads[node.name] = node
-        super(LineDependencyVisitor, self).generic_visit(node)
-        self.reset()
-
-    def visit_Call(self, node):
-        if isinstance(node.func, ast.Name):
-            self.writes[node.func.id] = node
-
-        super(LineDependencyVisitor, self).generic_visit(node)
-
     def visit_Name(self, node):
-        for i in self.contexts:
-            if i == node:
-                continue
-            #
-            # The control flow goes from left to right. For example, the
-            # value assigned to a variable has to be reflected in a
-            # graph so that we can pick the value and traverse to the
-            # assigned variable.
-            #
-            # This will create the graph, so it can be traversed. From
-            # the value to the assignment in line 1, then from the value
-            # which was the assignment before to the next
-            # assignment.
-            #
-            # v = 1
-            # m = v
-            #
-            # 1 → v → v → m
-            #
-            assignment = programslice.graph.Edge.create_from_astnode(i)
-            value = programslice.graph.Edge.create_from_astnode(node)
-            self.graph.connect(value, assignment)
+        if isinstance(node.ctx, ast.Store):
+            self.writes[node.id] = node
+        elif isinstance(node.ctx, ast.Load):
+            self.reads[node.id] = node
+            self.connect_by_name()
+            self.connect_by_lineno(node)
+        elif isinstance(node.ctx, ast.Del):
+            pass
+        elif isinstance(node.ctx, ast.AugLoad):
+            pass
+        elif isinstance(node.ctx, ast.AugStore):
+            pass
+        elif isinstance(node.ctx, ast.Param):
+            self.reads[node.id] = node
 
-    def visit_Assign(self, node):
-        # Save the targets first. Then let the visitor continue walk
-        # over all children. We scoop up additional names and connect
-        # them in our graph.
-        # Once finished, we add all targets which are not yet connected.
-        # They could correspond to numerical assignments and such.
-        self.contexts = node.targets
-        super(LineDependencyVisitor, self).generic_visit(node)
-        for i in node.targets:
-            edge = programslice.graph.Edge.create_from_astnode(i)
-            if edge not in self.graph:
-                self.graph.add(edge)
-        self.contexts = []
+    def connect_by_lineno(self, node):
+        """
+        Connect reads and writes also by line number.
 
-    def reset(self):
+        We can not only connect by name, but also by line number. That
+        ensures, that we connect the variables which are read, to
+        assigned ones in the current line.
+        """
+        for i, obj in self.writes.items():
+            if obj.lineno == node.lineno:
+                read = programslice.graph.Edge.create_from_astnode(obj)
+                write = programslice.graph.Edge.create_from_astnode(node)
+                self.graph.connect(write, read)
+
+    def connect_by_name(self):
+        """
+        Here we are connecting all variables which are stored with the
+        variables which are read.
+
+        For example:
+
+            v = 1
+            b = 1
+            c = v
+
+        writes: v, c
+        reads: v
+        visitor visits: v (store) → b (store) → c (store) → v (read)
+
+        In order to produce a graph such that: v → v → c we need to
+        check if we can find a read variable which now is written to.
+        Just using the line number is not good enough, since variables
+        written to can come way down the function/method.
+        """
         to_delete = []
-        for i in self.writes:
+        for i, astobj in self.writes.items():
             node = self.reads.get(i)
             if node is None:
                 continue
 
-            call = self.writes[i]
-            for a in call.args:
-                write = programslice.graph.Edge.create_from_astnode(a)
-                for b in node.args.args:
-                    read = programslice.graph.Edge.create_from_astnode(b)
-                    self.graph.connect(write, read)
+            write = programslice.graph.Edge.create_from_astnode(node)
+            read = programslice.graph.Edge.create_from_astnode(astobj)
+            self.graph.connect(write, read)
             to_delete.append(i)
+
         for k in to_delete:
-            del self.writes[i]
-            del self.reads[i]
+            del self.writes[k]
+            del self.reads[k]

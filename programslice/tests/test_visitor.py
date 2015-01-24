@@ -1,4 +1,4 @@
-from programslice.graph import Graph, Slice, Edge
+from programslice.graph import Slice, Edge
 import ast
 import os.path
 import programslice.visitor
@@ -30,9 +30,12 @@ class TestLineDependencyVisitor(unittest.TestCase):
         node = self.load_testdata('function.py')
         self.visitor.visit(node)
         graph = self.visitor.graph
-        result = sorted([x.lineno
-                         for x in Slice(graph)(Edge('foo', 17, 4))])
-        self.assertEqual([17, 19, 19], result)
+        result = Slice(graph)(Edge('foo', 17, 4))
+        self.assertEqual([
+            Edge('foo', 17, 4),
+            Edge('foo', 19, 10),
+            Edge('baz', 19, 4),
+            ], result)
 
     def test_visit_While(self):
         node = self.load_testdata('binsearch.py')

@@ -156,4 +156,4 @@ class Slice(object):
 
         # XXX the sorting defies the whole purpose of traversing first
         # I don't even think it matters really.
-        return sorted(visited)
+        return visited

@@ -58,7 +58,6 @@ defaults to :py:class:`LineFormatter` to just render the line numbers:
 >>> from programslice.formatter import TextOutputFormatter
 >>> result = slice_string('bar', 4, 4, program, 'myprogram', formatter=TextOutputFormatter)
 >>> print('\n'.join(result))    # doctest: +NORMALIZE_WHITESPACE
-    baz = foo + bar
     bar = 1
-    print(baz)
     baz = foo + bar
+    print(baz)

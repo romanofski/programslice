@@ -45,13 +45,13 @@ class TestLineDependencyVisitor(unittest.TestCase):
         expected = [
             start,
             Edge('min', 15, 14),
-            Edge('mid', 16, 8),
             Edge('min', 16, 18),
-            Edge('mid', 17, 23),
             Edge('min', 16, 31),
+            Edge('mid', 16, 8),
+            Edge('min', 21, 12),
+            Edge('mid', 17, 23),
             Edge('x', 17, 8),
             Edge('x', 18, 11),
-            Edge('min', 21, 12),
             ]
         result = Slice(graph)(start)
         self.assertEqual(expected, result)

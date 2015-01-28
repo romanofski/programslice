@@ -17,8 +17,8 @@ class LineDependencyVisitor(ast.NodeVisitor):
             self.writes[node.id] = node
         elif isinstance(node.ctx, ast.Load):
             self.reads[node.id] = node
-            self.connect_by_name()
             self.connect_by_lineno(node)
+            self.connect_by_name()
         elif isinstance(node.ctx, ast.Del):
             pass
         elif isinstance(node.ctx, ast.AugLoad):

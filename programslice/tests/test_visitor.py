@@ -1,8 +1,18 @@
-from programslice.graph import Slice, Edge
 import ast
 import os.path
-import programslice.visitor
 import unittest
+
+import pytest
+
+from programslice.graph import Slice, Edge
+import programslice.visitor
+
+
+def load_testdata(filename):
+    filepath = os.path.join(os.path.dirname(__file__),
+                            'testdata', filename)
+    node = ast.parse(open(filepath, 'r').read(), filepath)
+    return node
 
 
 def test_visit_Assign(assignment_graph):
@@ -14,19 +24,37 @@ def test_visit_Call(call_graph):
     assert graph[Edge('n', 3, 4)] == [Edge('n', 4, 10)]
 
 
+@pytest.mark.unsorted_result
+def test_fix_issue_1_slices_a():
+    node = load_testdata('binsearch.py')
+    visitor = programslice.visitor.LineDependencyVisitor()
+    visitor.visit(node)
+    graph = visitor.graph
+
+    start = Edge('a', 27, 4)
+    result = Slice(graph)(start)
+
+    expected = [
+        start,
+        Edge('a', 30, 8),
+        Edge('a', 31, 8),
+        Edge('a', 32, 8),
+        Edge('a', 34, 11),
+        Edge('a', 30, 4),
+        Edge('a', 31, 4),
+        Edge('a', 32, 4),
+        Edge('a', 33, 4),
+    ]
+    assert expected == result
+
+
 class TestLineDependencyVisitor(unittest.TestCase):
 
     def setUp(self):
         self.visitor = programslice.visitor.LineDependencyVisitor()
 
-    def load_testdata(self, filename):
-        filepath = os.path.join(os.path.dirname(__file__),
-                                'testdata', filename)
-        node = ast.parse(open(filepath, 'r').read(), filepath)
-        return node
-
     def test_visit_FunctionDef(self):
-        node = self.load_testdata('function.py')
+        node = load_testdata('function.py')
         self.visitor.visit(node)
         graph = self.visitor.graph
         result = Slice(graph)(Edge('foo', 17, 4))
@@ -38,7 +66,7 @@ class TestLineDependencyVisitor(unittest.TestCase):
             ], result)
 
     def test_visit_While(self):
-        node = self.load_testdata('binsearch.py')
+        node = load_testdata('binsearch.py')
         self.visitor.visit(node)
         graph = self.visitor.graph
         start = Edge('min', 12, 4)

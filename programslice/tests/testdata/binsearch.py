@@ -21,3 +21,14 @@ def binarysearch(n, searchlist):
             min = mid
         elif x == n:
             return mid
+
+
+def issue_1():
+    a = 1
+    b = 2
+    c = 2 * b
+    a = a - b
+    a = a + c
+    a = a - b
+    a = 5
+    return a

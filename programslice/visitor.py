@@ -14,7 +14,7 @@ class LineDependencyVisitor(ast.NodeVisitor):
 
     def visit_Name(self, node):
         if isinstance(node.ctx, ast.Store):
-            self.writes[node.id] = node
+            self.writes.setdefault(node.id, []).append(node)
         elif isinstance(node.ctx, ast.Load):
             self.reads[node.id] = node
             self.connect_by_lineno(node)
@@ -36,11 +36,12 @@ class LineDependencyVisitor(ast.NodeVisitor):
         ensures, that we connect the variables which are read, to
         assigned ones in the current line.
         """
-        for i, obj in self.writes.items():
-            if obj.lineno == node.lineno:
-                read = programslice.graph.Edge.create_from_astnode(obj)
-                write = programslice.graph.Edge.create_from_astnode(node)
-                self.graph.connect(write, read)
+        for i, objs in self.writes.items():
+            for obj in objs:
+                if obj.lineno == node.lineno:
+                    read = programslice.graph.Edge.create_from_astnode(obj)
+                    write = programslice.graph.Edge.create_from_astnode(node)
+                    self.graph.connect(write, read)
 
     def connect_by_name(self):
         """
@@ -62,16 +63,17 @@ class LineDependencyVisitor(ast.NodeVisitor):
         Just using the line number is not good enough, since variables
         written to can come way down the function/method.
         """
-        to_delete = []
-        for i, astobj in self.writes.items():
-            node = self.reads.get(i)
-            if node is None:
-                continue
+        to_delete = set()
+        for i, objs in self.writes.items():
+            for astobj in objs:
+                node = self.reads.get(i)
+                if node is None:
+                    continue
 
-            write = programslice.graph.Edge.create_from_astnode(node)
-            read = programslice.graph.Edge.create_from_astnode(astobj)
-            self.graph.connect(write, read)
-            to_delete.append(i)
+                write = programslice.graph.Edge.create_from_astnode(node)
+                read = programslice.graph.Edge.create_from_astnode(astobj)
+                self.graph.connect(write, read)
+                to_delete.add(node.id)
 
         for k in to_delete:
             del self.writes[k]

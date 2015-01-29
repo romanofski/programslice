@@ -1,5 +1,4 @@
 from programslice.graph import Graph, Slice, Edge
-import programslice.visitor
 import unittest
 import ast
 

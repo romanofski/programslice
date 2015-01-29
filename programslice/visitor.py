@@ -63,18 +63,13 @@ class LineDependencyVisitor(ast.NodeVisitor):
         Just using the line number is not good enough, since variables
         written to can come way down the function/method.
         """
-        to_delete = set()
-        for i, objs in self.writes.items():
-            for astobj in objs:
-                node = self.reads.get(i)
-                if node is None:
+        for i, write_nodes in self.writes.items():
+            for w_node in write_nodes:
+                r_node = self.reads.get(i)
+                if r_node is None:
                     continue
 
-                write = programslice.graph.Edge.create_from_astnode(node)
-                read = programslice.graph.Edge.create_from_astnode(astobj)
+                assert isinstance(w_node.ctx, ast.Store)
+                write = programslice.graph.Edge.create_from_astnode(w_node)
+                read = programslice.graph.Edge.create_from_astnode(r_node)
                 self.graph.connect(write, read)
-                to_delete.add(node.id)
-
-        for k in to_delete:
-            del self.writes[k]
-            del self.reads[k]

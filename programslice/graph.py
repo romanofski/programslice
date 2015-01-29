@@ -86,15 +86,10 @@ class Graph(object):
 
     def connect(self, e1, e2):
         assert isinstance(e1, type(e1)) and isinstance(e2, type(e2))
-        self.graph.setdefault(e1, []).append(e2)
+        edges = self.graph.setdefault(e1, [])
+        if e2 not in edges:
+            self.graph[e1].append(e2)
         self.add(e2)
-
-        # Tie up potential outstanding edges
-        for key in self.graph:
-            if (key.name == e1.name and
-                    key != e1 and
-                    e1 not in self.graph[key]):
-                self.graph[key].append(e1)
 
     def get(self, edge, default=[]):
         """ Returns all referenced edges from the given edge an empty

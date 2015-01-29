@@ -4,6 +4,9 @@ import ast
 
 
 def test_connect():
+    """
+    This test assures that a connection is being made from Edge 1 to 2.
+    """
     graph = Graph('')
     e1 = graph.add(Edge('', 1, 1))
     e2 = graph.add(Edge('', 2, 1))

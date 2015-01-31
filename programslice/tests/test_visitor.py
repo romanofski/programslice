@@ -44,6 +44,25 @@ def test_does_not_prematurely_delete_dependencies():
     assert Edge('a', 31, 4) in result
 
 
+def test_no_overlapping_slice_result():
+    """
+    Test verifies, that slice result does not include independent
+    functions if the naming of the variables is the same.
+    """
+    node = load_testdata('overlapping.py')
+    visitor = programslice.visitor.LineDependencyVisitor()
+    visitor.visit(node)
+    graph = visitor.graph
+
+    start = Edge('a', 2, 4)
+    result = Slice(graph)(start)
+    expected = [
+        start,
+        Edge('a', 3, 8),
+        Edge('a', 4, 11),
+        Edge('a', 3, 4),
+    ]
+    assert expected == result
 @pytest.mark.xfail
 def test_fix_issue_1_slices_a():
     """

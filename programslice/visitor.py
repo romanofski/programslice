@@ -12,7 +12,28 @@ class LineDependencyVisitor(ast.NodeVisitor):
         self.writes = {}
         self.reads = {}
 
+    def visit_FunctionDef(self, node):
+        """
+        Visits function and resets `writes` and `reads` in order to
+        prevent that current function variables are overwritten.
+
+        Note: This currently just resets writes and reads which is used
+        to build the dependency graph. But it should set the writes and
+        reads in such a way, so that we can slice over function
+        boundaries.
+        """
+        self.writes = {}
+        self.reads = {}
+        super(LineDependencyVisitor, self).generic_visit(node)
+
     def visit_Name(self, node):
+        """
+        Use the name and context in order to distinguish between
+        variables written and read.
+
+        Once the variable is read, we tie up dependencies by line number
+        and name.
+        """
         if isinstance(node.ctx, ast.Store):
             self.writes.setdefault(node.id, []).append(node)
         elif isinstance(node.ctx, ast.Load):
@@ -35,6 +56,10 @@ class LineDependencyVisitor(ast.NodeVisitor):
         We can not only connect by name, but also by line number. That
         ensures, that we connect the variables which are read, to
         assigned ones in the current line.
+
+        Example:
+
+            v = a + b
         """
         for i, objs in self.writes.items():
             for obj in objs:

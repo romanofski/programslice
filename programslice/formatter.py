@@ -50,4 +50,4 @@ class TextOutputFormatter(LineFormatter):
     def __call__(self):
         splitted = self.source.splitlines()
         linenumbers = [x.lineno for x in self.slice_result]
-        return [splitted[x - 1] for x in linenumbers]
+        return [splitted[x - 1] for x in set(linenumbers)]

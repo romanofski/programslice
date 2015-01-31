@@ -1,15 +1,32 @@
 from programslice.graph import Graph, Slice, Edge
-import programslice.visitor
 import unittest
 import ast
 
 
 def test_connect():
+    """
+    This test assures that a connection is being made from Edge 1 to 2.
+    """
     graph = Graph('')
     e1 = graph.add(Edge('', 1, 1))
     e2 = graph.add(Edge('', 2, 1))
     graph.connect(e1, e2)
-    assert graph[e2] == [e1]
+    assert graph[e2] == []
+    assert graph[e1] == [e2]
+
+
+def test_can_t_connect_twice():
+    """
+    This test assures that edges which already have been connected will
+    not result in an additional edge again.
+    """
+    graph = Graph('')
+    e1 = Edge('', 1, 1)
+    e2 = Edge('', 1, 2)
+    for i in range(5):
+        graph.connect(e1, e2)
+
+    assert graph[e1] == [e2]
 
 
 def test_edge_identity():

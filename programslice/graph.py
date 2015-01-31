@@ -5,6 +5,13 @@ educational project for me, since my own implementation.
 """
 from collections import OrderedDict
 from collections import deque
+import ast
+
+AST_EDGE_MAPPING = {
+    ast.Attribute: lambda x: x.attr,
+    ast.Name: lambda x: x.id,
+    ast.Subscript: lambda x: x.value.attr,
+}
 
 
 class Edge(object):
@@ -39,7 +46,8 @@ class Edge(object):
 
     @classmethod
     def create_from_astnode(klass, node):
-        return Edge(node.id, node.lineno, node.col_offset)
+        return Edge(AST_EDGE_MAPPING[node.__class__](node),
+                    node.lineno, node.col_offset)
 
 
 class Graph(object):
@@ -78,15 +86,10 @@ class Graph(object):
 
     def connect(self, e1, e2):
         assert isinstance(e1, type(e1)) and isinstance(e2, type(e2))
-        self.graph.setdefault(e1, []).append(e2)
+        edges = self.graph.setdefault(e1, [])
+        if e2 not in edges:
+            self.graph[e1].append(e2)
         self.add(e2)
-
-        # Tie up potential outstanding edges
-        for key in self.graph:
-            if (key.name == e1.name and
-                    key != e1 and
-                    e1 not in self.graph[key]):
-                self.graph[key].append(e1)
 
     def get(self, edge, default=[]):
         """ Returns all referenced edges from the given edge an empty
@@ -148,4 +151,4 @@ class Slice(object):
 
         # XXX the sorting defies the whole purpose of traversing first
         # I don't even think it matters really.
-        return sorted(visited)
+        return visited

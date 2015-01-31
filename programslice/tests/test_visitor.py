@@ -63,6 +63,11 @@ def test_no_overlapping_slice_result():
         Edge('a', 3, 4),
     ]
     assert expected == result
+
+
+# Currently fails, since last line 'a = 5' is not included in the
+# result. Perhaps it shouldn't be, but rather the result itself only
+# depends on that line.
 @pytest.mark.xfail
 def test_fix_issue_1_slices_a():
     """

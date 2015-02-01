@@ -1,15 +1,38 @@
-Product Vision
+==============
+ Programslice
 ==============
 
-Static slicing for python programs with `vim <https://github.com/romanofski/programslice.vim>`_ integration.
+Static analysis tool for python programs to see depending lines of code.
 
-    http://en.wikipedia.org/wiki/Program_slicing
+
+.. toctree::
+   :maxdepth: 2
+
+   design
+   screenshots
+   intro
+   vim
+   api
+
+
 
 Non-Goals
 ---------
 
     * Find defects in your code e.g. like PyChecker
     * Being used as a command line utility
+
+Design Decisions
+----------------
+
+The implementation makes use of the Python ASTs `ctx` attribute in order
+to find out if variables are written or read. The control flow graph
+representing the source code is currently very basic; most likely
+leading to errors in the slice result.
+
+At this point in time, I'm concentrating not on exact accuracy (if even
+possible in a duck typed language), but on an overall good user
+experience.
 
 Installation Requirements
 -------------------------
@@ -58,3 +81,5 @@ This work would not be possible without:
 
     * VIM plug-ins: Muraoka Yusuke for pep8.vim, Kevin Watters for
       pychecker.vim and Tim Pope for fugitive.vim
+
+    * Mark Harman, A piece of cake; http://www0.cs.ucl.ac.uk/staff/mharman/exe1.html

@@ -6,22 +6,6 @@
 ..  moduleauthor:: Róman Joost <roman@bromeco.de>
 ..  default-domain:: py
 
-==============
- Programslice
-==============
-
-Static analysis tool for python programs to see depending lines of code.
-
-.. toctree::
-   :maxdepth: 2
-
-   design
-   screenshots
-   intro
-   vim
-   api
-
-
 .. include:: ../README.rst
 .. include:: CHANGES.rst
 

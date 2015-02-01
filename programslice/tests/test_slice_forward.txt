@@ -6,9 +6,6 @@ using both methods together and we get a full slice. Currently only
 forward slicing is implemented which returns all line numbers depending
 on the current line number.
 
-..  note:: Weiser style slicing defines a slice criterion with a
-    statement and a subset of variables. This is currently not supported.
-
 Slicing Forward
 ---------------
 
@@ -30,12 +27,6 @@ To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 >>> from programslice import slice_string
 >>> slice_string('foo', 3, 4, program, 'myprogram')
 ['foo,3,4', 'foo,5,10', 'baz,5,4', 'baz,6,10']
-
-Inverted Result
----------------
-
-Inverted results are no longer supported. We're slicing on search
-criteria, not on simple line numbers.
 
 Shebangs and Encoding declarations
 ----------------------------------

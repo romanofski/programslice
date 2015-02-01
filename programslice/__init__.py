@@ -91,13 +91,14 @@ def slice_string(varname, currentline, offset, source, filename,
     :param filename: filename of the given source code.
     :type filename: str
     :param formatter: Formatter class to format the slice result.
-                        Defaults to VimOutPutFormatter which only outputs the
-                        line numbers.
+                      Defaults to VimOutPutFormatter which only outputs the
+                      line numbers.
     :type formatter: class
 
     .. deprecated:: 0.3
+
     :param invert: Invert the result and return lines which don't depend
-                    on the ``currentline``. Defaults to **False**.
+                   on the ``currentline``. Defaults to **False**.
     :type invert: bool
     """
     result = []

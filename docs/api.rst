@@ -4,8 +4,6 @@ API
 Utility Functions
 -----------------
 
-.. automodule:: vim.programslice
-    :members:
 .. automodule:: programslice
     :members:
 

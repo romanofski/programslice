@@ -1,1 +1,1 @@
-.. include:: ../programslice/tests/slice_forward.txt
+.. include:: ../programslice/tests/test_slice_forward.txt

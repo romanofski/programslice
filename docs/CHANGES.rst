@@ -5,8 +5,7 @@ CHANGES
 ----------------
 
     * New datastructures to improve slicing quality
-    * Slicing result is now more fine grained than simply highlighting
-      line numbers
+    * [vim] - Slicing result now highlights variables instead of just lines
 
 0.2 (2012-11-21)
 ----------------

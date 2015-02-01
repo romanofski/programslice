@@ -5,10 +5,15 @@ import programslice.graph
 
 class LineDependencyVisitor(ast.NodeVisitor):
     """ A visitor which creates a data dependency graph.
+
+    ..  note:: Read and Written variables are currently kept track of in
+               a dictionary for each. This may cause wrong results when
+               building the graph. Furthermore, we might want to create
+               a data flow graph and a control flow graph.
     """
 
     def __init__(self):
-        self.graph = programslice.graph.Graph('')
+        self.graph = programslice.graph.Graph('control flow')
         self.writes = {}
         self.reads = {}
 
@@ -73,20 +78,21 @@ class LineDependencyVisitor(ast.NodeVisitor):
         Here we are connecting all variables which are stored with the
         variables which are read.
 
-        For example:
+        For example::
 
-            v = 1
-            b = 1
-            c = v
+            >>> v = 1
+            >>> b = 1
+            >>> c = v
 
-        writes: v, c
-        reads: v
-        visitor visits: v (store) → b (store) → c (store) → v (read)
+            writes: v, c
+            reads: v
+            visitor visits: v (store) → b (store) → c (store) → v (read)
 
         In order to produce a graph such that: v → v → c we need to
         check if we can find a read variable which now is written to.
-        Just using the line number is not good enough, since variables
-        written to can come way down the function/method.
+        Just using the line number is not good enough, because written
+        variables may appear at the end of the function/method, not in
+        the next line.
         """
         for i, write_nodes in self.writes.items():
             for w_node in write_nodes:

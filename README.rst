@@ -15,6 +15,8 @@ Static analysis tool for python programs to see depending lines of code.
    api
 
 
+.. note:: The Python program is rather useless for the end user. Install
+   this program with the `Vim editor plugin <https://github.com/romanofski/programslice.vim>`_ in order to use it. See :ref:`programslice-installation` for more information.
 
 Non-Goals
 ---------
@@ -34,10 +36,22 @@ At this point in time, I'm concentrating not on exact accuracy (if even
 possible in a duck typed language), but on an overall good user
 experience.
 
-Installation Requirements
--------------------------
+.. _programslice-installation:
 
-    * Python 2.7
+Installation
+------------
+
+Requirements: Python 2.7
+
+Install `programslice` first in your favourite virtualenv:
+
+    $ pip install https://github.com/romanofski/programslice/archive/master.zip
+
+Install the Vim plugin by following the instructions on it's `github
+page <https://github.com/romanofski/programslice.vim>`_. Once the plugin
+is installed, either make sure that the ``programslice`` command is in
+your ``$PATH`` variable or you adjust the ``g:programslice_cmd``
+variable in your ``~/.vimrc`` to point it to the executable.
 
 Development
 ===========
@@ -45,6 +59,7 @@ Development
 The project is hosted on github:
 
     https://github.com/romanofski/programslice
+    https://github.com/romanofski/programslice.vim
 
 Documentation is available on:
 

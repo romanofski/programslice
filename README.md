@@ -1,4 +1,4 @@
-### Programslice
+# Programslice
 
 Static analysis tool for python programs to see depending lines of code.
 
@@ -28,26 +28,22 @@ Requirements: Python 2.7
   the ``g:programslice_cmd`` variable in your ``~/.vimrc`` to point it
   to the executable.
 
-Development
-===========
-
-Overview
---------
+## Development
 
 The project is hosted on github:
 
-    https://github.com/romanofski/programslice
-    https://github.com/romanofski/programslice.vim
+* https://github.com/romanofski/programslice
+* https://github.com/romanofski/programslice.vim
 
 Github issues is used as backlogs:
 
-    https://github.com/romanofski/programslice/issues
-    https://github.com/romanofski/programslice.vim/issues
+* https://github.com/romanofski/programslice/issues
+* https://github.com/romanofski/programslice.vim/issues
 
 Documentation is available on:
 
-    http://programslice.readthedocs.org/
+* http://programslice.readthedocs.org/
 
 Screenshots are at:
 
-    https://github.com/romanofski/programslice.vim
+* https://github.com/romanofski/programslice.vim

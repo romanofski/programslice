@@ -19,7 +19,8 @@ Static analysis tool for python programs to see depending lines of code.
    intro
    development
    vim
-   api
+   commandline-api
+   python-api
    CHANGES
    credits
 

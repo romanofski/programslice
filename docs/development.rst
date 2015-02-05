@@ -68,5 +68,3 @@ leading to errors in the slice result.
 
 At this point in time, I'm concentrating not on exact accuracy, but on
 an overall good user experience.
-
-.. include:: ../programslice/tests/test_slice_forward.txt

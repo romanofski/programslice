@@ -1,5 +1,7 @@
-API
-===
+Code Documentation
+==================
+
+.. include:: ../programslice/tests/test_slice_forward.txt
 
 Utility Functions
 -----------------

@@ -20,7 +20,7 @@ Static analysis tool for python programs to see depending lines of code.
    development
    vim
    commandline-api
-   python-api
+   code-documentation
    CHANGES
    credits
 

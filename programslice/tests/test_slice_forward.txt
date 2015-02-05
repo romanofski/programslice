@@ -1,5 +1,5 @@
 Slicing
-=======
+-------
 
 The definition of slicing is split into forward and backwards slicing:
 using both methods together and we get a full slice. Currently only
@@ -7,7 +7,7 @@ forward slicing is implemented which returns all line numbers depending
 on the current line number.
 
 Slicing Forward
----------------
+~~~~~~~~~~~~~~~
 
 Given a simple program:
 
@@ -29,7 +29,7 @@ To see which lines depend on line 3, use the :py:meth:`slice_string` method:
 ['foo,3,4', 'foo,5,10', 'baz,5,4', 'baz,6,10']
 
 Shebangs and Encoding declarations
-----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes programs use encoding declarations, which need to removed
 before the program can be parsed. The slicing will not cause an error:
@@ -40,7 +40,7 @@ before the program can be parsed. The slicing will not cause an error:
 >>> ignored = slice_string('baz', 5, 4, encprogram, 'myprogram')
 
 Text Output
------------
+~~~~~~~~~~~
 
 Instead of returning line numbers, we can filter the buffer as well. The
 `slice_string` function can be given a custom formatter class. It

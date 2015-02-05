@@ -47,12 +47,13 @@ Documentation can easily be build by running::
 
 The HTML can be found under `docs-build`.
 
-Pull Requests
--------------
+Contributing
+------------
 
 If you hack on your own version, here is the policy for acceptable pull
 requests:
 
+* should follow PEP-8
 * each feature should provide tests which cover the new code
 * the patch should not break any existing tests
 * it should add an entry in the `CHANGES.txt`

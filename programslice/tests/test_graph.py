@@ -39,11 +39,6 @@ def test_edge_identity():
     assert e1 != e2
 
 
-def test_graph_slice_forward(assignment_graph):
-    result = [x.lineno for x in Slice(assignment_graph)(Edge('n', 3, 4))]
-    assert set([3, 5, 6]) == set(result)
-
-
 def test_repr():
     graph = Graph('foo')
     graph.add(Edge('o', 3, 4))

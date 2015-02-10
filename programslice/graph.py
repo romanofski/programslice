@@ -139,8 +139,4 @@ class Slice(object):
                 children.extend(deque(self.graph.get(edge)))
                 visited.append(edge)
 
-        # XXX filter out duplicates
-
-        # XXX the sorting defies the whole purpose of traversing first
-        # I don't even think it matters really.
         return visited

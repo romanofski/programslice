@@ -1,10 +1,10 @@
 # coding: utf-8
 from setuptools import setup, find_packages
+import programslice
 
-version = '0.2'
 
-setup(name='programslice',
-      version=version,
+setup(name=programslice.__name__,
+      version=programslice.__version__,
       description='Static analysis tool for python',
       long_description=(
           open('README.rst').read() + '\n\n' +

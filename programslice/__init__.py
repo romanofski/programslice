@@ -1,3 +1,6 @@
+__name__ = 'programslice'
+__version__ = '0.3'
+
 import argparse
 import ast
 import logging
@@ -32,6 +35,7 @@ def command_slice_file():
     depending lines.
     """
     parser = argparse.ArgumentParser(
+        prog=__name__,
         description='Static analysis tool to slice python programs')
     parser.add_argument(
         'filename',
@@ -56,6 +60,12 @@ def command_slice_file():
         default='vim',
         help=('Choose an output: vim (default), linenumbers, text.'),
         type=str)
+    parser.add_argument(
+        '--version',
+        help=('Print version and exit.'),
+        version='%(prog)s {}'.format(__version__),
+        action='version',
+        )
     arguments = parser.parse_args()
     if not os.path.exists(arguments.filename):
         logger.error("Can't open {0}.".format(arguments.filename))

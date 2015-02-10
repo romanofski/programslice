@@ -4,6 +4,7 @@ CHANGES
 0.3 (unreleased)
 ----------------
 
+    * command: Added ``--version`` to see command line tool version.
     * New datastructures to improve slicing quality: Result can yield
       line numbers, objects, sliced source code
     * vim: Slicing result now highlights variables instead of just lines

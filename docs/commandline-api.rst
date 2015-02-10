@@ -3,6 +3,22 @@ Commandline API
 
 This utility can be invoked by editor plugins.
 
+Version
+-------
+
+Call::
+
+    programslice --version
+
+Example::
+
+    # call
+    programslice --version
+
+    # output
+    0.3
+
+
 Slicing a File
 --------------
 

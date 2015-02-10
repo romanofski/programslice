@@ -37,10 +37,10 @@ Development
 
 The project is hosted on github:
 
--  https://github.com/romanofski/programslice
+-  http://romanofski.github.io/programslice/
 -  https://github.com/romanofski/programslice.vim
 
-Github issues is used as backlogs:
+Backlogs:
 
 -  https://github.com/romanofski/programslice/issues
 -  https://github.com/romanofski/programslice.vim/issues
@@ -49,6 +49,6 @@ Documentation is available on:
 
 -  http://programslice.readthedocs.org/
 
-Screenshots are at:
+Screenshots:
 
 -  https://github.com/romanofski/programslice.vim

@@ -6,26 +6,22 @@
 ..  moduleauthor:: Róman Joost <roman@bromeco.de>
 ..  default-domain:: py
 
-==============
- Programslice
-==============
+============
+Programslice
+============
 
-Static analysis tool for python programs to see depending lines of code.
-
+.. include:: ../README.rst
+   :start-after: Build status
+   :end-before: Installation
 
 .. toctree::
    :maxdepth: 2
 
-   intro
    development
    commandline-api
    code-documentation
    CHANGES
    credits
-
-
-.. note:: The Python program `programslice` in itself is rather useless for the end user. Use it
-   with the `Vim editor plugin <https://github.com/romanofski/programslice.vim>`_ . See :ref:`programslice-installation` for more information.
 
 Indices and tables
 ==================

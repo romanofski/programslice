@@ -18,9 +18,12 @@ Documentation is available on:
 
     http://programslice.readthedocs.org/
 
-Screenshots are at:
+Non-Goals
+---------
 
-    https://github.com/romanofski/programslice.vim
+-  Find defects in your code e.g. like PyChecker
+-  Being used as a command line utility
+
 
 Development Environment
 -----------------------

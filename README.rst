@@ -2,10 +2,6 @@
 Programslice
 ============
 
-.. image:: https://travis-ci.org/romanofski/programslice.svg?branch=master
-   :target: https://travis-ci.org/romanofski/programslice
-   :alt: Build status
-
 Static analysis tool for python programs to see depending lines of code.
 
 .. note:: The Python program ``programslice`` in itself is rather

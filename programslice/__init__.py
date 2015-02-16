@@ -1,15 +1,14 @@
-__name__ = 'programslice'
-__version__ = '0.3'
-
 import argparse
 import ast
 import logging
 import os.path
+import re
+import sys
+
 import programslice.formatter
 import programslice.graph
 import programslice.visitor
-import re
-import sys
+import programslice.package
 
 
 logger = logging.getLogger('programslice')
@@ -35,7 +34,7 @@ def command_slice_file():
     depending lines.
     """
     parser = argparse.ArgumentParser(
-        prog=__name__,
+        prog=programslice.package.__name__,
         description='Static analysis tool to slice python programs')
     parser.add_argument(
         'filename',
@@ -63,7 +62,8 @@ def command_slice_file():
     parser.add_argument(
         '--version',
         help=('Print version and exit.'),
-        version='%(prog)s {}'.format(__version__),
+        version='%(prog)s {}'.format(
+            programslice.package.__version__),
         action='version',
         )
     arguments = parser.parse_args()

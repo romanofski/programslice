@@ -1,5 +1,5 @@
 language: python
 install:
-    - python bootstrap.py --setuptools-version=0.9.8
+    - python bootstrap.py --setuptools-version=12.2
     - ./bin/buildout
 script: ./bin/test

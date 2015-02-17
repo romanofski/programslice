@@ -1,10 +1,18 @@
 # coding: utf-8
+import os.path
 from setuptools import setup, find_packages
-import programslice.package
+
+about = {}
+
+package_meta_path = os.path.join(
+    os.path.dirname(__file__), 'programslice', 'package.py')
+
+with open(package_meta_path) as fp:
+    exec(fp.read(), about)
 
 
-setup(name=programslice.package.__name__,
-      version=programslice.package.__version__,
+setup(name=about['__name__'],
+      version=about['__version__'],
       description='Static analysis tool for python',
       long_description=(
           open('README.rst').read() + '\n\n' +

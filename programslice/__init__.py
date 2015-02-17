@@ -62,8 +62,7 @@ def command_slice_file():
     parser.add_argument(
         '--version',
         help=('Print version and exit.'),
-        version='%(prog)s {}'.format(
-            programslice.package.__version__),
+        version=programslice.package.__version__,
         action='version',
         )
     arguments = parser.parse_args()

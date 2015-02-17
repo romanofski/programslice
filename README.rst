@@ -33,6 +33,21 @@ Requirements: Python 2.7
   the ``g:programslice_cmd`` variable in your ``~/.vimrc`` to point it
   to the executable.
 
+Forms of Contribution
+=====================
+
+If you find this program useful, here is a list of how you can
+contribute:
+
+* buy me a book off my `wish list
+  <http://www.amazon.com/gp/registry/wishlist/13873Q1WKYL2W/ref=cm_wl_rlist_go_o?>`_
+
+* file issues against `programslice
+  <https://github.com/romanofski/programslice/issues>`_ or the `vim
+  plugin <https://github.com/romanofski/programslice.vim/issues>`_
+
+* help to improve the code
+
 Development
 -----------
 

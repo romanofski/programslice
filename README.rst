@@ -16,6 +16,15 @@ Static analysis tool for python programs to see depending lines of code.
 
 .. _programslice-installation:
 
+Why Using Programslice
+======================
+
+The main benefits of the program are:
+
+* the possibility to aid tracing the control flow of the program
+
+* find variables that are unnecessary to the program state
+
 Installation
 ============
 

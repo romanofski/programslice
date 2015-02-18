@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-0.3 (unreleased)
+0.3 (2015-02-18)
 ----------------
 
     * command: Added ``--version`` to see command line tool version.

@@ -76,7 +76,7 @@ Documentation is available on:
 
 Screenshot
 
-.. image:: docs/screenshot.png
+.. image:: docs/screenshot.gif
 
 License
 -------

@@ -3,6 +3,7 @@ module PythonAst2IR where
 
 import Compiler.Hoopl
 import Language.Python.Common.AST
+import Language.Python.Common.SrcLocation
 import Control.Monad
 import qualified IR as I
 import qualified Data.Map as M
@@ -11,19 +12,20 @@ import qualified Data.Map as M
 -- | Map to avoid creating new labels for already known identifiers
 --
 type IdLabelMap = M.Map String Label
-data LabelMapM a = LabelMapM (IdLabelMap -> I.M (IdLabelMap, a))
+data LabelMapM a = LabelMapM (IdLabelMap -> SimpleFuelMonad (IdLabelMap, a))
 
 -- | TODO urks... what are we doing here?
 --
 instance Monad LabelMapM where
     return x = LabelMapM (\m -> return (m, x))
+
     LabelMapM f1 >>= k = LabelMapM (\m -> do (m', x) <- f1 m
                                              let (LabelMapM f2) = k x
                                              f2 m')
 
 -- | main function to convert Python AST to IR
 --
-astToIR :: Statement annot -> I.M I.Proc
+astToIR :: Statement SrcSpan -> SimpleFuelMonad I.Proc
 astToIR (Fun {  fun_name = n
               , fun_args = a
               , fun_result_annotation = _
@@ -34,9 +36,8 @@ astToIR (Fun {  fun_name = n
         body <- toBody b
         return I.Proc { I.name = toName n, I.args = toVar a, I.body = body, I.entry = entry }
 
-run :: LabelMapM a -> I.M a
-run (LabelMapM f) = f M.empty >>= return . snd
-
+run :: LabelMapM a -> SimpleFuelMonad a
+run (LabelMapM f) = liftM snd $ f M.empty
 
 -- | returns a label for the given "function" name
 --
@@ -62,10 +63,9 @@ toBody x =
        getBody g
 
 toBlock :: Statement annot -> LabelMapM (Graph I.Insn C C)
-toBlock x = do
-        f <- toFirst x
-        l <- toLast x
-        return $ mkFirst f <*> mkLast l
+toBlock x = toFirst x >>= \f ->
+                toLast x >>= \l ->
+                    return $ mkFirst f <*> mkLast l
 
 
 -- | make an entry point IR.Insn
@@ -77,7 +77,7 @@ toFirst (Assign to _ _) = liftM I.Label $ labelFor entry
 
 toLast :: Statement annot -> LabelMapM (I.Insn O C)
 toLast (Return Nothing _) = return $ I.Return Nothing
-toLast (Return (Just x) _) = return $ I.Return $ Just [(I.Var $ exprToStrings x)]
+toLast (Return (Just x) _) = return $ I.Return $ Just [I.Var $ exprToStrings x]
 
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str

@@ -7,12 +7,8 @@ module IR where
 import Compiler.Hoopl
 
 
--- | Make sure when converting Strings to (Hoopl) Labels, we avoid any
--- duplication. The same strings will be assigned to the same Label
---
-type M = CheckingFuelMonad SimpleUniqueMonad
-
 data Expr = Var Var
+    deriving Show
 
 type Var = String
 
@@ -25,9 +21,20 @@ data Proc = Proc { name :: String, args :: [Var], entry :: Label, body :: Graph 
 data Insn e x where
     Label   :: Label    ->              Insn C O
     Assign  :: Var      -> Expr ->      Insn O O
-    Return  :: Maybe [Expr]   ->              Insn O C
+    Return  :: Maybe [Expr]   ->        Insn O C
 
 
 instance NonLocal Insn where
     entryLabel (Label l)    = l
     successors (Return _)   = []
+
+instance Show (Proc) where
+    show (Proc {name = n, args = axs, entry = lbl, body = g }) =
+        show $ n ++ show lbl ++ "\n" ++ graph
+        where graph = showGraph show g
+
+instance Show (Insn e x) where
+    show (Label lbl)  = show lbl ++ ":"
+    show (Assign v e) =  show v ++ " = " ++ show e
+    show (Return (Just xs)) = show $ fmap show xs
+    show (Return Nothing) = ""

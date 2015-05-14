@@ -57,12 +57,14 @@ toVar (Param (Ident name _) _ _ _ :xs) = name : toVar xs
 toVar  _                               = []
 
 
-toBody :: Suite annot -> LabelMapM (Graph I.Insn C C)
+toBody :: Suite SrcSpan -> LabelMapM (Graph I.Insn C C)
 toBody x =
     do g <- foldl (liftM2 (|*><*|)) (return emptyClosedGraph) (map toBlock x)
        getBody g
 
-toBlock :: Statement annot -> LabelMapM (Graph I.Insn C C)
+-- | TODO this does not represent a block in Python, since it only
+-- operates on one statement
+toBlock :: Statement SrcSpan -> LabelMapM (Graph I.Insn C C)
 toBlock x = toFirst x >>= \f ->
                 toLast x >>= \l ->
                     return $ mkFirst f <*> mkLast l
@@ -71,13 +73,14 @@ toBlock x = toFirst x >>= \f ->
 -- | make an entry point IR.Insn
 -- TODO non exaustive patterns!
 --
-toFirst :: Statement annot -> LabelMapM (I.Insn C O)
+toFirst :: Statement SrcSpan -> LabelMapM (I.Insn C O)
+toFirst x = liftM I.Label $ labelFor (show x)
 toFirst (Assign to _ _) = liftM I.Label $ labelFor entry
     where entry = exprToStrings $ head to
 
 toLast :: Statement annot -> LabelMapM (I.Insn O C)
-toLast (Return Nothing _) = return $ I.Return Nothing
 toLast (Return (Just x) _) = return $ I.Return $ Just [I.Var $ exprToStrings x]
+toLast _ = return $ I.Return Nothing
 
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str

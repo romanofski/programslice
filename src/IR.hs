@@ -29,8 +29,8 @@ instance NonLocal Insn where
     successors (Return _)   = []
 
 instance Show (Proc) where
-    show (Proc {name = n, args = axs, entry = lbl, body = g }) =
-        show $ n ++ show lbl ++ "\n" ++ graph
+    show (Proc {name = n, args = _, entry = lbl, body = g }) =
+        show $ n ++ show lbl ++ ": " ++ graph ++ "||"
         where graph = showGraph show g
 
 instance Show (Insn e x) where

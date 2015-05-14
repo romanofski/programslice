@@ -22,7 +22,7 @@ executable programslice
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.7
                      , language-python
-                     , hoopl
+                     , hoopl >= 3.10.1
                      , pretty-show
                      , containers
   hs-source-dirs:      src

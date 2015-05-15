@@ -1,5 +1,2 @@
-language: python
-install:
-    - python bootstrap.py --setuptools-version=12.2
-    - ./bin/buildout
-script: ./bin/test
+language: haskell
+script: cabal configure --enable-tests -ghc-options=-Werror && cabal build && cabal test

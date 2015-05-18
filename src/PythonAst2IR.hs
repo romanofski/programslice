@@ -74,9 +74,8 @@ toBlock x = toFirst x >>= \f ->
 -- TODO non exaustive patterns!
 --
 toFirst :: Statement SrcSpan -> LabelMapM ((I.Insn I.SrcLocation) C O)
+toFirst (Assign to _ _) = liftM I.Label $ labelFor $ exprToStrings $ head to
 toFirst x = liftM I.Label $ labelFor (show x)
-toFirst (Assign to _ _) = liftM I.Label $ labelFor entry
-    where entry = exprToStrings $ head to
 
 toLast :: Statement SrcSpan -> LabelMapM ((I.Insn I.SrcLocation) O C)
 toLast (Return (Just x) an) = return $ I.Return $ Just [I.Variable (exprToStrings x) (toSrcLocation an)]

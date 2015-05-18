@@ -1,3 +1,2 @@
-No annotations::
-    At this point in time we can not slice and return needed Line and
-    Column numbers since our IR does not know anything about it.
+No API::
+    Currently everything is public

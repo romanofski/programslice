@@ -30,7 +30,7 @@ astToIR (Fun {  fun_name = n
               , fun_args = a
               , fun_result_annotation = _
               , fun_body = b
-              , stmt_annot = sta })
+              , stmt_annot = _ })
     = run $ do
         entry <- getEntry n
         body <- toBody b
@@ -42,7 +42,7 @@ run (LabelMapM f) = liftM snd $ f M.empty
 -- | returns a label for the given "function" name
 --
 getEntry :: Ident annot -> LabelMapM Label
-getEntry (Ident fname _) = labelFor fname
+getEntry x = labelFor $ toName x
 
 toName :: Ident annot -> String
 toName (Ident name _) = name
@@ -52,19 +52,19 @@ toName (Ident name _) = name
 --
 -- TODO: There are more parameter types to match against.
 --
-toVar :: [Parameter annot] -> [I.Var]
-toVar (Param (Ident name _) _ _ _ :xs) = name : toVar xs
+toVar :: [Parameter SrcSpan] -> [I.Var]
+toVar (Param (Ident name _) _ _ an :xs) = I.Variable name (toSrcLocation an) : toVar xs
 toVar  _                               = []
 
 
-toBody :: Suite SrcSpan -> LabelMapM (Graph I.Insn C C)
+toBody :: Suite SrcSpan -> LabelMapM (Graph (I.Insn I.SrcLocation) C C)
 toBody x =
     do g <- foldl (liftM2 (|*><*|)) (return emptyClosedGraph) (map toBlock x)
        getBody g
 
 -- | TODO this does not represent a block in Python, since it only
 -- operates on one statement
-toBlock :: Statement SrcSpan -> LabelMapM (Graph I.Insn C C)
+toBlock :: Statement SrcSpan -> LabelMapM (Graph (I.Insn I.SrcLocation) C C)
 toBlock x = toFirst x >>= \f ->
                 toLast x >>= \l ->
                     return $ mkFirst f <*> mkLast l
@@ -73,13 +73,13 @@ toBlock x = toFirst x >>= \f ->
 -- | make an entry point IR.Insn
 -- TODO non exaustive patterns!
 --
-toFirst :: Statement SrcSpan -> LabelMapM (I.Insn C O)
+toFirst :: Statement SrcSpan -> LabelMapM ((I.Insn I.SrcLocation) C O)
 toFirst x = liftM I.Label $ labelFor (show x)
 toFirst (Assign to _ _) = liftM I.Label $ labelFor entry
     where entry = exprToStrings $ head to
 
-toLast :: Statement annot -> LabelMapM (I.Insn O C)
-toLast (Return (Just x) _) = return $ I.Return $ Just [I.Var $ exprToStrings x]
+toLast :: Statement SrcSpan -> LabelMapM ((I.Insn I.SrcLocation) O C)
+toLast (Return (Just x) an) = return $ I.Return $ Just [I.Variable (exprToStrings x) (toSrcLocation an)]
 toLast _ = return $ I.Return Nothing
 
 exprToStrings :: Expr annot -> String
@@ -101,3 +101,11 @@ labelFor name = LabelMapM go
             Nothing -> do l' <- freshLabel
                           let m' = M.insert name l' m
                           return (m', l')
+
+
+-- | Helper function to convert language annotation to our annotation
+--
+toSrcLocation :: SrcSpan -> I.SrcLocation
+toSrcLocation (SpanPoint _ r c) = I.SingleLocation r c
+toSrcLocation (SpanCoLinear _ r sc ec) = I.CoLinearLocation r sc ec
+toSrcLocation (SpanMultiLine _ sr sc er ec) = I.MultiLineLocation sr sc er ec

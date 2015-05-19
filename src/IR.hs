@@ -1,9 +1,10 @@
 {-# LANGUAGE GADTs #-}
-module IR where
-
--- with the help from:
--- http://blog.ezyang.com/2011/04/hoopl-guided-tour-base-system/
+-- | Intermedite representation
+-- The plan is to convert every language we support to the intermediate
+-- representation language.  From there we utilize hoopl to create
+-- control flow and data flow graphs.
 --
+module IR where
 import Compiler.Hoopl
 
 
@@ -34,6 +35,11 @@ instance Show SrcLocation where
 --
 data Proc = Proc { name :: String, args :: [Var], entry :: Label, body :: Graph (Insn SrcLocation) C C }
 
+instance Show (Proc) where
+    show (Proc {name = n, args = _, entry = lbl, body = g }) =
+        show $ n ++ show lbl ++ ": " ++ graph ++ "||"
+        where graph = showGraph show g
+
 -- | An instruction with an (e)ntry and an e(x)it
 --
 data Insn a e x where
@@ -41,15 +47,9 @@ data Insn a e x where
     Assign  :: Var      -> Expr   ->    Insn a O O
     Return  :: Maybe [Expr]   ->        Insn a O C
 
-
 instance NonLocal (Insn a) where
     entryLabel (Label l)    = l
     successors (Return _)   = []
-
-instance Show (Proc) where
-    show (Proc {name = n, args = _, entry = lbl, body = g }) =
-        show $ n ++ show lbl ++ ": " ++ graph ++ "||"
-        where graph = showGraph show g
 
 instance Show (Insn a e x) where
     show (Label lbl)  = show lbl ++ ":"

@@ -78,6 +78,11 @@ Screenshot
 
 .. image:: docs/screenshot.gif
 
+Credits
+-------
+
+- http://blog.ezyang.com/2011/04/hoopl-guided-tour-base-system/
+
 License
 -------
 

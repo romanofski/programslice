@@ -35,6 +35,7 @@ executable programslice
                      , language-python
                      , hoopl >= 3.10.1
                      , containers
+                     , pretty-show
   hs-source-dirs:      src
   default-language:    Haskell2010
 

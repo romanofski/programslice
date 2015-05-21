@@ -10,7 +10,7 @@ import Language.Python.Common (Token)
 import Language.Python.Common.AST
 import PythonAst2IR (astToIR)
 import Compiler.Hoopl
-import qualified IR as I
+import qualified PythonHoopl as I
 
 
 getAST :: (Module SrcSpan, [Token]) -> [Statement SrcSpan]

@@ -5,7 +5,7 @@ import Compiler.Hoopl
 import Language.Python.Common.AST
 import Language.Python.Common.SrcLocation
 import Control.Monad
-import qualified IR as I
+import qualified PythonHoopl as I
 import qualified Data.Map as M
 
 
@@ -34,7 +34,7 @@ astToIR (Fun {  fun_name = n
     = run $ do
         entry <- getEntry n
         body <- toBody b
-        return I.Proc { I.name = toName n, I.args = toVar a, I.body = body, I.entry = entry }
+        return I.Proc { I.name = toName n, I.args = a, I.body = body, I.entry = entry }
 
 run :: LabelMapM a -> SimpleFuelMonad a
 run (LabelMapM f) = liftM snd $ f M.empty
@@ -52,19 +52,19 @@ toName (Ident name _) = name
 --
 -- TODO: There are more parameter types to match against.
 --
-toVar :: [Parameter SrcSpan] -> [I.Var]
-toVar (Param (Ident name _) _ _ an :xs) = I.Variable name (toSrcLocation an) : toVar xs
-toVar  _                               = []
+-- toVar :: [Parameter SrcSpan] -> [I.Var]
+-- toVar (Param (Ident name _) _ _ an :xs) = I.Variable name (toSrcLocation an) : toVar xs
+-- toVar  _                               = []
 
 
-toBody :: Suite SrcSpan -> LabelMapM (Graph (I.Insn I.SrcLocation) C C)
-toBody x =
-    do g <- foldl (liftM2 (|*><*|)) (return emptyClosedGraph) (map toBlock x)
+toBody :: Suite SrcSpan -> LabelMapM (Graph (I.Insn SrcSpan) C C)
+toBody xs =
+    do g <- foldl (liftM2 (|*><*|)) (return emptyClosedGraph) (map toBlock xs)
        getBody g
 
 -- | TODO this does not represent a block in Python, since it only
 -- operates on one statement
-toBlock :: Statement SrcSpan -> LabelMapM (Graph (I.Insn I.SrcLocation) C C)
+toBlock :: Statement SrcSpan -> LabelMapM (Graph (I.Insn SrcSpan) C C)
 toBlock x = toFirst x >>= \f ->
                 toLast x >>= \l ->
                     return $ mkFirst f <*> mkLast l
@@ -73,13 +73,13 @@ toBlock x = toFirst x >>= \f ->
 -- | make an entry point IR.Insn
 -- TODO non exaustive patterns!
 --
-toFirst :: Statement SrcSpan -> LabelMapM ((I.Insn I.SrcLocation) C O)
+toFirst :: Statement SrcSpan -> LabelMapM ((I.Insn SrcSpan) C O)
 toFirst (Assign to _ _) = liftM I.Label $ labelFor $ exprToStrings $ head to
 toFirst x = liftM I.Label $ labelFor (show x)
 
-toLast :: Statement SrcSpan -> LabelMapM ((I.Insn I.SrcLocation) O C)
-toLast (Return (Just x) an) = return $ I.Return $ Just [I.Variable (exprToStrings x) (toSrcLocation an)]
-toLast _ = return $ I.Return Nothing
+toLast :: Statement SrcSpan -> LabelMapM ((I.Insn SrcSpan) O C)
+toLast (Return x an) = return $ I.Return x an
+toLast _ = return $ I.Return Nothing SpanEmpty
 
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str
@@ -101,10 +101,3 @@ labelFor name = LabelMapM go
                           let m' = M.insert name l' m
                           return (m', l')
 
-
--- | Helper function to convert language annotation to our annotation
---
-toSrcLocation :: SrcSpan -> I.SrcLocation
-toSrcLocation (SpanPoint _ r c) = I.SingleLocation r c
-toSrcLocation (SpanCoLinear _ r sc ec) = I.CoLinearLocation r sc ec
-toSrcLocation (SpanMultiLine _ sr sc er ec) = I.MultiLineLocation sr sc er ec

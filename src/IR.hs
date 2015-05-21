@@ -4,6 +4,13 @@
 -- representation language.  From there we utilize hoopl to create
 -- control flow and data flow graphs.
 --
+-- TODO:
+--   * the IR AST is currently way to minimal to represent any kind of
+--   input language
+--   * the annotation is tacked on to the IR AST. It feels like a crazy
+--   mistake, but the only way to do this at this point is to run with
+--   it and find out
+--
 module IR where
 import Compiler.Hoopl
 

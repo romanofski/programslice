@@ -13,25 +13,25 @@ import Compiler.Hoopl
 import qualified PythonHoopl as I
 
 
-getAST :: (Module SrcSpan, [Token]) -> [Statement SrcSpan]
-getAST (Module xs, _) = xs
-
--- | Helper function to check if we can convert ASTs correctly to our
--- internal representation.
+-- | Helper function to filter out all functions from a list of
+-- statements.
 --
--- /TODO:/ don't stick to just functions once we extend our IR
+filterFunction :: [Statement SrcSpan] -> [Statement SrcSpan]
+filterFunction (fun@(Fun{}):xs) = fun : filterFunction xs
+filterFunction [] = []
+filterFunction (_:xs) = filterFunction xs
+
+
+-- | Monadic code to convert source code to a list of IR procedures.
 --
-parsedToFun :: [Statement SrcSpan] -> [Statement SrcSpan]
-parsedToFun (fun@(Fun{}):xs) = fun : parsedToFun xs
-parsedToFun [] = []
-parsedToFun (_:xs) = parsedToFun xs
-
-
 parse :: String -> SimpleFuelMonad [I.Proc]
 parse contents =
     case parseModule contents [] of
-        Right parsed -> mapM astToIR $ parsedToFun $ getAST parsed
+        Right parsed -> mapM astToIR $ filterFunction $ getAST parsed
         Left _ -> return []
+    where
+        getAST :: (Module SrcSpan, [Token]) -> [Statement SrcSpan]
+        getAST (Module xs, _) = xs
 
 -- | converts the source code given as a string to our intermediate
 -- representation

@@ -18,7 +18,8 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     PythonAst2IR
+  exposed-modules:     Python.ControlFlow
+                       Python.Hoopl
                      , Parse
   default-language:    Haskell2010
   ghc-options:         -O2 -Wall -fwarn-tabs

@@ -1,8 +1,8 @@
 {-# LANGUAGE GADTs #-}
-module PythonHoopl where
+module Python.Hoopl where
 
-import Compiler.Hoopl
 import qualified Language.Python.Common.AST as PA
+import Compiler.Hoopl
 import Language.Python.Common.SrcLocation
 
 

@@ -8,9 +8,9 @@ import Language.Python.Version2.Parser
 import Language.Python.Common.SrcLocation
 import Language.Python.Common (Token)
 import Language.Python.Common.AST
-import PythonAst2IR (astToIR)
+import Python.ControlFlow (astToIR)
+import Python.Hoopl (Proc)
 import Compiler.Hoopl
-import qualified PythonHoopl as I
 
 
 -- | Helper function to filter out all functions from a list of
@@ -24,7 +24,7 @@ filterFunction (_:xs) = filterFunction xs
 
 -- | Monadic code to convert source code to a list of IR procedures.
 --
-parse :: String -> SimpleFuelMonad [I.Proc]
+parse :: String -> SimpleFuelMonad [Proc]
 parse contents =
     case parseModule contents [] of
         Right parsed -> mapM astToIR $ filterFunction $ getAST parsed
@@ -36,5 +36,5 @@ parse contents =
 -- | converts the source code given as a string to our intermediate
 -- representation
 --
-convert :: String -> [I.Proc]
+convert :: String -> [Proc]
 convert contents = runSimpleUniqueMonad $ runWithFuel 0 (parse contents)

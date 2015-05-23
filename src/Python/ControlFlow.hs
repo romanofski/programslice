@@ -1,11 +1,11 @@
 {-# LANGUAGE RankNTypes #-}
-module PythonAst2IR where
+module Python.ControlFlow where
 
 import Compiler.Hoopl
 import Language.Python.Common.AST
 import Language.Python.Common.SrcLocation
 import Control.Monad
-import qualified PythonHoopl as I
+import qualified Python.Hoopl as I
 import qualified Data.Map as M
 
 

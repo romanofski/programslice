@@ -1,0 +1,5 @@
+latest:
+    build: ghc780
+    working_dir: /workspace
+    volumes:
+        - ../:/workspace

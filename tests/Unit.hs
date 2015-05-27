@@ -1,9 +1,9 @@
-module Main where
+module Unit where
 
 import Parse
+import Fixtures
 import Test.HUnit
-import Control.Monad (unless)
-import System.Exit (exitFailure)
+import Python.Hoopl (Proc(..))
 
 
 -- | helper function to read source code from given FilePath and convert
@@ -19,11 +19,15 @@ testConvertsToIRSuccessfully = TestCase $ do
     procs <- toIRProcs convert "tests/data/binsearch.py"
     assertBool "non-empty list expected" (not $ null procs)
 
+testConvertsSingleFunctionSuccessfully :: Test
+testConvertsSingleFunctionSuccessfully = TestCase $
+    assertBool "non-empty hoopl statement" (isHooplStatement $ convertSingleStatement fixturePythonAssignFunc)
+
+isHooplStatement :: Proc -> Bool
+isHooplStatement (Proc name _ _ _) = name == "assign"
+
 tests :: Test
 tests = TestList [
-    TestLabel "converts source code successfully" testConvertsToIRSuccessfully
+      TestLabel "converts source code successfully" testConvertsToIRSuccessfully
+    , TestLabel "converts statement to hoopl correctly" testConvertsToIRSuccessfully
     ]
-
-main :: IO ()
-main = runTestTT tests >>= \(Counts _ _ e f) ->
-        unless (e + f == 0) exitFailure

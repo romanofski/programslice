@@ -33,6 +33,11 @@ parse contents =
         getAST :: (Module SrcSpan, [Token]) -> [Statement SrcSpan]
         getAST (Module xs, _) = xs
 
+-- | Converts single statement to hoopl
+--
+convertSingleStatement :: Statement SrcSpan -> Proc
+convertSingleStatement stm = runSimpleUniqueMonad $ runWithFuel 0 (astToIR stm)
+
 -- | converts the source code given as a string to our intermediate
 -- representation
 --

@@ -25,7 +25,7 @@ instance Monad LabelMapM where
 
 -- | main function to convert Python AST to IR
 --
-astToIR :: Statement SrcSpan -> SimpleFuelMonad I.Proc
+astToIR :: Statement SrcSpan -> SimpleFuelMonad (IdLabelMap, I.Proc)
 astToIR (Fun {  fun_name = n
               , fun_args = a
               , fun_result_annotation = _
@@ -36,8 +36,8 @@ astToIR (Fun {  fun_name = n
         body <- toBody b
         return I.Proc { I.name = toName n, I.args = a, I.body = body, I.entry = entry }
 
-run :: LabelMapM a -> SimpleFuelMonad a
-run (LabelMapM f) = liftM snd $ f M.empty
+run :: LabelMapM a -> SimpleFuelMonad (IdLabelMap, a)
+run (LabelMapM f) = f M.empty
 
 -- | returns a label for the given "function" name
 --

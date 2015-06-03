@@ -4,6 +4,7 @@ import Parse
 import Fixtures
 import Test.HUnit
 import Python.Hoopl (Proc(..))
+import Python.ControlFlow (IdLabelMap)
 
 
 -- | helper function to read source code from given FilePath and convert
@@ -23,8 +24,8 @@ testConvertsSingleFunctionSuccessfully :: Test
 testConvertsSingleFunctionSuccessfully = TestCase $
     assertBool "non-empty hoopl statement" (isHooplStatement $ convertSingleStatement fixturePythonAssignFunc)
 
-isHooplStatement :: Proc -> Bool
-isHooplStatement (Proc name _ _ _) = name == "assign"
+isHooplStatement :: (IdLabelMap, Proc) -> Bool
+isHooplStatement (_, Proc name _ _ _) = name == "assign"
 
 tests :: Test
 tests = TestList [

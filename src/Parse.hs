@@ -8,7 +8,7 @@ import Language.Python.Version2.Parser
 import Language.Python.Common.SrcLocation
 import Language.Python.Common (Token)
 import Language.Python.Common.AST
-import Python.ControlFlow (astToIR)
+import Python.ControlFlow (astToIR, IdLabelMap)
 import Python.Hoopl (Proc)
 import Compiler.Hoopl
 
@@ -24,7 +24,7 @@ filterFunction (_:xs) = filterFunction xs
 
 -- | Monadic code to convert source code to a list of IR procedures.
 --
-parse :: String -> SimpleFuelMonad [Proc]
+parse :: String -> SimpleFuelMonad [(IdLabelMap, Proc)]
 parse contents =
     case parseModule contents [] of
         Right parsed -> mapM astToIR $ filterFunction $ getAST parsed
@@ -35,11 +35,11 @@ parse contents =
 
 -- | Converts single statement to hoopl
 --
-convertSingleStatement :: Statement SrcSpan -> Proc
+convertSingleStatement :: Statement SrcSpan -> (IdLabelMap, Proc)
 convertSingleStatement stm = runSimpleUniqueMonad $ runWithFuel 0 (astToIR stm)
 
 -- | converts the source code given as a string to our intermediate
 -- representation
 --
-convert :: String -> [Proc]
+convert :: String -> [(IdLabelMap, Proc)]
 convert contents = runSimpleUniqueMonad $ runWithFuel 0 (parse contents)

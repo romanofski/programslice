@@ -6,20 +6,19 @@ import Compiler.Hoopl
 import Language.Python.Common.SrcLocation
 
 
-data Insn a e x where
-    Label   :: Label -> Insn a C O
-    Assign  :: [PA.Expr SrcSpan] -> PA.Expr SrcSpan -> SrcSpan -> Insn a O O
-    While   :: PA.Expr SrcSpan -> PA.Suite SrcSpan -> PA.Suite SrcSpan -> SrcSpan -> Insn a O O
-    Return  :: Maybe (PA.Expr SrcSpan) -> SrcSpan -> Insn a O C
+data Insn e x where
+    Label   :: Label -> Insn C O
+    Normal  :: PA.Statement SrcSpan -> Label -> Insn O O
+    Return  :: Maybe (PA.Expr SrcSpan) -> Insn O C
 
 data Proc = Proc { name :: String
                  , args :: [PA.Parameter SrcSpan]
                  , entry :: Label
-                 , body :: Graph (Insn SrcSpan) C C }
+                 , body :: Graph Insn C C }
 
-instance NonLocal (Insn a) where
+instance NonLocal (Insn) where
     entryLabel (Label l)    = l
-    successors (Return _ _)   = []
+    successors (Return _ )   = []
 
 
 instance Show (Proc) where
@@ -28,9 +27,8 @@ instance Show (Proc) where
         where graph = showGraph show g
 
 
-instance Show (Insn a e x) where
+instance Show (Insn e x) where
     show (Label lbl)  = show lbl ++ ":"
-    show (Assign v e _) =  show v ++ " = " ++ show e
-    show (While c b e _) = show c ++ show b ++ show e
-    show (Return (Just xs) _) = show xs
-    show (Return Nothing _) = ""
+    show (Normal _ lbl) = show lbl
+    show (Return (Just xs)) = show xs
+    show (Return Nothing) = ""

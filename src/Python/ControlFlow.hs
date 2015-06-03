@@ -57,29 +57,33 @@ toName (Ident name _) = name
 -- toVar  _                               = []
 
 
-toBody :: Suite SrcSpan -> LabelMapM (Graph (I.Insn SrcSpan) C C)
+toBody :: Suite SrcSpan -> LabelMapM (Graph I.Insn C C)
 toBody xs =
     do g <- foldl (liftM2 (|*><*|)) (return emptyClosedGraph) (map toBlock xs)
        getBody g
 
 -- | TODO this does not represent a block in Python, since it only
 -- operates on one statement
-toBlock :: Statement SrcSpan -> LabelMapM (Graph (I.Insn SrcSpan) C C)
+toBlock :: Statement SrcSpan -> LabelMapM (Graph I.Insn C C)
 toBlock x = toFirst x >>= \f ->
                 toLast x >>= \l ->
                     return $ mkFirst f <*> mkLast l
 
 
 -- | make an entry point IR.Insn
--- TODO non exaustive patterns!
+-- TODO I think this is not necessary!
 --
-toFirst :: Statement SrcSpan -> LabelMapM ((I.Insn SrcSpan) C O)
-toFirst (Assign to _ _) = liftM I.Label $ labelFor $ exprToStrings $ head to
+toFirst :: Statement SrcSpan -> LabelMapM (I.Insn C O)
 toFirst x = liftM I.Label $ labelFor (show x)
 
-toLast :: Statement SrcSpan -> LabelMapM ((I.Insn SrcSpan) O C)
-toLast (Return x an) = return $ I.Return x an
-toLast _ = return $ I.Return Nothing SpanEmpty
+toMiddle :: Statement SrcSpan -> LabelMapM (I.Insn O O)
+toMiddle x = do
+    lbl <- labelFor $ show x
+    return $ I.Normal x lbl
+
+toLast :: Statement SrcSpan -> LabelMapM (I.Insn O C)
+toLast (Return x _) = return $ I.Return x
+toLast _ = return $ I.Return Nothing
 
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str

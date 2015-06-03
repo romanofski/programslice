@@ -66,8 +66,9 @@ toBody xs =
 -- operates on one statement
 toBlock :: Statement SrcSpan -> LabelMapM (Graph I.Insn C C)
 toBlock x = toFirst x >>= \f ->
-                toLast x >>= \l ->
-                    return $ mkFirst f <*> mkLast l
+                toMiddle x >>= \m ->
+                    toLast x >>= \l ->
+                        return $ mkFirst f <*> mkMiddle m <*> mkLast l
 
 
 -- | make an entry point IR.Insn

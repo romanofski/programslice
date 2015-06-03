@@ -8,7 +8,7 @@ import Language.Python.Version2.Parser
 import Language.Python.Common.SrcLocation
 import Language.Python.Common (Token)
 import Language.Python.Common.AST
-import Python.ControlFlow (astToIR, IdLabelMap)
+import Python.ControlFlow (astToCFG, IdLabelMap)
 import Python.Hoopl (Proc)
 import Compiler.Hoopl
 
@@ -27,7 +27,7 @@ filterFunction (_:xs) = filterFunction xs
 parse :: String -> SimpleFuelMonad [(IdLabelMap, Proc)]
 parse contents =
     case parseModule contents [] of
-        Right parsed -> mapM astToIR $ filterFunction $ getAST parsed
+        Right parsed -> mapM astToCFG $ filterFunction $ getAST parsed
         Left _ -> return []
     where
         getAST :: (Module SrcSpan, [Token]) -> [Statement SrcSpan]
@@ -36,7 +36,7 @@ parse contents =
 -- | Converts single statement to hoopl
 --
 convertSingleStatement :: Statement SrcSpan -> (IdLabelMap, Proc)
-convertSingleStatement stm = runSimpleUniqueMonad $ runWithFuel 0 (astToIR stm)
+convertSingleStatement stm = runSimpleUniqueMonad $ runWithFuel 0 (astToCFG stm)
 
 -- | converts the source code given as a string to our intermediate
 -- representation

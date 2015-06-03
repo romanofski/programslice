@@ -31,7 +31,7 @@ main = do
     case flags of
         (PrintIR : _) -> do
             c <- getContents
-            mapM_ print (runSimpleUniqueMonad $ runWithFuel 0 (parse c))
+            mapM_ (putStrLn . ppShow) (runSimpleUniqueMonad $ runWithFuel 0 (parse c))
         (PrintAST : _) -> do
             c <- getContents
             let Right parsed = parseModule c []

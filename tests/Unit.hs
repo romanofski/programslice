@@ -6,7 +6,12 @@ import Test.HUnit
 import Compiler.Hoopl
 
 import Programslice.Parse
-import Programslice.Python.ControlFlow (astToCFG, CFG(..), getInternalGraph)
+import Programslice.Visualisation
+import Programslice.Python.ControlFlow (
+      getInternalGraph
+    , astToCFG
+    , extractGraphLabelsInOrder
+    , CFG(..))
 
 
 -- | helper function to read source code from given FilePath and convert
@@ -25,6 +30,11 @@ testParsesToCFGSuccessfully = TestCase $ do
 testCreatesCFGSuccessfully :: Test
 testCreatesCFGSuccessfully = TestCase $
     assertBool "expecting non-empty CFG graph" (isHooplStatement $ astToCFG fixturePythonAssignFunc)
+
+testGraphIsNotEmpty :: Test
+testGraphIsNotEmpty = TestCase $
+    assertBool "extracted at least one label" (
+        not $ null $ extractGraphLabelsInOrder $ getInternalGraph overlappingAssignmentsFixture)
 
 isHooplStatement :: Maybe CFG -> Bool
 isHooplStatement Nothing = False

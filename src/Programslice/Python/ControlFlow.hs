@@ -8,6 +8,7 @@ import Language.Python.Common.Pretty
 import Language.Python.Common.PrettyAST()
 import Control.Monad.State
 import Data.Tuple (swap)
+import Data.Maybe (mapMaybe, catMaybes)
 import qualified Data.Map as M
 
 
@@ -158,3 +159,30 @@ getInternalGraph (CFG _ _ _ graph _ _) = graph
 
 getInternalBlockMap :: CFG -> LabelBlockMap
 getInternalBlockMap (CFG _ _ _ _ _ lblMap) = lblMap
+
+-- | extracts all labels in the internal graph in order
+--
+extractGraphLabelsInOrder :: Graph Insn e x -> [Label]
+extractGraphLabelsInOrder GNil = []
+extractGraphLabelsInOrder (GUnit block) = mapMaybe xLabelFromThing (blockToList block)
+extractGraphLabelsInOrder (GMany en b ex) = getEntryLabel en ++ getBodyLabel b ++ getExitLabel ex
+    where getEntryLabel :: MaybeO x (Block Insn O C) -> [Label]
+          getEntryLabel (JustO blk) = mapMaybe xLabelFromThing [lastNode blk]
+          getEntryLabel _ = []
+          getExitLabel :: MaybeO x (Block Insn C O) -> [Label]
+          getExitLabel (JustO blk) = mapMaybe xLabelFromThing [firstNode blk]
+          getExitLabel _ = []
+          getBodyLabel :: Body' Block Insn -> [Label]
+          getBodyLabel lblMap = catMaybes $ concat $ fmap xLabelFromBlock (mapElems lblMap)
+
+-- | Extracts all labels from our instruction
+--
+xLabelFromThing :: Insn e x -> Maybe Label
+xLabelFromThing (Label    l) = Just l
+xLabelFromThing _            = Nothing
+
+xLabelFromBlock :: forall e x . Block Insn e x -> [Maybe Label]
+xLabelFromBlock (BlockCO x b1) = xLabelFromThing x : xLabelFromBlock b1
+xLabelFromBlock (BlockCC x b1 y) = xLabelFromThing x : xLabelFromBlock b1 ++ [xLabelFromThing y]
+xLabelFromBlock BNil = []
+xLabelFromBlock _ = []

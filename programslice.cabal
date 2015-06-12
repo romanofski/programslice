@@ -20,11 +20,13 @@ library
   hs-source-dirs:      src
   exposed-modules:     Programslice.Python.ControlFlow
                      , Programslice.Parse
+                     , Programslice.Visualisation
   default-language:    Haskell2010
   ghc-options:         -O2 -Wall -fwarn-tabs
   build-depends:       base >=4.7 && <4.8
                      , containers
                      , language-python
+                     , graphviz
                      , hoopl >= 3.10.1
                      , mtl >= 2.0
 
@@ -37,6 +39,8 @@ executable programslice
                      , containers
                      , pretty-show
                      , mtl >= 2.0
+                     , graphviz
+                     , text
   hs-source-dirs:      src
   default-language:    Haskell2010
 
@@ -46,7 +50,20 @@ test-suite unittests
   hs-source-dirs:      tests
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && <4.8
+                     , HUnit
+                     , doctest
                      , programslice
                      , language-python
                      , hoopl >= 3.10.1
-                     , HUnit
+
+test-suite doctests
+  type:                exitcode-stdio-1.0
+  main-is:             Doctests.hs
+  hs-source-dirs:      tests
+  default-language:    Haskell2010
+  ghc-options:         -threaded
+  build-depends:       base >= 4.7 && <4.8
+                     , doctest
+                     , programslice
+                     , language-python
+                     , hoopl >= 3.10.1

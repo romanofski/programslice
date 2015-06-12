@@ -4,7 +4,7 @@ import Fixtures
 import Test.HUnit
 
 import Programslice.Parse
-import Programslice.Python.Hoopl (Proc(..))
+import Programslice.Python.Hoopl (CFG(..))
 import Programslice.Python.ControlFlow (IdLabelMap)
 
 
@@ -25,8 +25,8 @@ testConvertsSingleFunctionSuccessfully :: Test
 testConvertsSingleFunctionSuccessfully = TestCase $
     assertBool "non-empty hoopl statement" (isHooplStatement $ convertSingleStatement fixturePythonAssignFunc)
 
-isHooplStatement :: (IdLabelMap, Proc) -> Bool
-isHooplStatement (_, Proc name _ _ _) = name == "assign"
+isHooplStatement :: (IdLabelMap, CFG) -> Bool
+isHooplStatement (_, CFG name _ _ _) = name == "assign"
 
 tests :: Test
 tests = TestList [

@@ -26,7 +26,7 @@ instance Monad LabelMapM where
 
 -- | main function to convert Python AST to IR
 --
-astToCFG :: Statement SrcSpan -> SimpleFuelMonad (IdLabelMap, I.Proc)
+astToCFG :: Statement SrcSpan -> SimpleFuelMonad (IdLabelMap, I.CFG)
 astToCFG (Fun {  fun_name = n
               , fun_args = a
               , fun_result_annotation = _
@@ -35,7 +35,7 @@ astToCFG (Fun {  fun_name = n
     = run $ do
         entry <- getEntry n
         body <- toBody b
-        return I.Proc { I.name = toName n, I.args = a, I.body = body, I.entry = entry }
+        return I.CFG { I.name = toName n, I.args = a, I.body = body, I.entry = entry }
 
 run :: LabelMapM a -> SimpleFuelMonad (IdLabelMap, a)
 run (LabelMapM f) = f M.empty

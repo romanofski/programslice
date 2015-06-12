@@ -11,7 +11,7 @@ import Language.Python.Common.AST
 import Compiler.Hoopl
 
 import Programslice.Python.ControlFlow (astToCFG, IdLabelMap)
-import Programslice.Python.Hoopl (Proc)
+import Programslice.Python.Hoopl (CFG)
 
 
 -- | Helper function to filter out all functions from a list of
@@ -25,7 +25,7 @@ filterFunction (_:xs) = filterFunction xs
 
 -- | Monadic code to convert source code to a list of IR procedures.
 --
-parse :: String -> SimpleFuelMonad [(IdLabelMap, Proc)]
+parse :: String -> SimpleFuelMonad [(IdLabelMap, CFG)]
 parse contents =
     case parseModule contents [] of
         Right parsed -> mapM astToCFG $ filterFunction $ getAST parsed
@@ -36,11 +36,11 @@ parse contents =
 
 -- | Converts single statement to hoopl
 --
-convertSingleStatement :: Statement SrcSpan -> (IdLabelMap, Proc)
+convertSingleStatement :: Statement SrcSpan -> (IdLabelMap, CFG)
 convertSingleStatement stm = runSimpleUniqueMonad $ runWithFuel 0 (astToCFG stm)
 
 -- | converts the source code given as a string to our intermediate
 -- representation
 --
-convert :: String -> [(IdLabelMap, Proc)]
+convert :: String -> [(IdLabelMap, CFG)]
 convert contents = runSimpleUniqueMonad $ runWithFuel 0 (parse contents)

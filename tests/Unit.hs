@@ -1,10 +1,11 @@
 module Unit where
 
-import Parse
 import Fixtures
 import Test.HUnit
-import Python.Hoopl (Proc(..))
-import Python.ControlFlow (IdLabelMap)
+
+import Programslice.Parse
+import Programslice.Python.Hoopl (Proc(..))
+import Programslice.Python.ControlFlow (IdLabelMap)
 
 
 -- | helper function to read source code from given FilePath and convert

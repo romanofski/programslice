@@ -1,9 +1,12 @@
-import Parse
+module Main where
+
 import Language.Python.Version2.Parser (parseModule)
 import Compiler.Hoopl
 import System.Console.GetOpt (usageInfo, ArgDescr(..), OptDescr(..), ArgOrder(..), getOpt)
 import System.Environment (getArgs)
 import Text.Show.Pretty
+
+import Programslice.Parse
 
 
 data Flag = PrintAST | PrintIR

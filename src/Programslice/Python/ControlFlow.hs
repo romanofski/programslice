@@ -1,12 +1,13 @@
 {-# LANGUAGE RankNTypes #-}
-module Python.ControlFlow where
+module Programslice.Python.ControlFlow where
 
 import Compiler.Hoopl
 import Language.Python.Common.AST
 import Language.Python.Common.SrcLocation
 import Control.Monad
-import qualified Python.Hoopl as I
 import qualified Data.Map as M
+
+import qualified Programslice.Python.Hoopl as I
 
 
 -- | Map to avoid creating new labels for already known identifiers

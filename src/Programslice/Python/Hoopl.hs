@@ -1,5 +1,5 @@
 {-# LANGUAGE GADTs #-}
-module Python.Hoopl where
+module Programslice.Python.Hoopl where
 
 import qualified Language.Python.Common.AST as PA
 import Compiler.Hoopl

@@ -2,15 +2,16 @@
 -- TODO: all functions here will need to change in order to support a
 -- more flexible conversion.
 --
-module Parse where
+module Programslice.Parse where
 
 import Language.Python.Version2.Parser
 import Language.Python.Common.SrcLocation
 import Language.Python.Common (Token)
 import Language.Python.Common.AST
-import Python.ControlFlow (astToCFG, IdLabelMap)
-import Python.Hoopl (Proc)
 import Compiler.Hoopl
+
+import Programslice.Python.ControlFlow (astToCFG, IdLabelMap)
+import Programslice.Python.Hoopl (Proc)
 
 
 -- | Helper function to filter out all functions from a list of

@@ -18,9 +18,9 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Python.ControlFlow
-                       Python.Hoopl
-                     , Parse
+  exposed-modules:     Programslice.Python.ControlFlow
+                       Programslice.Python.Hoopl
+                     , Programslice.Parse
   default-language:    Haskell2010
   ghc-options:         -O2 -Wall -fwarn-tabs
   build-depends:       base >=4.7 && <4.8

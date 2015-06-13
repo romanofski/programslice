@@ -10,8 +10,7 @@ import Language.Python.Common (Token)
 import Language.Python.Common.AST
 import Compiler.Hoopl
 
-import Programslice.Python.ControlFlow (astToCFG, IdLabelMap)
-import Programslice.Python.Hoopl (CFG)
+import Programslice.Python.ControlFlow (CFG, astToCFG, IdLabelMap)
 
 
 -- | Helper function to filter out all functions from a list of

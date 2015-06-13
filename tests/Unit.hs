@@ -4,8 +4,7 @@ import Fixtures
 import Test.HUnit
 
 import Programslice.Parse
-import Programslice.Python.Hoopl (CFG(..))
-import Programslice.Python.ControlFlow (IdLabelMap)
+import Programslice.Python.ControlFlow (IdLabelMap, CFG(..))
 
 
 -- | helper function to read source code from given FilePath and convert

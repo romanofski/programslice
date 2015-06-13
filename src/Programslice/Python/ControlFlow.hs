@@ -1,4 +1,4 @@
-{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE RankNTypes, GADTs #-}
 module Programslice.Python.ControlFlow where
 
 import Compiler.Hoopl
@@ -7,7 +7,41 @@ import Language.Python.Common.SrcLocation
 import Control.Monad
 import qualified Data.Map as M
 
-import qualified Programslice.Python.Hoopl as I
+
+data Insn e x where
+    Label   :: Label -> Insn C O
+    Normal  :: Statement SrcSpan -> Label -> Insn O O
+    Exit    :: Maybe (Expr SrcSpan) -> Insn O C
+
+
+-- | A representation of a control flow graph
+--
+-- Note: The current intention of constructing control flow graphs is
+-- on a function level, until I can utilise Hoopl better.
+--
+data CFG = CFG { name :: String                     -- ^ function name
+                , args :: [Parameter SrcSpan]    -- ^ function parameters
+                , entry :: Label                    -- ^ function entry label
+                , body :: Graph Insn C C            -- ^ CFG of the function
+                }
+
+
+instance NonLocal (Insn) where
+    entryLabel (Label l)    = l
+    successors (Exit _ )   = []
+
+
+instance Show (CFG) where
+    show (CFG {name = n, args = _, entry = lbl, body = g }) =
+        show $ n ++ show lbl ++ ": " ++ graph ++ "||"
+        where graph = showGraph show g
+
+
+instance Show (Insn e x) where
+    show (Label lbl)  = show lbl ++ ":"
+    show (Normal _ lbl) = show lbl ++ "N"
+    show (Exit (Just xs)) = show xs
+    show (Exit Nothing) = ""
 
 
 -- | Map to avoid creating new labels for already known identifiers
@@ -26,16 +60,16 @@ instance Monad LabelMapM where
 
 -- | main function to convert Python AST to IR
 --
-astToCFG :: Statement SrcSpan -> SimpleFuelMonad (IdLabelMap, I.CFG)
+astToCFG :: Statement SrcSpan -> SimpleFuelMonad (IdLabelMap, CFG)
 astToCFG (Fun {  fun_name = n
               , fun_args = a
               , fun_result_annotation = _
               , fun_body = b
               , stmt_annot = _ })
     = run $ do
-        entry <- getEntry n
-        body <- toBody b
-        return I.CFG { I.name = toName n, I.args = a, I.body = body, I.entry = entry }
+        e <- getEntry n
+        graph <- toBody b
+        return CFG { name = toName n, args = a, body = graph, entry = e }
 
 run :: LabelMapM a -> SimpleFuelMonad (IdLabelMap, a)
 run (LabelMapM f) = f M.empty
@@ -46,7 +80,7 @@ getEntry :: Ident annot -> LabelMapM Label
 getEntry x = labelFor $ toName x
 
 toName :: Ident annot -> String
-toName (Ident name _) = name
+toName (Ident n _) = n
 
 
 -- | Arguments to IR
@@ -58,14 +92,14 @@ toName (Ident name _) = name
 -- toVar  _                               = []
 
 
-toBody :: Suite SrcSpan -> LabelMapM (Graph I.Insn C C)
+toBody :: Suite SrcSpan -> LabelMapM (Graph Insn C C)
 toBody xs =
     do g <- foldl (liftM2 (|*><*|)) (return emptyClosedGraph) (map toBlock xs)
        getBody g
 
 -- | TODO this does not represent a block in Python, since it only
 -- operates on one statement
-toBlock :: Statement SrcSpan -> LabelMapM (Graph I.Insn C C)
+toBlock :: Statement SrcSpan -> LabelMapM (Graph Insn C C)
 toBlock x = toFirst x >>= \f ->
                 toMiddle x >>= \m ->
                     toLast x >>= \l ->
@@ -75,17 +109,17 @@ toBlock x = toFirst x >>= \f ->
 -- | make an entry point IR.Insn
 -- TODO I think this is not necessary!
 --
-toFirst :: Statement SrcSpan -> LabelMapM (I.Insn C O)
-toFirst x = liftM I.Label $ labelFor (show x)
+toFirst :: Statement SrcSpan -> LabelMapM (Insn C O)
+toFirst x = liftM Label $ labelFor (show x)
 
-toMiddle :: Statement SrcSpan -> LabelMapM (I.Insn O O)
+toMiddle :: Statement SrcSpan -> LabelMapM (Insn O O)
 toMiddle x = do
     lbl <- labelFor $ show x
-    return $ I.Normal x lbl
+    return $ Normal x lbl
 
-toLast :: Statement SrcSpan -> LabelMapM (I.Insn O C)
-toLast (Return x _) = return $ I.Return x
-toLast _ = return $ I.Return Nothing
+toLast :: Statement SrcSpan -> LabelMapM (Insn O C)
+toLast (Return x _) = return $ Exit x
+toLast _ = return $ Exit Nothing
 
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str

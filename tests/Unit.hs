@@ -4,7 +4,7 @@ import Fixtures
 import Test.HUnit
 
 import Programslice.Parse
-import Programslice.Python.ControlFlow (IdLabelMap, CFG(..))
+import Programslice.Python.ControlFlow (astToCFG, CFG(..))
 
 
 -- | helper function to read source code from given FilePath and convert
@@ -17,15 +17,16 @@ toIRProcs f p = do
 
 testConvertsToIRSuccessfully :: Test
 testConvertsToIRSuccessfully = TestCase $ do
-    procs <- toIRProcs convert "tests/data/binsearch.py"
+    procs <- toIRProcs parse "tests/data/binsearch.py"
     assertBool "non-empty list expected" (not $ null procs)
 
 testConvertsSingleFunctionSuccessfully :: Test
 testConvertsSingleFunctionSuccessfully = TestCase $
-    assertBool "non-empty hoopl statement" (isHooplStatement $ convertSingleStatement fixturePythonAssignFunc)
+    assertBool "non-empty hoopl statement" (isHooplStatement $ astToCFG fixturePythonAssignFunc)
 
-isHooplStatement :: (IdLabelMap, CFG) -> Bool
-isHooplStatement (_, CFG name _ _ _) = name == "assign"
+isHooplStatement :: Maybe CFG -> Bool
+isHooplStatement Nothing = False
+isHooplStatement (Just (CFG name _ _ _ _)) = name == "assign"
 
 tests :: Test
 tests = TestList [

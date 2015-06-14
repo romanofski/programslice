@@ -1,10 +1,13 @@
 module Main where
 
 import Language.Python.Version2.Parser (parseModule)
-import Compiler.Hoopl
-import System.Console.GetOpt (usageInfo, ArgDescr(..), OptDescr(..), ArgOrder(..), getOpt)
 import System.Environment (getArgs)
 import Text.Show.Pretty
+import System.Console.GetOpt (usageInfo
+                              , ArgDescr(..)
+                              , OptDescr(..)
+                              , ArgOrder(..)
+                              , getOpt)
 
 import Programslice.Parse
 
@@ -34,7 +37,7 @@ main = do
     case flags of
         (PrintIR : _) -> do
             c <- getContents
-            mapM_ (putStrLn . ppShow . snd) (runSimpleUniqueMonad $ runWithFuel 0 (parse c))
+            mapM_ (putStrLn . ppShow) (parse c)
         (PrintAST : _) -> do
             c <- getContents
             let Right parsed = parseModule c []

@@ -8,9 +8,9 @@ import Language.Python.Version2.Parser
 import Language.Python.Common.SrcLocation
 import Language.Python.Common (Token)
 import Language.Python.Common.AST
-import Compiler.Hoopl
+import Data.Maybe (mapMaybe)
 
-import Programslice.Python.ControlFlow (CFG, astToCFG, IdLabelMap)
+import Programslice.Python.ControlFlow (CFG, astToCFG)
 
 
 -- | Helper function to filter out all functions from a list of
@@ -24,22 +24,11 @@ filterFunction (_:xs) = filterFunction xs
 
 -- | Monadic code to convert source code to a list of IR procedures.
 --
-parse :: String -> SimpleFuelMonad [(IdLabelMap, CFG)]
+parse :: String -> [CFG]
 parse contents =
     case parseModule contents [] of
-        Right parsed -> mapM astToCFG $ filterFunction $ getAST parsed
-        Left _ -> return []
+        Right parsed -> mapMaybe astToCFG $ filterFunction $ getAST parsed
+        Left _ -> []
     where
         getAST :: (Module SrcSpan, [Token]) -> [Statement SrcSpan]
         getAST (Module xs, _) = xs
-
--- | Converts single statement to hoopl
---
-convertSingleStatement :: Statement SrcSpan -> (IdLabelMap, CFG)
-convertSingleStatement stm = runSimpleUniqueMonad $ runWithFuel 0 (astToCFG stm)
-
--- | converts the source code given as a string to our intermediate
--- representation
---
-convert :: String -> [(IdLabelMap, CFG)]
-convert contents = runSimpleUniqueMonad $ runWithFuel 0 (parse contents)

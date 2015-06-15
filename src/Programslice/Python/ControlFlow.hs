@@ -6,12 +6,14 @@ import Language.Python.Common.AST
 import Language.Python.Common.SrcLocation
 import Control.Monad
 import Control.Monad.State
+import Data.Tuple (swap)
 import qualified Data.Map as M
 
 
 -- | Map to avoid creating new labels for already known identifiers
 --
 type IdLabelMap = M.Map String Label
+type LabelBlockMap = M.Map Label String
 
 -- | A representation of a control flow graph
 --
@@ -22,7 +24,8 @@ data CFG = CFG { name :: String                     -- ^ function name
                 , args :: [Parameter SrcSpan]       -- ^ function parameters
                 , entry :: Label                    -- ^ function entry label
                 , body :: Graph Insn C C            -- ^ CFG of the function
-                , labelMap :: IdLabelMap            -- ^ maps source code blocks to labels
+                , blockLabelMap :: IdLabelMap            -- ^ maps source code blocks to labels
+                , labelBlockMap :: LabelBlockMap         -- ^ maps labels to code blocks
                 }
 
 
@@ -88,7 +91,8 @@ astToCFG (Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
                        , args = a
                        , body = graph
                        , entry = e
-                       , labelMap = m
+                       , blockLabelMap = m
+                       , labelBlockMap = M.fromList $ map swap $ M.toList m
                        }
 astToCFG _ = Nothing
 

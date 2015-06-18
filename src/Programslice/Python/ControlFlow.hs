@@ -56,10 +56,10 @@ instance NonLocal (Insn) where
     successors (Exit _ )   = []
 
 instance Show (Insn e x) where
-    show (Label lbl)  = show lbl ++ ":"
-    show (Normal _ lbl) = show lbl ++ "N"
-    show (Exit (Just xs)) = show xs
-    show (Exit Nothing) = ""
+    show (Label lbl)  = "[CO]" ++ show lbl ++ ":"
+    show (Normal _ lbl) = "[OO]" ++ show lbl
+    show (Exit (Just xs)) = "[OC]" ++ show xs
+    show (Exit Nothing) = "[OC]"
 
 
 -- | Creates a new label for the given string or source code block.

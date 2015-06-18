@@ -48,4 +48,5 @@ test-suite unittests
   build-depends:       base >= 4.7 && <4.8
                      , programslice
                      , language-python
+                     , hoopl >= 3.10.1
                      , HUnit

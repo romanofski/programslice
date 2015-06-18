@@ -1,6 +1,10 @@
+{-# LANGUAGE NamedFieldPuns #-}
 module Fixtures where
 import Language.Python.Common.SrcLocation
 import Language.Python.Common.AST
+
+import Programslice.Parse
+import Programslice.Python.ControlFlow (CFG)
 
 -- | fixture providing a Python function with a single assignment and
 -- return
@@ -26,3 +30,6 @@ fixturePythonAssignFunc = Fun fun_name fun_args fun_result_annotation fun_body S
                         SpanEmpty
                      ]
 
+overlappingAssignmentsFixture :: CFG
+overlappingAssignmentsFixture = head $ parse contents
+        where contents = "def issue_1():\n    a = 1\n    b = 2\n    a = a - b\n    return a\n"

@@ -144,3 +144,15 @@ toLast _ = return $ Exit Nothing
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str
 exprToStrings _                      = ""
+
+-- Helpers
+-- These helpers are used for testing purposes and deconstructing the
+-- graph in order to visualise it
+
+-- | returns the internal hoopl graph
+--
+getInternalGraph :: CFG -> Graph Insn C C
+getInternalGraph (CFG _ _ _ graph _ _) = graph
+
+getInternalBlockMap :: CFG -> LabelBlockMap
+getInternalBlockMap (CFG _ _ _ _ _ lblMap) = lblMap

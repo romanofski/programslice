@@ -46,18 +46,18 @@ instance Show (CFG) where
 --
 data Insn e x where
     Label   :: Label -> Insn C O
-    Normal  :: Statement SrcSpan -> Label -> Insn O O
+    Normal  :: Statement SrcSpan -> Insn O O
     Exit    :: Maybe (Expr SrcSpan) -> Insn O C
 
 -- | Nonlocal control flow
 --
 instance NonLocal (Insn) where
     entryLabel (Label l)   = l
-    successors (Exit _ )   = []
+    successors (Exit  _)   = []
 
 instance Show (Insn e x) where
     show (Label lbl)  = "[CO]" ++ show lbl ++ ":"
-    show (Normal _ lbl) = "[OO]" ++ show lbl
+    show (Normal x ) = show x
     show (Exit (Just xs)) = "[OC]" ++ show xs
     show (Exit Nothing) = "[OC]"
 
@@ -133,9 +133,7 @@ toFirst :: Statement SrcSpan -> CFGBuilder (Insn C O)
 toFirst x = liftM Label $ labelFor (show x)
 
 toMiddle :: Statement SrcSpan -> CFGBuilder (Insn O O)
-toMiddle x = do
-    lbl <- labelFor $ show x
-    return $ Normal x lbl
+toMiddle x = return $ Normal x
 
 toLast :: Statement SrcSpan -> CFGBuilder (Insn O C)
 toLast (Return x _) = return $ Exit x

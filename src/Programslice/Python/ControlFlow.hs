@@ -88,12 +88,12 @@ astToCFG (Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
             e <- getEntry n
             graph <- toBody b
             return $ Just CFG { name = toName n
-                       , args = a
-                       , body = graph
-                       , entry = e
-                       , blockLabelMap = m
-                       , labelBlockMap = M.fromList $ map swap $ M.toList m
-                       }
+                              , args = a
+                              , body = graph
+                              , entry = e
+                              , blockLabelMap = m
+                              , labelBlockMap = M.fromList $ map swap $ M.toList m
+                              }
 astToCFG _ = Nothing
 
 -- | returns a label for the given "function" name

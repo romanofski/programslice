@@ -12,8 +12,8 @@ import qualified Data.Map as M
 
 -- | Map to avoid creating new labels for already known identifiers
 --
-type IdLabelMap = M.Map String Label
-type LabelBlockMap = M.Map Label String
+type IdLabelMap = M.Map (Statement SrcSpan) Label
+type LabelBlockMap = M.Map Label (Statement SrcSpan)
 
 -- | A representation of a control flow graph
 --
@@ -36,11 +36,9 @@ data CFG = CFG { name :: String                     -- ^ function name
 type CFGBuilder a = StateT IdLabelMap SimpleUniqueMonad a
 
 instance Show (CFG) where
-    show (CFG {name = n, args = _, entry = lbl, body = g }) =
+    show (CFG {name = n, entry = lbl, body = g }) =
         show $ n ++ show lbl ++ ": " ++ graph ++ "||"
         where graph = showGraph show g
-
-
 
 -- | A control flow instruction
 --
@@ -57,16 +55,15 @@ instance NonLocal (Insn) where
 
 instance Show (Insn e x) where
     show (Label lbl)  = "[CO]" ++ show lbl ++ ":"
-    show (Normal x ) = show x
     show (Exit (Just xs)) = "[OC]" ++ show xs
     show (Exit Nothing) = "[OC]"
-
+    show _ = ""
 
 -- | Creates a new label for the given string or source code block.
 -- If we have already created a label return the given label, otherwise
 -- create a new one and return it.
 --
-labelFor :: String -> CFGBuilder Label
+labelFor :: Statement SrcSpan -> CFGBuilder Label
 labelFor srcfrag = do
     m <- get
     case M.lookup srcfrag m of
@@ -82,10 +79,10 @@ labelFor srcfrag = do
 -- | builds the control flow graph for a function
 --
 astToCFG :: Statement SrcSpan -> Maybe CFG
-astToCFG (Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
+astToCFG f@(Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
     where createCFG = do
             m <- get
-            e <- getEntry n
+            e <- labelFor f
             graph <- toBody b
             return $ Just CFG { name = toName n
                               , args = a
@@ -95,11 +92,6 @@ astToCFG (Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
                               , labelBlockMap = M.fromList $ map swap $ M.toList m
                               }
 astToCFG _ = Nothing
-
--- | returns a label for the given "function" name
---
-getEntry :: Ident annot -> CFGBuilder Label
-getEntry x = labelFor $ toName x
 
 toName :: Ident annot -> String
 toName (Ident n _) = n
@@ -130,7 +122,7 @@ toBlock x = toFirst x >>= \f ->
 -- TODO I think this is not necessary!
 --
 toFirst :: Statement SrcSpan -> CFGBuilder (Insn C O)
-toFirst x = liftM Label $ labelFor (show x)
+toFirst x = liftM Label $ labelFor x
 
 toMiddle :: Statement SrcSpan -> CFGBuilder (Insn O O)
 toMiddle x = return $ Normal x

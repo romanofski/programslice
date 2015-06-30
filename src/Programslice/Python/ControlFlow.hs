@@ -4,7 +4,6 @@ module Programslice.Python.ControlFlow where
 import Compiler.Hoopl
 import Language.Python.Common.AST
 import Language.Python.Common.SrcLocation
-import Control.Monad
 import Control.Monad.State
 import Data.Tuple (swap)
 import qualified Data.Map as M
@@ -57,7 +56,7 @@ instance Show (Insn e x) where
     show (Label lbl)  = "[CO]" ++ show lbl ++ ":"
     show (Exit (Just xs)) = "[OC]" ++ show xs
     show (Exit Nothing) = "[OC]"
-    show _ = ""
+    show _ = "--"
 
 -- | Creates a new label for the given string or source code block.
 -- If we have already created a label return the given label, otherwise
@@ -83,7 +82,7 @@ astToCFG f@(Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
     where createCFG = do
             m <- get
             e <- labelFor f
-            graph <- toBody b
+            graph <- toBlock e b
             return $ Just CFG { name = toName n
                               , args = a
                               , body = graph
@@ -106,26 +105,34 @@ toName (Ident n _) = n
 -- toVar  _                               = []
 
 
-toBody :: Suite SrcSpan -> CFGBuilder (Graph Insn C C)
-toBody xs = foldl (liftM2 (|*><*|)) (return emptyClosedGraph) (map toBlock xs)
-
 -- | TODO this does not represent a block in Python, since it only
 -- operates on one statement
-toBlock :: Statement SrcSpan -> CFGBuilder (Graph Insn C C)
-toBlock x = toFirst x >>= \f ->
-                toMiddle x >>= \m ->
-                    toLast x >>= \l ->
-                        return $ mkFirst f <*> mkMiddle m <*> mkLast l
+toBlock :: Label -> Suite SrcSpan -> CFGBuilder (Graph Insn C C)
+toBlock eLabel xs = do
+    let (bodyBlocks, [lastStmt]) = splitAt (length xs - 1) xs
+    let bb = filter isNormalStatement bodyBlocks
+    e <- toFirst eLabel
+    m <- mapM toMiddle bb
+    l <- toLast lastStmt
+    return $ mkFirst e <*> mkMiddles m <*> mkLast l
 
 
 -- | make an entry point IR.Insn
 -- TODO I think this is not necessary!
 --
-toFirst :: Statement SrcSpan -> CFGBuilder (Insn C O)
-toFirst x = liftM Label $ labelFor x
+toFirst :: Label -> CFGBuilder (Insn C O)
+toFirst x = return $ Label x
 
 toMiddle :: Statement SrcSpan -> CFGBuilder (Insn O O)
 toMiddle x = return $ Normal x
+
+isNormalStatement :: Statement SrcSpan -> Bool
+isNormalStatement Assign{} = True
+isNormalStatement AugmentedAssign{} = True
+isNormalStatement Delete{} = True
+isNormalStatement Print{} = True
+isNormalStatement Exec{} = True
+isNormalStatement _ = False
 
 toLast :: Statement SrcSpan -> CFGBuilder (Insn O C)
 toLast (Return x _) = return $ Exit x

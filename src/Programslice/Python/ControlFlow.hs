@@ -4,6 +4,8 @@ module Programslice.Python.ControlFlow where
 import Compiler.Hoopl
 import Language.Python.Common.AST
 import Language.Python.Common.SrcLocation
+import Language.Python.Common.Pretty
+import Language.Python.Common.PrettyAST()
 import Control.Monad.State
 import Data.Tuple (swap)
 import qualified Data.Map as M
@@ -36,8 +38,8 @@ type CFGBuilder a = StateT IdLabelMap SimpleUniqueMonad a
 
 instance Show (CFG) where
     show (CFG {name = n, entry = lbl, body = g }) =
-        show $ n ++ show lbl ++ ": " ++ graph ++ "||"
-        where graph = showGraph show g
+        show $ show lbl ++ "\n" ++ n ++ ":" ++ graph
+        where graph = showGraph prettyText g
 
 -- | A control flow instruction
 --
@@ -57,6 +59,11 @@ instance Show (Insn e x) where
     show (Exit (Just xs)) = "[OC]" ++ show xs
     show (Exit Nothing) = "[OC]"
     show _ = "--"
+
+instance Pretty (Insn e x) where
+    pretty (Normal stm) = pretty stm
+    pretty (Exit (Just stm)) = pretty stm
+    pretty _ = text ""
 
 -- | Creates a new label for the given string or source code block.
 -- If we have already created a label return the given label, otherwise

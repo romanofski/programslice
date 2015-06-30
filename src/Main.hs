@@ -3,6 +3,7 @@ module Main where
 import Language.Python.Version2.Parser (parseModule)
 import System.Environment (getArgs)
 import Text.Show.Pretty
+import Language.Python.Common.Pretty
 import System.Console.GetOpt (usageInfo
                               , ArgDescr(..)
                               , OptDescr(..)
@@ -37,7 +38,9 @@ main = do
     case flags of
         (PrintIR : _) -> do
             c <- getContents
-            mapM_ (putStrLn . ppShow) (parse c)
+            -- yikes!!! just to print it in escaped form. How to do this
+            -- better?
+            mapM_ (putStrLn . read . render . ppDoc) (parse c)
         (PrintAST : _) -> do
             c <- getContents
             let Right parsed = parseModule c []

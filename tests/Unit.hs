@@ -34,7 +34,7 @@ isHooplStatement (Just (CFG n _ _ graph _ _)) = and [assertFunctionName, assertL
 
 testFunctionCFGHasMoreThanOneLabel:: Test
 testFunctionCFGHasMoreThanOneLabel = TestCase $
-    assertEqual "one entry label" 2 (setSize $ labelsDefined $ getInternalGraph cfg)
+    assertEqual "one entry label" 1 (setSize $ labelsDefined $ getInternalGraph cfg)
         where Just cfg = astToCFG fixturePythonAssignFunc
 
 tests :: Test

@@ -46,7 +46,7 @@ instance Show (CFG) where
 data Insn e x where
     Label   :: Label -> Insn C O
     Normal  :: Statement SrcSpan -> Insn O O
-    Exit    :: Maybe (Expr SrcSpan) -> Insn O C
+    Exit    :: Statement SrcSpan -> Insn O C
 
 -- | Nonlocal control flow
 --
@@ -56,13 +56,12 @@ instance NonLocal (Insn) where
 
 instance Show (Insn e x) where
     show (Label lbl)  = "[CO]" ++ show lbl ++ ":"
-    show (Exit (Just xs)) = "[OC]" ++ show xs
-    show (Exit Nothing) = "[OC]"
+    show (Exit stm) = "[OC]" ++ show stm
     show _ = "--"
 
 instance Pretty (Insn e x) where
     pretty (Normal stm) = pretty stm
-    pretty (Exit (Just stm)) = pretty stm
+    pretty (Exit stm) = pretty stm
     pretty _ = text ""
 
 -- | Creates a new label for the given string or source code block.
@@ -142,8 +141,7 @@ isNormalStatement Exec{} = True
 isNormalStatement _ = False
 
 toLast :: Statement SrcSpan -> CFGBuilder (Insn O C)
-toLast (Return x _) = return $ Exit x
-toLast _ = return $ Exit Nothing
+toLast stm = return $ Exit stm
 
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str

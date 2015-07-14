@@ -86,8 +86,8 @@ labelFor srcfrag = do
 astToCFG :: Statement SrcSpan -> Maybe CFG
 astToCFG f@(Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
     where createCFG = do
-            m <- get
             e <- labelFor f
+            m <- get
             graph <- toBlock e b
             return $ Just CFG { name = toName n
                               , args = a

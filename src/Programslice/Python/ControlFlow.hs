@@ -24,7 +24,7 @@ type LabelBlockMap = M.Map Label (Statement SrcSpan)
 data CFG = CFG { name :: String                     -- ^ function name
                 , args :: [Parameter SrcSpan]       -- ^ function parameters
                 , cfgEntryLabel :: Label            -- ^ function entry label
-                , body :: Graph Insn C C            -- ^ CFG of the function
+                , cfgBody :: Graph Insn C C            -- ^ CFG of the function
                 , blockLabelMap :: IdLabelMap            -- ^ maps source code blocks to labels
                 , labelBlockMap :: LabelBlockMap         -- ^ maps labels to code blocks
                 }
@@ -37,7 +37,7 @@ data CFG = CFG { name :: String                     -- ^ function name
 type CFGBuilder a = StateT IdLabelMap SimpleUniqueMonad a
 
 instance Show (CFG) where
-    show (CFG {name = n, cfgEntryLabel = lbl, body = g }) =
+    show (CFG {name = n, cfgEntryLabel = lbl, cfgBody = g }) =
         show $ show lbl ++ "\n" ++ n ++ ":" ++ graph
         where graph = showGraph prettyText g
 
@@ -91,7 +91,7 @@ astToCFG f@(Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
             graph <- toBlock e b
             return $ Just CFG { name = toName n
                               , args = a
-                              , body = graph
+                              , cfgBody = graph
                               , cfgEntryLabel = e
                               , blockLabelMap = m
                               , labelBlockMap = M.fromList $ map swap $ M.toList m

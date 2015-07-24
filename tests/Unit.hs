@@ -29,12 +29,12 @@ testParsesToCFGSuccessfully = TestCase $ do
 
 testCreatesCFGSuccessfully :: Test
 testCreatesCFGSuccessfully = TestCase $
-    assertBool "expecting non-empty CFG graph" (isHooplStatement $ astToCFG fixturePythonAssignFunc)
+    assertBool "expecting non-empty CFG graph" (isHooplStatement $ astToCFG simpleFunctionFixture)
 
 testGraphIsNotEmpty :: Test
 testGraphIsNotEmpty = TestCase $
     assertBool "extracted at least one label" (
-        not $ null $ extractGraphLabelsInOrder $ getInternalGraph overlappingAssignmentsFixture)
+        not $ null $ extractGraphLabelsInOrder $ getInternalGraph simpleFunctionFixture)
 
 isHooplStatement :: Maybe CFG -> Bool
 isHooplStatement Nothing = False

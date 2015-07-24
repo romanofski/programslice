@@ -8,27 +8,17 @@ import Language.Python.Version2.Parser
 import Language.Python.Common.SrcLocation
 import Language.Python.Common (Token)
 import Language.Python.Common.AST
-import Data.Maybe (mapMaybe)
 
-import Programslice.Python.ControlFlow (CFG, astToCFG)
-
-
--- | Helper function to filter out all functions from a list of
--- statements.
---
-filterFunction :: [Statement SrcSpan] -> [Statement SrcSpan]
-filterFunction (fun@(Fun{}):xs) = fun : filterFunction xs
-filterFunction [] = []
-filterFunction (_:xs) = filterFunction xs
+import Programslice.Python.ControlFlow (CFG, moduleToCFG)
 
 
 -- | Monadic code to convert source code to a list of IR procedures.
 --
-parse :: String -> [CFG]
+parse :: String -> Maybe CFG
 parse contents =
     case parseModule contents [] of
-        Right parsed -> mapMaybe astToCFG $ filterFunction $ getAST parsed
-        Left _ -> []
+        Right parsed -> moduleToCFG $ getAST parsed
+        Left _ -> Nothing
     where
-        getAST :: (Module SrcSpan, [Token]) -> [Statement SrcSpan]
-        getAST (Module xs, _) = xs
+        getAST :: (Module SrcSpan, [Token]) -> Module SrcSpan
+        getAST (x, _) = x

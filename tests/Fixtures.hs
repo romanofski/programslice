@@ -19,9 +19,9 @@ conditionFunction = "def get_bool():\n\
                     \        b = 3\n\
                     \    return b"
 
-simpleFunctionFixture :: CFG
-simpleFunctionFixture = head $ parse assignFunction
+simpleFunctionFixture :: Maybe CFG
+simpleFunctionFixture = parse assignFunction
 
-multipleFunctions :: CFG
-multipleFunctions = head $ parse contents
+multipleFunctions :: Maybe CFG
+multipleFunctions = parse contents
   where contents = conditionFunction ++ "\n\n" ++ assignFunction

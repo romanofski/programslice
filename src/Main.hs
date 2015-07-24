@@ -1,6 +1,7 @@
 
 module Main where
 
+import Data.Maybe (maybeToList)
 import Data.GraphViz.Printing (renderDot, toDot)
 import Language.Python.Version2.Parser (parseModule)
 import System.Environment (getArgs)
@@ -12,7 +13,6 @@ import System.Console.GetOpt (usageInfo
                               , OptDescr(..)
                               , ArgOrder(..)
                               , getOpt)
-
 import Programslice.Parse
 import Programslice.Visualisation
 
@@ -45,13 +45,13 @@ main = do
             c <- getContents
             -- yikes!!! just to print it in escaped form. How to do this
             -- better?
-            mapM_ (putStrLn . read . render . ppDoc) (parse c)
+            mapM_ (putStrLn . read . render . ppDoc) (maybeToList $ parse c)
         (PrintAST : _) -> do
             c <- getContents
             let Right parsed = parseModule c []
             putStrLn $ ppShow parsed
         (DrawDot : _) -> do
             c <- getContents
-            let dot = toDot $ cfgGraphvizRepr $ head (parse c)
+            let dot = toDot $ cfgGraphvizRepr (parse c)
             putStrLn $ L.unpack $ renderDot dot
         _ -> ioError (userError $ "No arguments provided. " ++ header)

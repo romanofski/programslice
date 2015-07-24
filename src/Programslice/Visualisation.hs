@@ -18,8 +18,9 @@ cfgGraphvizParams =
   GV.nonClusteredParams { GV.fmtNode = \(_, l) -> [GV.toLabel l]
                         , GV.fmtEdge = \(_, _, l) -> [GV.toLabel l]}
 
-cfgGraphvizRepr :: CFG -> GV.DotGraph Int
-cfgGraphvizRepr cfg = GV.graphElemsToDot cfgGraphvizParams (concat ns) es
+cfgGraphvizRepr :: Maybe CFG -> GV.DotGraph Int
+cfgGraphvizRepr Nothing    = GV.graphElemsToDot cfgGraphvizParams [] []
+cfgGraphvizRepr (Just cfg) = GV.graphElemsToDot cfgGraphvizParams (concat ns) es
   where
     ns = buildGraphNodes 1 $ buildGraphNodeLabels cfg
     es = buildGraphEdges ns
@@ -86,7 +87,7 @@ labelToBasicBlock :: CFG -> Label -> Maybe String
 labelToBasicBlock cfg lbl = fmap prettyText block
   where block = M.lookup lbl (labelBlockMap cfg)
 
-testGraph :: CFG
+testGraph :: Maybe CFG
 testGraph = cfg
     where contents = "def issue_1():\n    a = 1\n    b = 2\n    a = a - b\n    return a\n"
-          cfg = head $ parse contents
+          cfg = parse contents

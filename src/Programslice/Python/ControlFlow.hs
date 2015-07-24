@@ -8,7 +8,7 @@ import Language.Python.Common.Pretty
 import Language.Python.Common.PrettyAST()
 import Control.Monad.State
 import Data.Tuple (swap)
-import Data.Maybe (mapMaybe, catMaybes)
+import Data.Maybe (catMaybes)
 import qualified Data.Map as M
 
 
@@ -22,9 +22,7 @@ type LabelBlockMap = M.Map Label (Statement SrcSpan)
 -- Note: The current intention of constructing control flow graphs is
 -- on a function level, until I can utilise Hoopl better.
 --
-data CFG = CFG { name :: String                     -- ^ function name
-                , args :: [Parameter SrcSpan]       -- ^ function parameters
-                , cfgEntryLabel :: Label            -- ^ function entry label
+data CFG = CFG {  cfgEntryLabel :: Label            -- ^ function entry label
                 , cfgBody :: Graph Insn C C            -- ^ CFG of the function
                 , blockLabelMap :: IdLabelMap            -- ^ maps source code blocks to labels
                 , labelBlockMap :: LabelBlockMap         -- ^ maps labels to code blocks
@@ -38,8 +36,8 @@ data CFG = CFG { name :: String                     -- ^ function name
 type CFGBuilder a = StateT IdLabelMap SimpleUniqueMonad a
 
 instance Show (CFG) where
-    show (CFG {name = n, cfgEntryLabel = lbl, cfgBody = g }) =
-        show $ show lbl ++ "\n" ++ n ++ ":" ++ graph
+    show (CFG {cfgEntryLabel = lbl, cfgBody = g }) =
+        show $ show lbl ++ "\n:" ++ graph
         where graph = showGraph prettyText g
 
 -- | A control flow instruction
@@ -84,20 +82,32 @@ labelFor srcfrag = do
 
 -- | builds the control flow graph for a function
 --
-astToCFG :: Statement SrcSpan -> Maybe CFG
-astToCFG f@(Fun n a _ b _) = runSimpleUniqueMonad (evalStateT createCFG M.empty)
-    where createCFG = do
-            e <- labelFor f
-            m <- get
-            graph <- toBlock e b
-            return $ Just CFG { name = toName n
-                              , args = a
-                              , cfgBody = graph
+moduleToCFG :: Module SrcSpan -> Maybe CFG
+moduleToCFG (Module xs) = runSimpleUniqueMonad (evalStateT (createCFG xs) M.empty)
+
+createCFG :: [Statement SrcSpan] -> CFGBuilder (Maybe CFG)
+createCFG xs = do
+        maybeGraphs <- mapM astToCFG xs
+        m <- get
+        let g' = catMaybes maybeGraphs
+        -- meh this condition. TODO can this be implemented better?
+        if null g' then return Nothing
+        else do
+            let (e, _) = head g'
+            let graphs = foldl (|*><*|) emptyClosedGraph (fmap snd g')
+            return $ Just CFG { cfgBody = graphs
                               , cfgEntryLabel = e
                               , blockLabelMap = m
                               , labelBlockMap = M.fromList $ map swap $ M.toList m
                               }
-astToCFG _ = Nothing
+
+
+astToCFG :: Statement SrcSpan -> CFGBuilder (Maybe (Label, Graph Insn C C))
+astToCFG f@(Fun { fun_body = b }) = do
+            e <- labelFor f
+            graph <- toBlock e b
+            return $ Just (e, graph)
+astToCFG _ = return Nothing
 
 toName :: Ident annot -> String
 toName (Ident n _) = n
@@ -147,42 +157,3 @@ toLast stm = return $ Exit stm
 exprToStrings :: Expr annot -> String
 exprToStrings (Var (Ident str _) _ ) = str
 exprToStrings _                      = ""
-
--- Helpers
--- These helpers are used for testing purposes and deconstructing the
--- graph in order to visualise it
-
--- | returns the internal hoopl graph
---
-getInternalGraph :: CFG -> Graph Insn C C
-getInternalGraph (CFG _ _ _ graph _ _) = graph
-
-getInternalBlockMap :: CFG -> LabelBlockMap
-getInternalBlockMap (CFG _ _ _ _ _ lblMap) = lblMap
-
--- | extracts all labels in the internal graph in order
---
-extractGraphLabelsInOrder :: Graph Insn e x -> [Label]
-extractGraphLabelsInOrder GNil = []
-extractGraphLabelsInOrder (GUnit block) = mapMaybe xLabelFromThing (blockToList block)
-extractGraphLabelsInOrder (GMany en b ex) = getEntryLabel en ++ getBodyLabel b ++ getExitLabel ex
-    where getEntryLabel :: MaybeO x (Block Insn O C) -> [Label]
-          getEntryLabel (JustO blk) = mapMaybe xLabelFromThing [lastNode blk]
-          getEntryLabel _ = []
-          getExitLabel :: MaybeO x (Block Insn C O) -> [Label]
-          getExitLabel (JustO blk) = mapMaybe xLabelFromThing [firstNode blk]
-          getExitLabel _ = []
-          getBodyLabel :: Body' Block Insn -> [Label]
-          getBodyLabel lblMap = catMaybes $ concat $ fmap xLabelFromBlock (mapElems lblMap)
-
--- | Extracts all labels from our instruction
---
-xLabelFromThing :: Insn e x -> Maybe Label
-xLabelFromThing (Label    l) = Just l
-xLabelFromThing _            = Nothing
-
-xLabelFromBlock :: forall e x . Block Insn e x -> [Maybe Label]
-xLabelFromBlock (BlockCO x b1) = xLabelFromThing x : xLabelFromBlock b1
-xLabelFromBlock (BlockCC x b1 y) = xLabelFromThing x : xLabelFromBlock b1 ++ [xLabelFromThing y]
-xLabelFromBlock BNil = []
-xLabelFromBlock _ = []

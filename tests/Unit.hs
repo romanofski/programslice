@@ -2,11 +2,11 @@
 module Unit where
 
 import Fixtures
-import Test.HUnit
+import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.HUnit (assertEqual, assertBool, testCase)
 import Compiler.Hoopl
 
-import Programslice.Parse
-import Programslice.Visualisation
+import Programslice.Visualisation (buildGraphNodeLabels)
 import Programslice.Python.ControlFlow (CFG(..), Insn)
 
 
@@ -29,23 +29,29 @@ internalGraph = cfgBody
 
 -- | tests
 --
-testCreatesCFGSuccessfully :: Test
-testCreatesCFGSuccessfully = TestCase $
-    assertBool "expecting non-empty CFG graph" (isHooplStatement simpleFunctionFixture)
+unitTests :: TestTree
+unitTests = testGroup "CFG tests"
+            [ testGraphIsNotEmpty
+            , testCFGHasMoreThanOneLabel
+            ]
 
-testGraphIsNotEmpty :: Test
-testGraphIsNotEmpty = TestCase $
-    assertBool "extracted at least one label" (
+testGraphIsNotEmpty :: TestTree
+testGraphIsNotEmpty = testCase "extracted at least one label" $ assertBool "graph is not empty" (
       not $ setNull $ labelsDefined $ internalGraph cfg)
     where Just cfg = simpleFunctionFixture
 
-testCFGHasMoreThanOneLabel:: Test
-testCFGHasMoreThanOneLabel = TestCase $
-    assertEqual "more than one entry label" 2 (setSize $ labelsDefined $ internalGraph cfg)
+testCFGHasMoreThanOneLabel:: TestTree
+testCFGHasMoreThanOneLabel = testCase "more than one entry label" $
+    assertEqual "expecting more than one label" 2 (setSize $ labelsDefined $ internalGraph cfg)
         where Just cfg = multipleFunctions
 
-tests :: Test
-tests = TestList [
-      TestLabel "converts statement to CFG successfully" testCreatesCFGSuccessfully
-    , TestLabel "CFG for function has one entry" testCFGHasMoreThanOneLabel
-    ]
+-- | tests Visualisation.hs
+--
+testBuildsGraphLabels :: TestTree
+testBuildsGraphLabels = testCase "more than one label" $
+                        assertEqual "expecting 2 labels" 2 (length xs)
+  where Just cfg = multipleFunctions
+        xs = buildGraphNodeLabels cfg
+
+tests :: TestTree
+tests = testGroup "unit tests" [unitTests]

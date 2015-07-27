@@ -54,7 +54,6 @@ test-suite unittests
                      , tasty-hunit
                      , tasty
                      , HUnit
-                     , doctest
                      , programslice
                      , language-python
                      , hoopl >= 3.10.0.1

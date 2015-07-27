@@ -3,9 +3,9 @@ language: haskell
 ghc:
   - 7.8
 install:
-  - cabal list
   - cabal install happy alex
   - cabal install --only-dependencies
+  - cabal install HUnit doctest tasty tasty-hunit
   - cabal configure --enable-tests
   - cabal build
 script: cabal test --show-details=always --test-option=--color --test-option=always

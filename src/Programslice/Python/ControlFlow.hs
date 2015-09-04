@@ -44,17 +44,22 @@ instance Show (CFG) where
 --
 data Insn e x where
     Label   :: Label -> Insn C O
+    Condition :: Label -> Maybe Label -> Insn O C
     Normal  :: Statement SrcSpan -> Insn O O
     Exit    :: Statement SrcSpan -> Insn O C
 
 -- | Nonlocal control flow
 --
 instance NonLocal (Insn) where
-    entryLabel (Label l)   = l
-    successors (Exit  _)   = []
+    entryLabel (Label l)  = l
+    successors (Condition c Nothing) = [c]
+    successors (Condition c (Just e)) = [c, e]
+    successors (Exit  _)  = []
 
 instance Show (Insn e x) where
     show (Label lbl)  = "[CO]" ++ show lbl ++ ":"
+    show (Condition c (Just e)) = "if .. : " ++ show c ++ "else: " ++ show e
+    show (Condition c Nothing) = "if ... : " ++ show c
     show (Exit stm) = "[OC]" ++ show stm
     show _ = "--"
 
@@ -90,7 +95,8 @@ createCFG xs = do
         maybeGraphs <- mapM astToCFG xs
         m <- get
         let g' = catMaybes maybeGraphs
-        -- meh this condition. TODO can this be implemented better?
+        -- meh this condition.
+        -- TODO: can this be implemented better?
         if null g' then return Nothing
         else do
             let (e, _) = head g'
@@ -103,10 +109,16 @@ createCFG xs = do
 
 
 astToCFG :: Statement SrcSpan -> CFGBuilder (Maybe (Label, Graph Insn C C))
-astToCFG f@(Fun { fun_body = b }) = do
-            e <- labelFor f
+astToCFG (Fun n args _ b a) = do
+            e <- labelFor function
             graph <- toBlock e b
             return $ Just (e, graph)
+            where function = Fun { fun_name = n
+                                 , fun_args = args
+                                 , fun_result_annotation = Nothing
+                                 , fun_body = []
+                                 , stmt_annot = a
+                                 }
 astToCFG _ = return Nothing
 
 toName :: Ident annot -> String
@@ -127,7 +139,7 @@ toName (Ident n _) = n
 toBlock :: Label -> Suite SrcSpan -> CFGBuilder (Graph Insn C C)
 toBlock eLabel xs = do
     let (bodyBlocks, [lastStmt]) = splitAt (length xs - 1) xs
-    let bb = filter isNormalStatement bodyBlocks
+    let bb = fmap toBodyBlocks bodyBlocks
     e <- toFirst eLabel
     m <- mapM toMiddle bb
     l <- toLast lastStmt
@@ -140,7 +152,9 @@ toBlock eLabel xs = do
 toFirst :: Label -> CFGBuilder (Insn C O)
 toFirst x = return $ Label x
 
+-- TODO how to create an edge to the first statement after the condition?
 toMiddle :: Statement SrcSpan -> CFGBuilder (Insn O O)
+toMiddle (Conditional guards c_else annot) = return $ fmap createConditions
 toMiddle x = return $ Normal x
 
 isNormalStatement :: Statement SrcSpan -> Bool

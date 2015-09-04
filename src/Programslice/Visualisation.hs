@@ -57,8 +57,7 @@ buildGraphNodes i (ys:xs) = numbered : buildGraphNodes ( i' + 1 ) xs
 -- and create an edge from there.
 --
 buildGraphEdges :: [[(Int, String)]] -> [(Int, Int, String)]
-buildGraphEdges [] = []
-buildGraphEdges [_] = []
+buildGraphEdges [] = [] buildGraphEdges [_] = []
 buildGraphEdges (ys:xs:rest) = (x, y, "") : buildGraphEdges rest
   where x = fst $ last ys
         y = fst $ head xs
@@ -89,5 +88,5 @@ labelToBasicBlock cfg lbl = fmap prettyText block
 
 testGraph :: Maybe CFG
 testGraph = cfg
-    where contents = "def issue_1():\n    a = 1\n    b = 2\n    a = a - b\n    return a\n"
+    where contents = "def issue_1():\n    a = 1\n    if (a % 2 == 2):\n        print \"even\"\n    return a\n"
           cfg = parse contents

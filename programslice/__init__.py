@@ -9,6 +9,7 @@ import programslice.formatter
 import programslice.graph
 import programslice.visitor
 import programslice.package
+import programslice.visualize
 
 
 logger = logging.getLogger('programslice')
@@ -82,6 +83,23 @@ def command_slice_file():
         if lines:
             [logger.info('{0}'.format(x)) for x in lines]
         sys.exit(0)
+
+
+def command_draw_cfg():
+    source = '''
+def test(x):
+    a = 1
+    b = 2
+    if x == a:
+        a = 2
+    else:
+        a = 3
+    return a'''.strip()
+    node = ast.parse(source, 'testdata')
+    visitor = programslice.visitor.IndentVisitor()
+    visitor.visit(node)
+    graph = visitor.graph
+    programslice.visualize.draw_cfg([graph])
 
 
 def slice_string(varname, currentline, offset, source, filename,

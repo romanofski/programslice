@@ -35,6 +35,7 @@ setup(name=about['__name__'],
       include_package_data=True,
       zip_safe=False,
       install_requires=[
+          'graphviz',
           'astor',
       ],
       extras_require=dict(
@@ -43,6 +44,7 @@ setup(name=about['__name__'],
       entry_points={
           'console_scripts': [
               'programslice = programslice:command_slice_file',
+              'programslice-cfg = programslice:command_draw_cfg',
           ]
       }
       )

@@ -1,7 +1,30 @@
+import ast
+
 import pytest
 
 from programslice.graph import Edge
+from programslice.visitor import LineDependencyVisitor, IndentVisitor
 from programslice.tests.conftest import get_sliced_testdata
+
+
+def test_cfg_from_basic_blocks():
+    """Verifies that CFG is correctly created from basic blocks."""
+    source = '''
+def test(x):
+    a = 1
+    b = 2
+    if x == a:
+        a = 2
+    else:
+        a = 3
+    return a'''.strip()
+    node = ast.parse(source, 'testdata')
+    visitor = IndentVisitor()
+    visitor.visit(node)
+    graph = visitor.graph
+    assert len(graph.exitb) == 1
+    assert graph.entryb is not None
+    assert len(graph.edges) == 4
 
 
 def test_does_not_prematurely_delete_dependencies():

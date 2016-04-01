@@ -3,6 +3,58 @@ import ast
 import programslice.graph
 
 
+class IndentVisitor(ast.NodeVisitor):
+
+    def __init__(self):
+        self.graph = programslice.graph.Graph('control flow')
+        self.stack = []
+        self.jumpsources = []
+
+    def visit_Assign(self, node):
+        if (self.stack and self.stack[-1].col_offset == node.col_offset) or \
+           not self.stack:
+            self.stack.append(node)
+            # TODO check if body
+            return
+
+        # change in indent ... a new basic block begins, lets tie up what we have
+        block = programslice.graph.BasicBlock(self.stack)
+        # don't forget the new line
+        self.stack = [node]
+        self.graph.add(block)
+        self.jumpsources.append(block)
+
+        # if we have an entry block and found another one, create an edge
+        if self.graph.entryb:
+            self.graph.add(block)
+            self.graph.connect(self.graph.entryb, block)
+
+    def visit_If(self, node):
+        self.stack.append(node)
+        outer = programslice.graph.BasicBlock(self.stack)
+        body = programslice.graph.BasicBlock(node.body)
+        else_body = programslice.graph.BasicBlock(node.orelse)
+
+        self.jumpsources.extend([outer, body, else_body])
+
+        # TODO if we have returns or other jump statements the graph will be
+        # wrong ... perhaps visit first?
+        self.graph.add(outer)
+        self.graph.add(body)
+        self.graph.add(else_body)
+
+        self.graph.connect(outer, body)
+        self.graph.connect(outer, else_body)
+
+    def visit_Return(self, node):
+        exitb = programslice.graph.BasicBlock([node], programslice.graph.EXIT)
+        self.graph.add(exitb)
+
+        while self.jumpsources:
+            block = self.jumpsources.pop()
+            self.graph.connect(block, exitb)
+
+
 class LineDependencyVisitor(ast.NodeVisitor):
     """ A visitor which creates a data dependency graph.
 

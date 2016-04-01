@@ -34,7 +34,9 @@ setup(name=about['__name__'],
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=[],
+      install_requires=[
+          'astor',
+      ],
       extras_require=dict(
           test=[]
           ),

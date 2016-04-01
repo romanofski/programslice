@@ -5,6 +5,10 @@ educational project for me.
 """
 from collections import OrderedDict
 from collections import deque
+from collections import Iterable
+import hashlib
+
+import astor
 
 
 class Edge(object):
@@ -42,6 +46,36 @@ class Edge(object):
         return Edge(node.id, node.lineno, node.col_offset)
 
 
+ENTRY = 1
+MIDDLE = 2
+EXIT = 3
+
+
+class BasicBlock(object):
+
+    def __init__(self, nodes, type=MIDDLE):
+        self.type = type
+        assert isinstance(nodes, Iterable)
+        self.nodes = nodes
+        self.name = '\\n'.join(
+            [astor.to_source(n, add_line_information=False)
+             for n in self.nodes
+             ])
+        h = hashlib.new('sha256')
+        h.update(self.name)
+        self.uid = h.hexdigest()
+
+    def __repr__(self):
+        typename = 'EXIT'
+        if self.type == ENTRY:
+            typename = 'ENTRY'
+        elif self.type == MIDDLE:
+            typename = 'MIDDLE'
+        return '<{self.__class__.__name__} ({typename})>'.format(
+            self=self,
+            typename=typename)
+
+
 class Graph(object):
     """
     .. option:: synopsis
@@ -57,6 +91,8 @@ class Graph(object):
     def __init__(self, name=''):
         self.name = name
         self.graph = OrderedDict()
+        self.entryb = None
+        self.exitb = []
 
     def __repr__(self):
         return '<{} {} {}>'.format(
@@ -64,41 +100,39 @@ class Graph(object):
             self.name,
             self.graph.items())
 
-    def add(self, edge):
-        """ Adds a new edge with the given parameters to the graph.
+    def add(self, block):
+        """ Adds a new node to the graph
 
-        :rtype: Edge
+        :rtype: BasicBlock
         """
-        self.graph.setdefault(edge, [])
-        return edge
+        if self.entryb is None:
+            block.type = ENTRY
+            self.entryb = block
+
+        if block.type == EXIT and block not in self.exitb:
+            self.exitb.append(block)
+
+        self.graph.setdefault(block, [])
+        return block
 
     @property
     def edges(self):
         return self.graph.keys()
 
-    def connect(self, e1, e2):
-        assert isinstance(e1, type(e1)) and isinstance(e2, type(e2))
-        edges = self.graph.setdefault(e1, [])
-        if e2 not in edges:
-            self.graph[e1].append(e2)
-        self.add(e2)
+    def connect(self, block1, block2):
+        blocks = self.graph.setdefault(block1, [])
+        if block2 not in blocks:
+            self.graph[block1].append(block2)
+        self.add(block2)
 
-    def get(self, edge, default=[]):
+    def get(self, block):
         """ Returns all referenced edges from the given edge an empty
             list otherwise.
         """
-        return self.graph.get(edge, default)
+        return self.graph.get(block)
 
     def __len__(self):
         return len(self.graph)
-
-    def __getitem__(self, key):
-        return self.graph[key]
-
-    def __contains__(self, edge):
-        for e in self.edges:
-            if e == edge:
-                return True
 
 
 class Slice(object):

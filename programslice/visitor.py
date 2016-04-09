@@ -8,13 +8,15 @@ class IndentVisitor(ast.NodeVisitor):
     def __init__(self):
         self.graphs = []
         self.graph = None
+        self.tracker = DependencyTracker()
         self.stack = []
         self.blocks = []
         self.last_indent = None
 
     def generic_visit(self, node):
         if isinstance(node, ast.Name) or \
-           isinstance(node, ast.Num):
+           isinstance(node, ast.Num) or \
+           isinstance(node, ast.Compare):
             return super(IndentVisitor, self).generic_visit(node)
 
         if hasattr(node, 'col_offset'):
@@ -22,9 +24,20 @@ class IndentVisitor(ast.NodeVisitor):
             if self.last_indent is None:
                 self.last_indent = node.col_offset
 
+            # TODO keep a context node?
+            # E.g. if ast.If set do set jumpsources, or do something different
+            # for an ast.While
+            #
             if self.last_indent != node.col_offset:
-                block = programslice.graph.BasicBlock(self.stack)
+                if not self.blocks:
+                    type = programslice.graph.ENTRY
+                else:
+                    type = programslice.graph.MIDDLE
+
+                block = programslice.graph.BasicBlock(self.stack, type)
                 self.blocks.append(block)
+
+                self.tracker.check_for_dependency(block)
 
                 # Node with the new tab indent goes into the next basic block
                 self.stack = [node]
@@ -39,11 +52,21 @@ class IndentVisitor(ast.NodeVisitor):
             self.graphs.append(self.graph)
         self.graph = programslice.graph.Graph(node.name)
         super(IndentVisitor, self).generic_visit(node)
+        for b1, b2 in self.tracker.dependencies:
+            self.graph.add(b1)
+            self.graph.add(b2)
+            self.graph.connect(b1, b2)
 
     def visit_If(self, node):
         n_if = ast.If(node.test, [], [])
         n_if.col_offset = node.col_offset
         self.stack.append(n_if)
+
+        # TODO keep the context node to identify these?
+        if node.body:
+            self.tracker.add_jumpnode(node.body[-1])
+        if node.orelse:
+            self.tracker.add_jumpnode(node.orelse[-1])
 
         super(IndentVisitor, self).generic_visit(node)
 
@@ -54,8 +77,45 @@ class IndentVisitor(ast.NodeVisitor):
         if self.stack and self.stack[-1].col_offset == node.col_offset:
             exit_block = self.stack + exit_block
 
-        exitb = programslice.graph.BasicBlock(exit_block, programslice.graph.EXIT)
+        exitb = programslice.graph.BasicBlock(exit_block,
+                                              programslice.graph.EXIT)
         self.blocks.append(exitb)
+        self.tracker.check_for_dependency(exitb)
+
+
+class DependencyTracker(object):
+
+    def __init__(self):
+        self.stack = []
+        self.block = None
+        self.dependencies = []
+
+        self._jumpsources = []
+        self._jumpblocks = []
+
+    def add_jumpnode(self, node):
+        # Keep track of possible nodes which are sources of jumps. From here to
+        # the next basic block.
+        self._jumpsources.append(node)
+
+    def check_for_dependency(self, block):
+        if not self.block:
+            self.block = block
+            return
+
+        # TODO
+        # If the self.block is None but jump blocks are set, connect them with
+        # the sources and set self.block to block
+        if self.block in self._jumpblocks:
+            # That doesn't make sense
+            pass
+
+        self.dependencies.append((self.block, block))
+        for n in self._jumpsources:
+            if n in block.nodes:
+                self._jumpblocks.append(block)
+                del self._jumpsources[self._jumpsources.index(n)]
+        self.block = block
 
 
 class LineDependencyVisitor(ast.NodeVisitor):

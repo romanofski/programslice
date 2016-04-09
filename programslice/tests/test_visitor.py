@@ -3,12 +3,12 @@ import ast
 from programslice.visitor import IndentVisitor
 
 
-condition = '''
+ifelse = '''
 def test(x):
     a = 1
     b = 2
     if x == a:
-      a = 2
+        a = 2
     else:
         a = 3
     return a'''
@@ -31,14 +31,16 @@ def test():
 
 
 def test_visitor_finds_correct_basic_blocks():
-    code = [simple_condition,
-            condition,
-            simple, '\n'.join([condition, simple]),
+    code = [ifelse,
+            simple_condition,
+            simple,
+            '\n'.join([ifelse, simple]),
             ]
-    expected = [3, 4, 1, 6]
+    expected = [4, 3, 1, 6]
 
     for source, exp_blocks in zip(code, expected):
         node = ast.parse(source.strip(), 'testdata')
         visitor = IndentVisitor()
         visitor.visit(node)
+
         assert len(visitor.blocks) == exp_blocks, source

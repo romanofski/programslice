@@ -6,53 +6,56 @@ import programslice.graph
 class IndentVisitor(ast.NodeVisitor):
 
     def __init__(self):
-        self.graph = programslice.graph.Graph('control flow')
+        self.graphs = []
+        self.graph = None
         self.stack = []
-        self.jumpsources = []
+        self.blocks = []
+        self.last_indent = None
 
-    def visit_Assign(self, node):
-        if (self.stack and self.stack[-1].col_offset == node.col_offset) or \
-           not self.stack:
-            self.stack.append(node)
-            # TODO check if body
-            return
+    def generic_visit(self, node):
+        if isinstance(node, ast.Name) or \
+           isinstance(node, ast.Num):
+            return super(IndentVisitor, self).generic_visit(node)
 
-        # change in indent ... a new basic block begins, lets tie up what we have
-        block = programslice.graph.BasicBlock(self.stack)
-        # don't forget the new line
-        self.stack = [node]
-        self.graph.add(block)
-        self.jumpsources.append(block)
+        if hasattr(node, 'col_offset'):
+            # First time ever we see an interesting statement or expression
+            if self.last_indent is None:
+                self.last_indent = node.col_offset
 
-        # if we have an entry block and found another one, create an edge
-        if self.graph.entryb:
-            self.graph.add(block)
-            self.graph.connect(self.graph.entryb, block)
+            if self.last_indent != node.col_offset:
+                block = programslice.graph.BasicBlock(self.stack)
+                self.blocks.append(block)
+
+                # Node with the new tab indent goes into the next basic block
+                self.stack = [node]
+                self.last_indent = node.col_offset
+            elif self.last_indent == node.col_offset:
+                self.stack.append(node)
+
+        super(IndentVisitor, self).generic_visit(node)
+
+    def visit_FunctionDef(self, node):
+        if self.graph:
+            self.graphs.append(self.graph)
+        self.graph = programslice.graph.Graph(node.name)
+        super(IndentVisitor, self).generic_visit(node)
 
     def visit_If(self, node):
-        self.stack.append(node)
-        outer = programslice.graph.BasicBlock(self.stack)
-        body = programslice.graph.BasicBlock(node.body)
-        else_body = programslice.graph.BasicBlock(node.orelse)
+        n_if = ast.If(node.test, [], [])
+        n_if.col_offset = node.col_offset
+        self.stack.append(n_if)
 
-        self.jumpsources.extend([outer, body, else_body])
-
-        # TODO if we have returns or other jump statements the graph will be
-        # wrong ... perhaps visit first?
-        self.graph.add(outer)
-        self.graph.add(body)
-        self.graph.add(else_body)
-
-        self.graph.connect(outer, body)
-        self.graph.connect(outer, else_body)
+        super(IndentVisitor, self).generic_visit(node)
 
     def visit_Return(self, node):
-        exitb = programslice.graph.BasicBlock([node], programslice.graph.EXIT)
-        self.graph.add(exitb)
+        # In case we've collected additional nodes with the same indent,
+        # they'll become part of the exit block.
+        exit_block = [node]
+        if self.stack and self.stack[-1].col_offset == node.col_offset:
+            exit_block = self.stack + exit_block
 
-        while self.jumpsources:
-            block = self.jumpsources.pop()
-            self.graph.connect(block, exitb)
+        exitb = programslice.graph.BasicBlock(exit_block, programslice.graph.EXIT)
+        self.blocks.append(exitb)
 
 
 class LineDependencyVisitor(ast.NodeVisitor):

@@ -70,8 +70,7 @@ class Graph(object):
 
         :rtype: BasicBlock
         """
-        if self.entryb is None:
-            block.type = ENTRY
+        if block.type == ENTRY:
             self.entryb = block
 
         if block.type == EXIT and block not in self.exitb:
@@ -82,7 +81,11 @@ class Graph(object):
 
     @property
     def edges(self):
-        return self.graph.keys()
+        result = []
+        for key, values in self.graph.items():
+            for node in values:
+                result.append((key, node))
+        return result
 
     def connect(self, block1, block2):
         blocks = self.graph.setdefault(block1, [])

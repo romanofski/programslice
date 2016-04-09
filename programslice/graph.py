@@ -11,41 +11,6 @@ import hashlib
 import astor
 
 
-class Edge(object):
-    """
-    .. option:: synopsis
-
-    Representing the edge of a :class:`graph`.
-    """
-
-    def __init__(self, name, ln, column):
-        assert isinstance(ln, int), "line number needs to be an integer"
-        assert isinstance(name, str), "name needs to be str"
-        self.name = name
-        self.lineno = ln
-        self.column = column
-
-    def __key(self):
-        return (self.lineno, self.name, self.column)
-
-    def __eq__(self, other):
-        return type(self) == type(other) and self.__key() == other.__key()
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash(self.__key())
-
-    def __repr__(self):
-        return ('<{self.__class__.__name__} {self.name} at '
-                '#{self.lineno}@{self.column}>'.format(self=self))
-
-    @classmethod
-    def create_from_astnode(klass, node):
-        return Edge(node.id, node.lineno, node.col_offset)
-
-
 ENTRY = 1
 MIDDLE = 2
 EXIT = 3

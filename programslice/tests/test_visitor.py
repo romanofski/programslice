@@ -55,6 +55,7 @@ def test_visitor_if_blocks():
 
 
 def test_visitor_multiple_funcs_blocks():
-    visitor = visit_source_code('\n'.join([ifelse, simple]))
-    assert 6 == len(visitor.blocks)
+    source = '\n'.join([ifelse, simple])
+    visitor = visit_source_code(source)
+    assert 5 == len(visitor.blocks), source
     assert_entry_exit_blocks(visitor.blocks)

@@ -11,6 +11,7 @@ class IndentVisitor(ast.NodeVisitor):
         self.tracker = DependencyTracker()
         self.stack = []
         self.blocks = []
+        self.explicit_block_markers = []
         self.last_indent = None
 
     def generic_visit(self, node):
@@ -27,15 +28,17 @@ class IndentVisitor(ast.NodeVisitor):
             # TODO keep a context node?
             # E.g. if ast.If set do set jumpsources, or do something different
             # for an ast.While
-            #
-            if self.last_indent != node.col_offset:
-                if not self.blocks:
-                    type = programslice.graph.ENTRY
-                else:
-                    type = programslice.graph.MIDDLE
 
-                block = programslice.graph.BasicBlock(self.stack, type)
-                self.blocks.append(block)
+            # This node is used to explicitly signal the end of a block
+            if node in self.explicit_block_markers:
+                self.stack.append(node)
+                self._new_basic_block()
+
+                del self.explicit_block_markers[
+                    self.explicit_block_markers.index(node)]
+
+            elif self.last_indent != node.col_offset:
+                block = self._new_basic_block()
 
                 self.tracker.check_for_dependency(block)
 
@@ -46,6 +49,17 @@ class IndentVisitor(ast.NodeVisitor):
                 self.stack.append(node)
 
         super(IndentVisitor, self).generic_visit(node)
+
+    def _new_basic_block(self):
+        if not self.blocks:
+            type = programslice.graph.ENTRY
+        else:
+            type = programslice.graph.MIDDLE
+
+        block = programslice.graph.BasicBlock(self.stack, type)
+        self.blocks.append(block)
+        self.stack = []
+        return block
 
     def visit_FunctionDef(self, node):
         if self.graph:
@@ -61,12 +75,13 @@ class IndentVisitor(ast.NodeVisitor):
         n_if = ast.If(node.test, [], [])
         n_if.col_offset = node.col_offset
         self.stack.append(n_if)
+        self._new_basic_block()
 
         # TODO keep the context node to identify these?
         if node.body:
-            self.tracker.add_jumpnode(node.body[-1])
+            self.explicit_block_markers.append(node.body[-1])
         if node.orelse:
-            self.tracker.add_jumpnode(node.orelse[-1])
+            self.explicit_block_markers.append(node.orelse[-1])
 
         super(IndentVisitor, self).generic_visit(node)
 

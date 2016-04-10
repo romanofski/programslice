@@ -22,3 +22,10 @@ def load_testdata(filename):
     with open(filepath, 'r') as f:
         node = ast.parse(f.read(), filepath)
     return node
+
+
+def visit_source_code(code_string):
+    node = ast.parse(code_string.strip(), 'testdata')
+    visitor = programslice.visitor.IndentVisitor()
+    visitor.visit(node)
+    return visitor

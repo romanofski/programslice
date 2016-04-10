@@ -1,6 +1,8 @@
 import ast
 
+import programslice.graph
 from programslice.visitor import IndentVisitor
+from programslice.tests.conftest import visit_source_code
 
 
 ifelse = '''
@@ -30,17 +32,29 @@ def test():
     return a'''
 
 
-def test_visitor_finds_correct_basic_blocks():
-    code = [ifelse,
-            simple_condition,
-            simple,
-            '\n'.join([ifelse, simple]),
-            ]
-    expected = [4, 3, 1, 6]
+def assert_entry_exit_blocks(blocks):
+    types = [x.type for x in blocks]
+    assert programslice.graph.ENTRY in types
+    assert programslice.graph.EXIT in types
 
-    for source, exp_blocks in zip(code, expected):
-        node = ast.parse(source.strip(), 'testdata')
-        visitor = IndentVisitor()
-        visitor.visit(node)
+def test_visitor_ifelse_blocks():
+    visitor = visit_source_code(ifelse)
+    assert 4 == len(visitor.blocks)
+    assert_entry_exit_blocks(visitor.blocks)
 
-        assert len(visitor.blocks) == exp_blocks, source
+
+def test_visitor_simple_blocks():
+    visitor = visit_source_code(simple)
+    assert 1 == len(visitor.blocks)
+
+
+def test_visitor_if_blocks():
+    visitor = visit_source_code(simple_condition)
+    assert 3 == len(visitor.blocks), simple_condition
+    assert_entry_exit_blocks(visitor.blocks)
+
+
+def test_visitor_multiple_funcs_blocks():
+    visitor = visit_source_code('\n'.join([ifelse, simple]))
+    assert 6 == len(visitor.blocks)
+    assert_entry_exit_blocks(visitor.blocks)

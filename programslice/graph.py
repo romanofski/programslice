@@ -19,6 +19,7 @@ EXIT = 3
 class BasicBlock(object):
 
     def __init__(self, nodes, type=MIDDLE):
+        self.assert_when_different_indent(nodes)
         self.type = type
         assert isinstance(nodes, Iterable)
         self.nodes = nodes
@@ -29,6 +30,14 @@ class BasicBlock(object):
         h = hashlib.new('sha256')
         h.update(self.name)
         self.uid = h.hexdigest()
+
+    def assert_when_different_indent(self, nodes):
+        """In case we get nodes with different indentation levels passed, we
+        want to error out. Something went wrong with identifying the basic
+        blocks and we should not proceed with incomplete information."""
+        indents = [x.col_offset for x in nodes]
+
+        assert len(set(indents)) == 1, zip(indents, nodes)
 
     def __repr__(self):
         typename = 'EXIT'

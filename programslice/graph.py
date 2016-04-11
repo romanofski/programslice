@@ -65,8 +65,6 @@ class Graph(object):
     def __init__(self, name=''):
         self.name = name
         self.graph = OrderedDict()
-        self.entryb = None
-        self.exitb = []
 
     def __repr__(self):
         return '<{} {} {}>'.format(
@@ -79,28 +77,21 @@ class Graph(object):
 
         :rtype: BasicBlock
         """
-        if block.type == ENTRY:
-            self.entryb = block
-
-        if block.type == EXIT and block not in self.exitb:
-            self.exitb.append(block)
-
         self.graph.setdefault(block, [])
         return block
 
     @property
     def edges(self):
         result = []
-        for key, values in self.graph.items():
-            for node in values:
-                result.append((key, node))
+        for node, deps in self.graph.items():
+            result += [(node, n) for n in deps]
         return result
 
-    def connect(self, block1, block2):
-        blocks = self.graph.setdefault(block1, [])
-        if block2 not in blocks:
-            self.graph[block1].append(block2)
-        self.add(block2)
+    def connect(self, n1, n2):
+        blocks = self.graph.setdefault(n1, [])
+        if n2 not in blocks:
+            self.graph[n1].append(n2)
+        self.add(n2)
 
     def get(self, block):
         """ Returns all referenced edges from the given edge an empty

@@ -81,6 +81,11 @@ class Graph(object):
         return block
 
     @property
+    def nodes(self):
+        """Known nodes for this graph."""
+        return self.graph.keys()
+
+    @property
     def edges(self):
         result = []
         for node, deps in self.graph.items():
@@ -101,6 +106,24 @@ class Graph(object):
 
     def __len__(self):
         return len(self.graph)
+
+
+def find_entry_block(graph):
+    """If we store :rtype:BasicBlock objects in the graph, return the entry
+    basic block."""
+    for n in graph.nodes:
+        if hasattr(n, 'type') and n.type == ENTRY:
+            return n
+
+
+def find_exit_blocks(graph):
+    """If we store :rtype:BasicBlock objects in the graph, return all exit
+    blocks."""
+    blocks = []
+    for n in graph.nodes:
+        if hasattr(n, 'type') and n.type == EXIT:
+            blocks.append(n)
+    return blocks
 
 
 class Slice(object):

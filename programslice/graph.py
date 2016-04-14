@@ -31,6 +31,10 @@ class BasicBlock(object):
         h.update(self.name)
         self.uid = h.hexdigest()
 
+    @property
+    def indent(self):
+        return self.nodes[0].col_offset
+
     def assert_when_different_indent(self, nodes):
         """In case we get nodes with different indentation levels passed, we
         want to error out. Something went wrong with identifying the basic

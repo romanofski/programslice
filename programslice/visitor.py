@@ -38,9 +38,7 @@ class IndentVisitor(ast.NodeVisitor):
                     self.explicit_block_markers.index(node)]
 
             elif self.last_indent != node.col_offset:
-                block = self._new_basic_block()
-
-                self.tracker.check_for_dependency(block)
+                self._new_basic_block()
 
                 # Node with the new tab indent goes into the next basic block
                 self.stack = [node]
@@ -58,6 +56,7 @@ class IndentVisitor(ast.NodeVisitor):
 
         block = programslice.graph.BasicBlock(self.stack, type)
         self.blocks.append(block)
+        self.tracker.check_for_dependency(block)
         self.stack = []
         return block
 
@@ -67,8 +66,6 @@ class IndentVisitor(ast.NodeVisitor):
         self.graph = programslice.graph.Graph(node.name)
         super(IndentVisitor, self).generic_visit(node)
         for b1, b2 in self.tracker.dependencies:
-            self.graph.add(b1)
-            self.graph.add(b2)
             self.graph.connect(b1, b2)
 
     def visit_If(self, node):
@@ -80,8 +77,10 @@ class IndentVisitor(ast.NodeVisitor):
         # TODO keep the context node to identify these?
         if node.body:
             self.explicit_block_markers.append(node.body[-1])
+            self.tracker.add_jumpnode(node.body[-1])
         if node.orelse:
             self.explicit_block_markers.append(node.orelse[-1])
+            self.tracker.add_jumpnode(node.orelse[-1])
 
         super(IndentVisitor, self).generic_visit(node)
 
@@ -102,7 +101,7 @@ class DependencyTracker(object):
 
     def __init__(self):
         self.stack = []
-        self.block = None
+        self.lastblock = None
         self.dependencies = []
 
         self._jumpsources = []
@@ -114,23 +113,35 @@ class DependencyTracker(object):
         self._jumpsources.append(node)
 
     def check_for_dependency(self, block):
-        if not self.block:
-            self.block = block
+        if not self.lastblock:
+            self.lastblock = block
+            return
+
+        block_is_jumpsource = False
+
+        # TODO
+        # We need something which works based on the nested blocks
+        for n in self._jumpsources:
+            if n in block.nodes:
+                self.dependencies.append((self.lastblock, block))
+                self._jumpblocks.append(block)
+                del self._jumpsources[self._jumpsources.index(n)]
+                block_is_jumpsource = True
+
+        if not block_is_jumpsource:
+            self.dependencies.append((self.lastblock, block))
+            self.lastblock = block
+        else:
             return
 
         # TODO
-        # If the self.block is None but jump blocks are set, connect them with
-        # the sources and set self.block to block
-        if self.block in self._jumpblocks:
-            # That doesn't make sense
-            pass
+        # If the self.lastblock is None but jump blocks are set, connect them
+        # with the sources and set self.lastblock to block
+        if not self._jumpsources and self._jumpblocks:
+            for b in self._jumpblocks:
+                self.dependencies.append((b, block))
+        self._jumpblocks = []
 
-        self.dependencies.append((self.block, block))
-        for n in self._jumpsources:
-            if n in block.nodes:
-                self._jumpblocks.append(block)
-                del self._jumpsources[self._jumpsources.index(n)]
-        self.block = block
 
 
 class LineDependencyVisitor(ast.NodeVisitor):

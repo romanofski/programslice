@@ -11,15 +11,6 @@ class LineFormatter(object):
     :type slice_result: list
     :param source: The parsed source code as a string.
     :type source: str
-
-    TODO: No checking in place wether `source` is a unicode object or
-    str.
-
-    >>> from programslice.graph import Edge
-    >>> slice_result = [Edge('foo', 12, 3), Edge('bar', 13, 3)]
-    >>> formatter = LineFormatter(slice_result, '')
-    >>> formatter()
-    [12, 13]
     """
 
     def __init__(self, slice_result, source):

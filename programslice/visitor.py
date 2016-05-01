@@ -67,6 +67,7 @@ class IndentVisitor(ast.NodeVisitor):
         super(IndentVisitor, self).generic_visit(node)
         for b1, b2 in self.tracker.dependencies:
             self.graph.connect(b1, b2)
+        self.graphs.append(self.graph)
 
     def visit_If(self, node):
         n_if = ast.If(node.test, [], [])

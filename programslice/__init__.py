@@ -86,20 +86,22 @@ def command_slice_file():
 
 
 def command_draw_cfg():
-    source = '''
-def test(x):
-    a = 1
-    b = 2
-    if x == a:
-        a = 2
-    else:
-        a = 3
-    return a'''.strip()
-    node = ast.parse(source, 'testdata')
-    visitor = programslice.visitor.IndentVisitor()
-    visitor.visit(node)
-    graph = visitor.graph
-    programslice.visualize.draw_cfg([graph])
+    parser = argparse.ArgumentParser(
+        prog=programslice.package.__name__,
+        description='Static analysis tool to slice python programs')
+    parser.add_argument(
+        'filename',
+        help=('Path to a file to draw a CFG from.'),
+        type=str)
+
+    arguments = parser.parse_args()
+    with open(arguments.filename, 'r') as f:
+        contents = f.read()
+        node = ast.parse(contents, arguments.filename)
+        visitor = programslice.visitor.IndentVisitor()
+        visitor.visit(node)
+        programslice.visualize.draw_cfg(visitor.graphs)
+        sys.exit(0)
 
 
 def slice_string(varname, currentline, offset, source, filename,

@@ -1,0 +1,8 @@
+include *.py
+include LICENSE
+include buildout.cfg
+recursive-include docs *.gif
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include programslice *.py
+recursive-include programslice *.txt

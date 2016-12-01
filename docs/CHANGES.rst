@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.3.1 (2016-12-01)
+------------------
+
+    * Bugfix release (see issue #25, Kudos to Adam Coddington)
+
 0.3 (2015-02-18)
 ----------------
 
